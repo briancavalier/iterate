@@ -24,14 +24,16 @@ import java.util.regex.Pattern;
  *
  * @author Brian Cavalier
  */
-public class Iterate<X> implements Iterable<X> {
+public class Iterate<X> implements Iterable<X>
+{
 
     /**
      * @param items {@link Iterable} containing items over which to iterate
      *
      * @return an {@link Iterate} internal iterator that will operate on the items in the supplied {@link Iterable}.
      */
-    public static <X> Iterate<X> each(final Iterable<X> items) {
+    public static <X> Iterate<X> each(final Iterable<X> items)
+    {
         return new Iterate<X>(items);
     }
 
@@ -40,16 +42,20 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return an {@link Iterate} internal iterator that will operate on the items in the supplied array.
      */
-    public static <X> Iterate<X> each(final X... items) {
+    public static <X> Iterate<X> each(final X... items)
+    {
         return new Iterate<X>(new ArrayIterable<X>(items));
     }
+
     protected Iterable<X> iterable;
 
-    protected Iterate(Iterable<X> items) {
+    protected Iterate(Iterable<X> items)
+    {
         this.iterable = items;
     }
 
-    protected Iterate() {
+    protected Iterate()
+    {
         this(null);
     }
 
@@ -60,7 +66,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return {@link Iterate} that will only iterate over items for which {@code c.eval(item) == true}
      */
-    public Iterate<X> where(Condition<? super X> c) {
+    public Iterate<X> where(Condition<? super X> c)
+    {
         return new Iterate<X>(new FilterIterable<X>(this, c));
     }
 
@@ -71,7 +78,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return {@link Iterate} that will only iterate over items for which {@code c.compareTo(item) == 0}
      */
-    public Iterate<X> like(Comparable<? super X> c) {
+    public Iterate<X> like(Comparable<? super X> c)
+    {
         return where(Conditions.eq(c));
     }
 
@@ -83,7 +91,8 @@ public class Iterate<X> implements Iterable<X> {
      * @return {@link Iterate} that will only iterate over items before the first for which {@code c.eval(item) ==
      *         true}
      */
-    public Iterate<X> until(Condition<? super X> c) {
+    public Iterate<X> until(Condition<? super X> c)
+    {
         return new Iterate<X>(new UntilIterable<X>(this, c));
     }
 
@@ -95,7 +104,8 @@ public class Iterate<X> implements Iterable<X> {
      * @return {@link Iterate} that will only iterate over items including and after the first for which {@code
      *         c.eval(item) == true}
      */
-    public Iterate<X> after(Condition<? super X> c) {
+    public Iterate<X> after(Condition<? super X> c)
+    {
         return new Iterate<X>(new AfterIterable<X>(this, c));
     }
 
@@ -106,19 +116,22 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return new chained {@link Iterate}
      */
-    public <Y> Iterate<Y> map(Function<? super X, ? extends Y> f) {
+    public <Y> Iterate<Y> map(Function<? super X, ? extends Y> f)
+    {
         return new Iterate<Y>(new FunctionalIterable<X, Y>(this, f));
     }
 
     /**
      * Creates a chained {@link Iterate} by invoking {@code f.apply(item,param)} on each items.
      *
-     * @param f {@link BinaryFunction} to apply to all items
+     * @param f             {@link BinaryFunction} to apply to all items
+     * @param referenceData additional context will be passed as the second param to {@code f.apply}
      *
      * @return new chained {@link Iterate}
      */
-    public <Y, Z> Iterate<Y> map(BinaryFunction<? super X, ? super Z, Y> f, Z param) {
-        return new Iterate<Y>(new BinaryFunctionalIterable<X, Y, Z>(this, param, f));
+    public <Y, Z> Iterate<Y> map(BinaryFunction<? super X, ? super Z, Y> f, Z referenceData)
+    {
+        return new Iterate<Y>(new BinaryFunctionalIterable<X, Y, Z>(this, referenceData, f));
     }
 
     /**
@@ -128,7 +141,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return {@code predicate}
      */
-    public <P extends Predicate<? super X>> P reduce(P predicate) {
+    public <P extends Predicate<? super X>> P reduce(P predicate)
+    {
         for (X x : this) {
             predicate.apply(x);
         }
@@ -144,7 +158,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return {@code param}
      */
-    public <Y> Y reduce(BinaryPredicate<? super X, ? super Y> predicate, Y param) {
+    public <Y> Y reduce(BinaryPredicate<? super X, ? super Y> predicate, Y param)
+    {
         for (X x : this) {
             predicate.apply(x, param);
         }
@@ -160,7 +175,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return {@code param}
      */
-    public <Y> Y reduce(BinaryFunction<? super X, ? super Y, ? extends Y> f, Y param) {
+    public <Y> Y reduce(BinaryFunction<? super X, ? super Y, ? extends Y> f, Y param)
+    {
         Y result = param;
         for (X x : this) {
             result = f.apply(x, result);
@@ -180,8 +196,9 @@ public class Iterate<X> implements Iterable<X> {
      * @return {@code param}
      */
     public <Y, Z> Z reduce(TernaryPredicate<? super X, ? super Y, Z> predicate,
-            Function<? super X, ? extends Y> f,
-            Z param) {
+                           Function<? super X, ? extends Y> f,
+                           Z param)
+    {
         for (X x : this) {
             predicate.apply(x, f.apply(x), param);
         }
@@ -192,7 +209,8 @@ public class Iterate<X> implements Iterable<X> {
     /**
      * @return {@link Iterator} over items in this {@link Iterate} view
      */
-    public Iterator<X> iterator() {
+    public Iterator<X> iterator()
+    {
         return iterable.iterator();
     }
 
@@ -201,7 +219,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return a sorted view of {@code items}
      */
-    public static <X extends Comparable<X>> Iterable<X> sorted(final Collection<X> items) {
+    public static <X extends Comparable<X>> Iterable<X> sorted(final Collection<X> items)
+    {
         List<X> sorted = new ArrayList<X>(items);
         Collections.sort(sorted);
         return sorted;
@@ -213,7 +232,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return a sorted view of {@code items}
      */
-    public static <X> Iterable<X> sorted(final Collection<X> items, final Comparator<X> comparator) {
+    public static <X> Iterable<X> sorted(final Collection<X> items, final Comparator<X> comparator)
+    {
         List<X> sorted = new ArrayList<X>(items);
         Collections.sort(sorted, comparator);
         return sorted;
@@ -237,7 +257,8 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @return an {@link Iterable} which will group items in {@code items} into groups of size {@code groupSize}.
      */
-    public static <X> Iterable<Collection<X>> group(final Iterable<X> items, int groupSize) {
+    public static <X> Iterable<Collection<X>> group(final Iterable<X> items, int groupSize)
+    {
         return new GroupIterable<X>(items, groupSize);
     }
 
@@ -248,8 +269,9 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @param nested 2D {@link Iterable} of {@link Iterable}
      */
-    public static <X, Y extends Iterable<X>> Iterable<X> flatten(final Iterable<Y> nested) {
-        return new FlatteningIterable<X>(nested);
+    public static <X, Y extends Iterable<X>> Iterable<X> flatten(final Iterable<Y> nested)
+    {
+        return new FlattenIterable<X>(nested);
     }
 
     /**
@@ -259,8 +281,9 @@ public class Iterate<X> implements Iterable<X> {
      *
      * @param nested array of {@link Iterable}
      */
-    public static <X> Iterable<X> flatten(Iterable<X>... nested) {
-        return new FlatteningIterable<X>(Arrays.asList(nested));
+    public static <X> Iterable<X> flatten(Iterable<X>... nested)
+    {
+        return new FlattenIterable<X>(Arrays.asList(nested));
     }
 
     /**
@@ -270,7 +293,8 @@ public class Iterate<X> implements Iterable<X> {
      * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
      *         (exclusive)
      */
-    public static Iterable<Integer> range(int start, int end) {
+    public static Iterable<Integer> range(int start, int end)
+    {
         return new IntegerRange(start, end);
     }
 
@@ -278,17 +302,13 @@ public class Iterate<X> implements Iterable<X> {
      * @param start first integer value
      * @param end   exclusive last integer value
      * @param step  integer distance to step between each iteration.  For example, if {@code start = 0}, {@code end =
-     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements:
-     *              <pre>
-     *              <p/>
-     *                                                                                  [ 0, 2, 4 ]
-     *              <p/>
-     *                                                                                  </pre>
+     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]}
      *
      * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
      *         (exclusive), stepping by {@code step}
      */
-    public static Iterable<Integer> range(int start, int end, int step) {
+    public static Iterable<Integer> range(int start, int end, int step)
+    {
         return new StepIntegerRange(start, end, step);
     }
 
@@ -298,43 +318,44 @@ public class Iterate<X> implements Iterable<X> {
      * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
      *         (exclusive)
      */
-    public static Iterable<Integer> upto(int end) {
+    public static Iterable<Integer> upto(int end)
+    {
         return new IntegerRange(0, end);
     }
 
     /**
      * @param end  exclusive last integer value
      * @param step integer distance to step between each iteration.  For example, {@code end = 5}, {@code step = 2}, the
-     *             resulting {@link Iterable} will have the following elements:
-     *             <pre>
-     *             <p/>
-     *                                                                                [ 0, 2, 4 ]
-     *             <p/>
-     *                                                                                     </pre>
+     *             resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]} 
      *
      * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
      *         (exclusive), stepping by {@code step}
      */
-    public static Iterable<Integer> upto(int end, int step) {
+    public static Iterable<Integer> upto(int end, int step)
+    {
         return new StepIntegerRange(0, end, step);
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(InputStream in) {
+    public static LineReaderIterable line(InputStream in)
+    {
         return line(new InputStreamReader(in));
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(InputStream in, Charset charset) {
+    public static LineReaderIterable line(InputStream in, Charset charset)
+    {
         return line(new InputStreamReader(in, charset));
     }
 
-    public static LineReaderIterable line(Reader reader) {
+    public static LineReaderIterable line(Reader reader)
+    {
         return new LineReaderIterable(reader);
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(String url, String... headers) throws IOException {
+    public static LineReaderIterable line(String url, String... headers) throws IOException
+    {
         try {
             return new LineReaderIterable(Urls.reader(url, headers));
         } catch (MalformedURLException ignored) {
@@ -343,7 +364,8 @@ public class Iterate<X> implements Iterable<X> {
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(String url, Charset charset, String... headers) throws IOException {
+    public static LineReaderIterable line(String url, Charset charset, String... headers) throws IOException
+    {
         try {
             return new LineReaderIterable(Urls.reader(url, charset, headers));
         } catch (MalformedURLException ignored) {
@@ -351,27 +373,33 @@ public class Iterate<X> implements Iterable<X> {
         }
     }
 
-    public static ByteBufferIterable bytes(InputStream in, int numBytesPerIteration) {
+    public static ByteBufferIterable bytes(InputStream in, int numBytesPerIteration)
+    {
         return new ByteBufferIterable(in, numBytesPerIteration, true);
     }
 
-    public static ByteBufferIterable bytes(ReadableByteChannel channel, int numBytesPerIteration) {
+    public static ByteBufferIterable bytes(ReadableByteChannel channel, int numBytesPerIteration)
+    {
         return new ByteBufferIterable(channel, numBytesPerIteration, true);
     }
 
-    public static Iterable<String> token(Readable in, Pattern delimiter) {
+    public static Iterable<String> token(Readable in, Pattern delimiter)
+    {
         return new TokenizerIterable(in, delimiter);
     }
 
-    public static Iterable<String> token(Readable in, String delimiter) {
+    public static Iterable<String> token(Readable in, String delimiter)
+    {
         return new TokenizerIterable(in, Pattern.compile(delimiter));
     }
 
-    public static Iterable<String> match(Readable in, Pattern regex) {
+    public static Iterable<String> match(Readable in, Pattern regex)
+    {
         return new RegexMatchIterable(in, regex);
     }
 
-    public static Iterable<String> match(Readable in, String regex) {
+    public static Iterable<String> match(Readable in, String regex)
+    {
         return new RegexMatchIterable(in, Pattern.compile(regex));
     }
 
@@ -381,14 +409,18 @@ public class Iterate<X> implements Iterable<X> {
     /**
      * @return a {@link BinaryPredicate} that will add the item {@code x} to the {@code Collection y}
      */
-    public static <X> BinaryPredicate<X, Collection> collect() {
+    public static <X> BinaryPredicate<X, Collection> collect()
+    {
         return new Collect<X>();
     }
 
-    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryPredicate<IX, CX> flatten() {
-        return new BinaryPredicate<IX, CX>() {
+    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryPredicate<IX, CX> flatten()
+    {
+        return new BinaryPredicate<IX, CX>()
+        {
 
-            public void apply(IX iterable, CX cx) {
+            public void apply(IX iterable, CX cx)
+            {
                 for (X x : iterable) {
                     cx.add(x);
                 }
@@ -399,7 +431,8 @@ public class Iterate<X> implements Iterable<X> {
     /**
      * @return a {@link BinaryPredicate} that will remove the item {@code x} from the {@code Collection y}
      */
-    public static <X> BinaryPredicate<X, Collection> remove() {
+    public static <X> BinaryPredicate<X, Collection> remove()
+    {
         return new Remove<X>();
     }
 
@@ -407,43 +440,50 @@ public class Iterate<X> implements Iterable<X> {
      * @return a {@link TernaryPredicate} that will add the value {@code x} using the key {@code y} to the {@code Map
      *         z}
      */
-    public static <X, Y> TernaryPredicate<X, Y, Map<Y, X>> map() {
+    public static <X, Y> TernaryPredicate<X, Y, Map<Y, X>> map()
+    {
         return new Mapper<X, Y>();
     }
 
     /**
      * @return a {@link BinaryPredicate} that will call {@code append(x)} on the {@link Appendable} {@code y}
      */
-    public static <X> BinaryPredicate<X, Appendable> append() {
+    public static <X> BinaryPredicate<X, Appendable> append()
+    {
         return new Append<X>();
     }
 
     /**
      * @return an {@link org.bc.iterate.predicate.AppendWithSeparator}
      */
-    public static <X> AppendWithSeparator<X> append(final String separator) {
+    public static <X> AppendWithSeparator<X> append(final String separator)
+    {
         return new AppendWithSeparator<X>(separator);
     }
 
     /**
      * @return a {@link BinaryPredicate} that will call {@code write(x)} on the {@link java.io.Writer} {@code y}
      */
-    public static BinaryPredicate<String, Writer> write() {
+    public static BinaryPredicate<String, Writer> write()
+    {
         return new Write();
     }
 
     /**
      * @return a {@link BinaryPredicate} that will call {@code println(x)} on the {@link java.io.PrintStream} {@code y}
      */
-    public static <X> BinaryPredicate<X, PrintStream> println() {
+    public static <X> BinaryPredicate<X, PrintStream> println()
+    {
         return new PrintLine<X>();
     }
 
-    public static <X, Y> Predicate<X> bind(Y param, BinaryPredicate<X, Y> callee) {
+    public static <X, Y> Predicate<X> bind(Y param, BinaryPredicate<X, Y> callee)
+    {
         return new BindParam<X, Y>(param, callee);
     }
 
-    public static <X, Y> BinaryPredicate<X, Y> unbind(Predicate<X> callee) {
+    public static <X, Y> BinaryPredicate<X, Y> unbind(Predicate<X> callee)
+    {
         return new UnbindParam<X, Y>(callee);
     }
 
@@ -453,7 +493,8 @@ public class Iterate<X> implements Iterable<X> {
     /**
      * @return a {@link Function} that returns the result of invoking {@code toString()} on {@code x}.
      */
-    public static <X> Function<X, String> toString() {
+    public static <X> Function<X, String> toString()
+    {
         return new ToString<X>();
     }
 
@@ -461,7 +502,8 @@ public class Iterate<X> implements Iterable<X> {
      * @return a {@link Function} that will return the result of replacing all occurrences of {@code Pattern} with
      *         {@code replacement} on {@code x}
      */
-    public static Function<String, String> replace(Pattern pattern, String replacement) {
+    public static Function<String, String> replace(Pattern pattern, String replacement)
+    {
         return new RegexReplace(pattern, replacement);
     }
 
@@ -469,21 +511,24 @@ public class Iterate<X> implements Iterable<X> {
      * @return a {@link Function} that will return the result of replacing all occurrences of {@code Pattern} with
      *         {@code replacement} on {@code x}
      */
-    public static Function<String, String> replace(String pattern, String replacement) {
+    public static Function<String, String> replace(String pattern, String replacement)
+    {
         return new RegexReplace(Pattern.compile(pattern), replacement);
     }
 
     /**
      * @return a {@link Function} that will return the whole substring matched by {@code pattern}
      */
-    public static Function<String, String> find(Pattern pattern) {
+    public static Function<String, String> find(Pattern pattern)
+    {
         return new RegexFind(pattern);
     }
 
     /**
      * @return a {@link Function} that will return the whole substring matched by {@code pattern}
      */
-    public static Function<String, String> find(String pattern) {
+    public static Function<String, String> find(String pattern)
+    {
         return new RegexFind(Pattern.compile(pattern));
     }
 
@@ -491,7 +536,8 @@ public class Iterate<X> implements Iterable<X> {
      * @return a {@link Function} that will return the specified {@code group} within the first substring matched by
      *         {@code pattern}
      */
-    public static Function<String, String> find(Pattern pattern, int group) {
+    public static Function<String, String> find(Pattern pattern, int group)
+    {
         return new RegexFind(pattern, group);
     }
 
@@ -499,7 +545,8 @@ public class Iterate<X> implements Iterable<X> {
      * @return a {@link Function} that will return the specified {@code group} within the first substring matched by
      *         {@code pattern}
      */
-    public static Function<String, String> find(String pattern, int group) {
+    public static Function<String, String> find(String pattern, int group)
+    {
         return new RegexFind(Pattern.compile(pattern), group);
     }
 }

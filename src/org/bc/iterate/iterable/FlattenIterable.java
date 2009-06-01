@@ -5,12 +5,12 @@ package org.bc.iterate.iterable;
 
 import java.util.Iterator;
 
-public class FlatteningIterable<X> extends IterableBase<X>
+public class FlattenIterable<X> extends IterableBase<X>
 {
     final private Iterator<? extends Iterable<X>> nested;
     private Iterator<X> current;
 
-    public FlatteningIterable(Iterable<? extends Iterable<X>> nested)
+    public FlattenIterable(Iterable<? extends Iterable<X>> nested)
     {
         this.nested = nested.iterator();
         this.current = this.nested.next().iterator();

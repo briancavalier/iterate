@@ -7,20 +7,26 @@ import java.util.*;
 
 public class ComparatorSortIterable<X> implements Iterable<X>
 {
-    final private List<X> sorted;
+    private List<X> sorted;
+    private Iterable<X> source;
+    private Comparator<X> comparator;
 
-    public ComparatorSortIterable(final Iterable<X> iterable, final Comparator<X> comparator)
+    public ComparatorSortIterable(final Iterable<X> source, final Comparator<X> comparator)
     {
-        sorted = new ArrayList<X>(100);
-        for (X x : iterable) {
-            sorted.add(x);
-        }
-
-        Collections.sort(sorted, comparator);
+        this.source = source;
+        this.comparator = comparator;
     }
 
     public Iterator<X> iterator()
     {
+        if (source == null) {
+            sorted = new ArrayList<X>(100);
+            for (X x : source) {
+                sorted.add(x);
+            }
+
+            Collections.sort(sorted, comparator);
+        }
         return sorted.iterator();
     }
 }
