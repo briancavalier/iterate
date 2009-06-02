@@ -86,6 +86,28 @@ public class Strings
         return result;
     }
 
+    public static Condition<String> contains(final String contained)
+    {
+        return new Condition<String>()
+        {
+            public boolean eval(String s)
+            {
+                return s.contains(contained);
+            }
+        };
+    }
+
+    public static Condition<String> contains(final char contained)
+    {
+        return new Condition<String>()
+        {
+            public boolean eval(String s)
+            {
+                return s.indexOf(contained) != -1;
+            }
+        };
+    }
+
     public static Function<String, String> lowerCase()
     {
         return new Function<String, String>()
@@ -108,13 +130,24 @@ public class Strings
         };
     }
 
-    public static Function<String, String> titleCase()
+    public static Function<String, String> smartTitleCase()
     {
         return new Function<String, String>()
         {
             public String apply(String s)
             {
                 return smartTitleCase(s);
+            }
+        };
+    }
+
+    public static Function<String, String> titleCase()
+    {
+        return new Function<String, String>()
+        {
+            public String apply(String s)
+            {
+                return titleCase(s);
             }
         };
     }

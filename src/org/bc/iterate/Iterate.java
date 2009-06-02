@@ -18,8 +18,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * The core class of the iterate package containing the core iterator methods ({@code each(...))}, and methods creating
- * the most used {@link Visitor}s, {@link org.bc.iterate.Function}s, and {@link org.bc.iterate.Condition}s.
+ * The core class of the iterate package containing the core iteration methods {@code each}, {@code map}, {@code visit},
+ * and {@code reduce}, as well as methods creating the most used {@link Visitor}s, {@link org.bc.iterate.Function}s, and
+ * {@link org.bc.iterate.Condition}s.
  *
  * @author Brian Cavalier
  */
@@ -49,7 +50,7 @@ public class Iterate<X> implements Iterable<X>
     /**
      * Shortcut for {@code Iterate.each(map.entrySet())}
      *
-     * @param map This {@link Map}'s {@link Map#entrySet()} will be used for iteration  
+     * @param map This {@link Map}'s {@link Map#entrySet()} will be used for iteration
      *
      * @return an {@link Iterate} internal iterator that will operate on the {@link java.util.Map.Entry} items in {@code
      *         map.entrySet()}
@@ -208,8 +209,8 @@ public class Iterate<X> implements Iterable<X>
      * @return {@code param}
      */
     public <Y, Z> Z visit(TernaryVisitor<? super X, ? super Y, Z> visitor,
-                           Function<? super X, ? extends Y> f,
-                           Z param)
+                          Function<? super X, ? extends Y> f,
+                          Z param)
     {
         for (X x : this) {
             visitor.visit(x, f.apply(x), param);
@@ -219,7 +220,9 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * @return {@link Iterator} over items in this {@link Iterate} view
+     * @return {@link Iterator} over items in this {@link Iterate} view.  Typically, callers will not use this method,
+     *         but instead will use the internal iteration methods {@code each}, {@code map}, {@code visit}, and {@code
+     *         reduce}.
      */
     public Iterator<X> iterator()
     {
