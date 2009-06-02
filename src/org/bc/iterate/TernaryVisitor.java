@@ -16,7 +16,7 @@
 
 package org.bc.iterate;
 
-public interface TernaryPredicate<X, Y, Z>
+public interface TernaryVisitor<X, Y, Z>
 {
-    void apply(X x, Y y, Z z);
+    void visit(X x, Y y, Z z);
 }

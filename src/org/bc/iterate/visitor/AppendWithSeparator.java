@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public class AppendWithSeparator<X> extends Append<X>
         reset();
     }
 
-    public void apply(X x, Appendable appendable)
+    public void visit(X x, Appendable appendable)
     {
         if (useSeparator) {
             try {
@@ -45,12 +45,12 @@ public class AppendWithSeparator<X> extends Append<X>
             useSeparator = true;
         }
 
-        super.apply(x, appendable);
+        super.visit(x, appendable);
     }
 
     /**
      * After {@code reset()} is called, no separator will be appended before the item in the next call to
-     * {@link #apply(Object, Appendable)}.  
+     * {@link #visit(Object, Appendable)}.
      */
     public void reset()
     {

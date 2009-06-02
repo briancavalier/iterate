@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import org.bc.iterate.BinaryPredicate;
-import org.bc.iterate.Predicate;
+import org.bc.iterate.BinaryVisitor;
+import org.bc.iterate.Visitor;
 
-public class UnbindParam<X, Y> implements BinaryPredicate<X, Y>
+public class UnbindParam<X, Y> implements BinaryVisitor<X, Y>
 {
-    private final Predicate<X> callee;
+    private final Visitor<X> callee;
 
-    public UnbindParam(Predicate<X> callee)
+    public UnbindParam(Visitor<X> callee)
     {
         this.callee = callee;
     }
 
-    public void apply(X x, Y y)
+    public void visit(X x, Y y)
     {
-        callee.apply(x);   
+        callee.visit(x);
     }
 }

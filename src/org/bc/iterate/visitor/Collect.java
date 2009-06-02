@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import org.bc.iterate.Predicate;
+import org.bc.iterate.BinaryVisitor;
 
-public class Count<X> implements Predicate<X>
+import java.util.Collection;
+
+public class Collect<X> implements BinaryVisitor<X, Collection>
 {
-    private int count;
-
-    public void apply(X x)
+    public void visit(X x, Collection collection)
     {
-        count++;
-    }
-
-    public int getCount()
-    {
-        return count;
+        //noinspection unchecked
+        collection.add(x);
     }
 }

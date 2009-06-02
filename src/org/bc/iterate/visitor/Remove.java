@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import org.bc.iterate.BinaryVisitor;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
-public class AppendTest
+public class Remove<X> implements BinaryVisitor<X, Collection>
 {
-    @Test
-    public void basic()
+    public void visit(X x, Collection collection)
     {
-        List<Integer> test = Arrays.asList(1, 2, 3, 4, 5);
-        StringBuilder buf = new StringBuilder(32);
-
-        Append<Integer> p = new Append<Integer>();
-        for (Integer i : test) {
-            p.apply(i, buf);
-        }
-
-        assertEquals("12345", buf.toString());
+        collection.remove(x);
     }
 }

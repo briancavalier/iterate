@@ -16,7 +16,7 @@
 
 package org.bc.iterate;
 
-public interface BinaryPredicate<X, Y>
+public interface BinaryVisitor<X, Y>
 {
-    void apply(X x, Y y);
+    void visit(X x, Y y);
 }

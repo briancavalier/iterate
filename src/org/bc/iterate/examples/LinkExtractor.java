@@ -33,6 +33,6 @@ public class LinkExtractor
         each(line(args[0]))
                 .where(regex("\\<(a|link|img|script).+?(src|href)\\=.+?\\>"))
                 .map(find("(?:src|href)\\=[\\\"\\']([^#].*?)[\\\"\\']", 1))
-                .reduce(println(), System.out);
+                .visit(println(), System.out);
     }
 }

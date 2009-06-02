@@ -8,7 +8,7 @@ import org.bc.iterate.function.RegexReplace;
 import org.bc.iterate.function.ToString;
 import org.bc.iterate.iterable.*;
 import org.bc.iterate.net.Urls;
-import org.bc.iterate.predicate.*;
+import org.bc.iterate.visitor.*;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,8 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * The core class of the iterate package containing the core iterator methods ({@code each(...))}, and methods creating
- * the most used {@link org.bc.iterate.Predicate}s, {@link org.bc.iterate.Function}s, and {@link
- * org.bc.iterate.Condition}s.
+ * the most used {@link Visitor}s, {@link org.bc.iterate.Function}s, and {@link org.bc.iterate.Condition}s.
  *
  * @author Brian Cavalier
  */
@@ -45,6 +44,19 @@ public class Iterate<X> implements Iterable<X>
     public static <X> Iterate<X> each(final X... items)
     {
         return new Iterate<X>(new ArrayIterable<X>(items));
+    }
+
+    /**
+     * Shortcut for {@code Iterate.each(map.entrySet())}
+     *
+     * @param map This {@link Map}'s {@link Map#entrySet()} will be used for iteration  
+     *
+     * @return an {@link Iterate} internal iterator that will operate on the {@link java.util.Map.Entry} items in {@code
+     *         map.entrySet()}
+     */
+    public static <X, Y> Iterate<Map.Entry<X, Y>> each(final Map<X, Y> map)
+    {
+        return each(map.entrySet());
     }
 
     protected Iterable<X> iterable;
@@ -137,14 +149,14 @@ public class Iterate<X> implements Iterable<X>
     /**
      * Applies {@code predicate} to each item
      *
-     * @param predicate {@link Predicate} to apply
+     * @param predicate {@link Visitor} to apply
      *
      * @return {@code predicate}
      */
-    public <P extends Predicate<? super X>> P reduce(P predicate)
+    public <P extends Visitor<? super X>> P visit(P predicate)
     {
         for (X x : this) {
-            predicate.apply(x);
+            predicate.visit(x);
         }
 
         return predicate;
@@ -153,15 +165,15 @@ public class Iterate<X> implements Iterable<X>
     /**
      * Applies {@code predicate.apply(item,param)} to each item
      *
-     * @param predicate {@link BinaryPredicate} to apply
-     * @param param     value to pass as second parameter to {@code predicate.apply()}
+     * @param visitor {@link BinaryVisitor} to apply
+     * @param param   value to pass as second parameter to {@code predicate.apply()}
      *
      * @return {@code param}
      */
-    public <Y> Y reduce(BinaryPredicate<? super X, ? super Y> predicate, Y param)
+    public <Y> Y visit(BinaryVisitor<? super X, ? super Y> visitor, Y param)
     {
         for (X x : this) {
-            predicate.apply(x, param);
+            visitor.visit(x, param);
         }
 
         return param;
@@ -188,19 +200,19 @@ public class Iterate<X> implements Iterable<X>
     /**
      * Applies {@code predicate.apply(item,f.map(item), param}) to each item
      *
-     * @param predicate {@link org.bc.iterate.TernaryPredicate} to apply
-     * @param f         {@link Function} to apply to each item to generate the second param passed to {@code
-     *                  predicate.apply()}
-     * @param param     value to pass as third paramter to {@code predicate.apply()}
+     * @param visitor {@link TernaryVisitor} to apply
+     * @param f       {@link Function} to apply to each item to generate the second param passed to {@code
+     *                predicate.apply()}
+     * @param param   value to pass as third paramter to {@code predicate.apply()}
      *
      * @return {@code param}
      */
-    public <Y, Z> Z reduce(TernaryPredicate<? super X, ? super Y, Z> predicate,
+    public <Y, Z> Z visit(TernaryVisitor<? super X, ? super Y, Z> visitor,
                            Function<? super X, ? extends Y> f,
                            Z param)
     {
         for (X x : this) {
-            predicate.apply(x, f.apply(x), param);
+            visitor.visit(x, f.apply(x), param);
         }
 
         return param;
@@ -302,7 +314,8 @@ public class Iterate<X> implements Iterable<X>
      * @param start first integer value
      * @param end   exclusive last integer value
      * @param step  integer distance to step between each iteration.  For example, if {@code start = 0}, {@code end =
-     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]}
+     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements: {@code [ 0,
+     *              2, 4 ]}
      *
      * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
      *         (exclusive), stepping by {@code step}
@@ -326,7 +339,7 @@ public class Iterate<X> implements Iterable<X>
     /**
      * @param end  exclusive last integer value
      * @param step integer distance to step between each iteration.  For example, {@code end = 5}, {@code step = 2}, the
-     *             resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]} 
+     *             resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]}
      *
      * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
      *         (exclusive), stepping by {@code step}
@@ -404,57 +417,51 @@ public class Iterate<X> implements Iterable<X>
     }
 
     //
-    // Predicates
+    // Visitors
     //
     /**
-     * @return a {@link BinaryPredicate} that will add the item {@code x} to the {@code Collection y}
+     * @return a {@link BinaryVisitor} that will add the item {@code x} to the {@code Collection y}
      */
-    public static <X> BinaryPredicate<X, Collection> collect()
+    public static <X> BinaryVisitor<X, Collection> collect()
     {
         return new Collect<X>();
     }
 
-    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryPredicate<IX, CX> flatten()
+    /**
+     * @return a {@link BinaryVisitor} that will add all elements of the {@link Iterable} {@code x} to the {@link
+     *         Collection} {@code y}
+     */
+    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryVisitor<IX, CX> flatten()
     {
-        return new BinaryPredicate<IX, CX>()
-        {
-
-            public void apply(IX iterable, CX cx)
-            {
-                for (X x : iterable) {
-                    cx.add(x);
-                }
-            }
-        };
+        return new Flatten<IX, CX, X>();
     }
 
     /**
-     * @return a {@link BinaryPredicate} that will remove the item {@code x} from the {@code Collection y}
+     * @return a {@link BinaryVisitor} that will remove the item {@code x} from the {@code Collection y}
      */
-    public static <X> BinaryPredicate<X, Collection> remove()
+    public static <X> BinaryVisitor<X, Collection> remove()
     {
         return new Remove<X>();
     }
 
     /**
-     * @return a {@link TernaryPredicate} that will add the value {@code x} using the key {@code y} to the {@code Map
-     *         z}
+     * @return a {@link TernaryVisitor} that will add the value {@code x} using the key {@code y} to the {@code Map z}
      */
-    public static <X, Y> TernaryPredicate<X, Y, Map<Y, X>> map()
+    public static <X, Y> TernaryVisitor<X, Y, Map<Y, X>> map()
     {
         return new Mapper<X, Y>();
     }
 
     /**
-     * @return a {@link BinaryPredicate} that will call {@code append(x)} on the {@link Appendable} {@code y}
+     * @return a {@link BinaryVisitor} that will call {@code append(x)} on the {@link Appendable} {@code y}
      */
-    public static <X> BinaryPredicate<X, Appendable> append()
+    public static <X> BinaryVisitor<X, Appendable> append()
     {
         return new Append<X>();
     }
 
     /**
-     * @return an {@link org.bc.iterate.predicate.AppendWithSeparator}
+     * @return an {@link org.bc.iterate.visitor.AppendWithSeparator}
      */
     public static <X> AppendWithSeparator<X> append(final String separator)
     {
@@ -462,27 +469,27 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * @return a {@link BinaryPredicate} that will call {@code write(x)} on the {@link java.io.Writer} {@code y}
+     * @return a {@link BinaryVisitor} that will call {@code write(x)} on the {@link java.io.Writer} {@code y}
      */
-    public static BinaryPredicate<String, Writer> write()
+    public static BinaryVisitor<String, Writer> write()
     {
         return new Write();
     }
 
     /**
-     * @return a {@link BinaryPredicate} that will call {@code println(x)} on the {@link java.io.PrintStream} {@code y}
+     * @return a {@link BinaryVisitor} that will call {@code println(x)} on the {@link java.io.PrintStream} {@code y}
      */
-    public static <X> BinaryPredicate<X, PrintStream> println()
+    public static <X> BinaryVisitor<X, PrintStream> println()
     {
         return new PrintLine<X>();
     }
 
-    public static <X, Y> Predicate<X> bind(Y param, BinaryPredicate<X, Y> callee)
+    public static <X, Y> Visitor<X> bind(Y param, BinaryVisitor<X, Y> callee)
     {
         return new BindParam<X, Y>(param, callee);
     }
 
-    public static <X, Y> BinaryPredicate<X, Y> unbind(Predicate<X> callee)
+    public static <X, Y> BinaryVisitor<X, Y> unbind(Visitor<X> callee)
     {
         return new UnbindParam<X, Y>(callee);
     }

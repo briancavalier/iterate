@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import org.bc.iterate.TernaryPredicate;
+import org.bc.iterate.BinaryVisitor;
 
-import java.util.Map;
+import java.io.PrintStream;
 
-public class Mapper<X, Y> implements TernaryPredicate<X, Y, Map<Y, X>>
+public class PrintLine<X> implements BinaryVisitor<X, PrintStream>
 {
-    public void apply(X value, Y key, Map<Y, X> map)
+    public void visit(X x, PrintStream out)
     {
-        //noinspection unchecked
-        map.put(key, value);
+        out.println(x);
     }
 }

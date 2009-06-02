@@ -14,17 +14,28 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import org.bc.iterate.BinaryPredicate;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class Collect<X> implements BinaryPredicate<X, Collection>
+public class CollectTest
 {
-    public void apply(X x, Collection collection)
+    @Test
+    public void basic()
     {
-        //noinspection unchecked
-        collection.add(x);
+        List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> results = new ArrayList<Integer>(expected.size());
+
+        Collect<Integer> c = new Collect<Integer>();
+        for (Integer i : expected) {
+            c.visit(i, results);
+        }
+
+        assertEquals(expected, results);
     }
 }

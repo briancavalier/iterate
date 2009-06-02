@@ -34,6 +34,6 @@ public class FeedLinkExtractor
                 .until(regex("</head>"))
                 .where(regex("\\<link.+?rel\\=.alternate.*?\\>"))
                 .map(find("(?:href)\\=[\\\"\\']([^#].*?)[\\\"\\']", 1))
-                .reduce(println(), System.out);
+                .visit(println(), System.out);
     }
 }

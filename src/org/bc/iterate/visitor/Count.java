@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import org.bc.iterate.BinaryPredicate;
+import org.bc.iterate.Visitor;
 
-import java.io.IOException;
-
-public class Append<X> implements BinaryPredicate<X, Appendable>
+public class Count<X> implements Visitor<X>
 {
-    public void apply(X x, Appendable appendable)
+    private int count;
+
+    public void visit(X x)
     {
-        try {
-            appendable.append(x.toString());
-        } catch (IOException e) {
-            System.err.println(e);
-        }
+        count++;
+    }
+
+    public int getCount()
+    {
+        return count;
     }
 }

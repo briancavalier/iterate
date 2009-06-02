@@ -16,7 +16,7 @@
 
 package org.bc.iterate;
 
-import org.bc.iterate.predicate.Count;
+import org.bc.iterate.visitor.Count;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class Algorithms
      */
     public static <X, Y> Collection<Y> map(final Iterable<X> items, Collection<Y> results, Function<X, Y> mapFunction)
     {
-        return Iterate.each(items).map(mapFunction).reduce(Iterate.collect(), results);
+        return Iterate.each(items).map(mapFunction).visit(Iterate.collect(), results);
     }
 
     public static <X, Y> Map<Y, X> asMap(final Iterable<X> items, Function<X, Y> mapFunction)
@@ -61,7 +61,7 @@ public class Algorithms
 
     public static <X, Y> Map<Y, X> asMap(final Iterable<X> items, final Map<Y, X> results, Function<X, Y> mapFunction)
     {
-        return Iterate.each(items).reduce(Iterate.<X, Y>map(), mapFunction, results);
+        return Iterate.each(items).visit(Iterate.<X, Y>map(), mapFunction, results);
     }
 
     public static <X, Y> Map<Y, Collection<X>> partition(final Iterable<X> items, Function<X, Y> groupFunction)
@@ -114,7 +114,7 @@ public class Algorithms
      */
     public static <X> int count(final Iterable<X> items, Condition<X> criteria)
     {
-        return Iterate.each(items).where(criteria).reduce(new Count<X>()).getCount();
+        return Iterate.each(items).where(criteria).visit(new Count<X>()).getCount();
     }
 
     /**
@@ -173,7 +173,7 @@ public class Algorithms
      */
     public static <X> Collection<X> select(final Iterable<X> items, Condition<X> criteria)
     {
-        return Iterate.each(items).where(criteria).reduce(Iterate.collect(), new ArrayList<X>(100));
+        return Iterate.each(items).where(criteria).visit(Iterate.collect(), new ArrayList<X>(100));
     }
 
     /**
@@ -186,7 +186,7 @@ public class Algorithms
     public static <X, Y extends Collection<? super X>> Y select(final Iterable<X> items, Y results,
                                                                 Condition<X> criteria)
     {
-        return Iterate.each(items).where(criteria).reduce(Iterate.collect(), results);
+        return Iterate.each(items).where(criteria).visit(Iterate.collect(), results);
     }
 
     /**
@@ -202,7 +202,7 @@ public class Algorithms
     public static <X, Y extends Collection<? super X>> Y generate(int n, Y results,
                                                                   Function<Integer, X> generator)
     {
-        return Iterate.each(Iterate.upto(n)).map(generator).reduce(Iterate.collect(), results);
+        return Iterate.each(Iterate.upto(n)).map(generator).visit(Iterate.collect(), results);
     }
 
     private Algorithms()

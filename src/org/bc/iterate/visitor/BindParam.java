@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import org.bc.iterate.BinaryPredicate;
+import org.bc.iterate.BinaryVisitor;
+import org.bc.iterate.Visitor;
 
-import java.io.PrintStream;
-
-public class PrintLine<X> implements BinaryPredicate<X, PrintStream>
+public class BindParam<X, Y> implements Visitor<X>
 {
-    public void apply(X x, PrintStream out)
+    private final Y param;
+    private final BinaryVisitor<X, Y> callee;
+
+    public BindParam(final Y param, final BinaryVisitor<X, Y> callee)
     {
-        out.println(x);
+        this.param = param;
+        this.callee = callee;
+    }
+
+    public void visit(X x)
+    {
+        callee.visit(x, param);
     }
 }

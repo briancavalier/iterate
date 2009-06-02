@@ -30,6 +30,6 @@ public class GrepExample {
 
         final Iterable<String> lines = (args.length >= 2) ? line(args[1]) : line(System.in);
 
-        each(lines).where(regex(args[0])).reduce(println(), System.out);
+        each(lines).where(regex(args[0])).visit(println(), System.out);
     }
 }

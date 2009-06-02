@@ -32,6 +32,6 @@ public class SedExample
 
         final LineReaderIterable lines = (args.length >= 3) ? line(args[2]) : line(System.in);
 
-        each(lines).map(replace(args[0], args[1])).reduce(println(), System.out);
+        each(lines).map(replace(args[0], args[1])).visit(println(), System.out);
     }
 }

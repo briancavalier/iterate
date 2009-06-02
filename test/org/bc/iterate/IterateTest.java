@@ -16,7 +16,7 @@
 
 package org.bc.iterate;
 
-import org.bc.iterate.predicate.AppendWithSeparator;
+import org.bc.iterate.visitor.AppendWithSeparator;
 import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class IterateTest
         final List<String> test = Arrays.asList("a", "b", "c", "d");
         final Counter<String> counter = new Counter<String>();
 
-        assertEquals(test.size(), Iterate.each(test).reduce(counter).getCount());
+        assertEquals(test.size(), Iterate.each(test).visit(counter).getCount());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class IterateTest
         final List<String> test = Arrays.asList("a", "b", "a", "c", "a", "d");
         final Counter<String> counter = new Counter<String>();
 
-        assertEquals(3, Iterate.each(test).like("a").reduce(counter).getCount());
+        assertEquals(3, Iterate.each(test).like("a").visit(counter).getCount());
     }
 
     @Test
@@ -54,9 +54,9 @@ public class IterateTest
     {
         final List<Integer> test = Arrays.asList(1, 2, 3);
         final StringBuilder results = new StringBuilder(10);
-        Iterate.each(test).map(new ToString<Integer>()).reduce(new Predicate<String>()
+        Iterate.each(test).map(new ToString<Integer>()).visit(new Visitor<String>()
         {
-            public void apply(String s)
+            public void visit(String s)
             {
                 results.append(s).append("+");
             }
@@ -70,9 +70,9 @@ public class IterateTest
     {
         final List<Integer> test = Arrays.asList(1, 2, 3);
         final StringBuilder results = new StringBuilder(10);
-        Iterate.each(test).like(2).map(new ToString<Integer>()).reduce(new Predicate<String>()
+        Iterate.each(test).like(2).map(new ToString<Integer>()).visit(new Visitor<String>()
         {
-            public void apply(String s)
+            public void visit(String s)
             {
                 results.append(s).append("+");
             }
@@ -93,15 +93,32 @@ public class IterateTest
     {
         final List<String> test = Arrays.asList("a", "b", "c", "d");
 
-        final List<String> results = Iterate.each(test).reduce(new BinaryPredicate<String, List<String>>()
+        final List<String> results = Iterate.each(test).visit(new BinaryVisitor<String, List<String>>()
         {
-            public void apply(String s, List<String> strings)
+            public void visit(String s, List<String> strings)
             {
                 strings.add(s);
             }
         }, new ArrayList<String>(10));
         
         assertEquals(test, results);
+    }
+
+    @Test
+    public void each7()
+    {
+        final Map<String, Integer> test = new LinkedHashMap<String, Integer>(3);
+        test.put("foo", 1);
+        test.put("bar", 2);
+        test.put("baz", 3);
+
+        assertEquals("foo1bar2baz3", Iterate.each(test).visit(new BinaryVisitor<Map.Entry<String, Integer>, StringBuilder>()
+        {
+            public void visit(Map.Entry<String, Integer> stringIntegerEntry, StringBuilder buf)
+            {
+                buf.append(stringIntegerEntry.getKey()).append(stringIntegerEntry.getValue());
+            }
+        }, new StringBuilder(16)).toString());
     }
 
     private static File generateTempFile(String name, String content, String... charset) throws IOException
@@ -166,9 +183,9 @@ public class IterateTest
     {
         final List<String> test = Arrays.asList("a", "b", "c", "d");
         final List<String> results = new ArrayList<String>(10);
-        Iterate.each(test).reduce(Iterate.bind(results, new BinaryPredicate<String, List<String>>()
+        Iterate.each(test).visit(Iterate.bind(results, new BinaryVisitor<String, List<String>>()
         {
-            public void apply(String s, List<String> strings)
+            public void visit(String s, List<String> strings)
             {
                 strings.add(s);
             }
@@ -183,9 +200,9 @@ public class IterateTest
         final List<String> test = Arrays.asList("a", "b", "c", "d");
         final List<String> results = new ArrayList<String>(10);
         final List<String> results2 = new ArrayList<String>(10);
-        Iterate.each(test).reduce(Iterate.unbind(new Predicate<String>()
+        Iterate.each(test).visit(Iterate.unbind(new Visitor<String>()
         {
-            public void apply(String s)
+            public void visit(String s)
             {
                 results.add(s);
             }
@@ -200,21 +217,21 @@ public class IterateTest
     public void collect()
     {
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-        assertEquals(expected, Iterate.each(expected).reduce(Iterate.collect(), new ArrayList<Integer>(5)));
+        assertEquals(expected, Iterate.each(expected).visit(Iterate.collect(), new ArrayList<Integer>(5)));
     }
 
     @Test
     public void remove()
     {
         assertEquals(Arrays.asList(1, 3, 5), Iterate.each(Arrays.asList(2, 4))
-                .reduce(Iterate.remove(), new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5))));
+                .visit(Iterate.remove(), new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5))));
     }
 
     @Test
     public void append()
     {
         Appendable results =
-                Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).reduce(Iterate.append(), new StringBuilder(5));
+                Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).visit(Iterate.append(), new StringBuilder(5));
         assertEquals("12345", results.toString());
     }
 
@@ -223,17 +240,17 @@ public class IterateTest
     {
         final AppendWithSeparator<Object> a = Iterate.append(",");
 
-        Appendable results = Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).reduce(a, new StringBuilder(5));
+        Appendable results = Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).visit(a, new StringBuilder(5));
         assertEquals("1,2,3,4,5", results.toString());
 
         a.reset();
 
-        results = Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).reduce(a, results);
+        results = Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).visit(a, results);
         assertEquals("1,2,3,4,51,2,3,4,5", results.toString());
     }
 
     @Test
-    public void flattened()
+    public void flatten()
     {
         final List<String> src = Arrays.asList("a", "b", "c", "i", "j", "k", "c", "b", "a");
         final List<Collection<String>> nested = new ArrayList<Collection<String>>(3);
@@ -241,15 +258,15 @@ public class IterateTest
         nested.add(src.subList(3, 6));
         nested.add(src.subList(6, 9));
 
-        assertEquals(src, Iterate.each(Iterate.flatten(nested)).reduce(Iterate.collect(), new ArrayList<String>(10)));
+        assertEquals(src, Iterate.each(Iterate.flatten(nested)).visit(Iterate.collect(), new ArrayList<String>(10)));
     }
 
 
-    private static class Counter<X> implements Predicate<X>
+    private static class Counter<X> implements Visitor<X>
     {
         private int count = 0;
 
-        public void apply(X x)
+        public void visit(X x)
         {
             count++;
         }

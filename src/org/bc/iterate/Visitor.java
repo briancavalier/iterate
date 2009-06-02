@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate;
 
-import org.bc.iterate.BinaryPredicate;
-import org.bc.iterate.Predicate;
-
-public class BindParam<X, Y> implements Predicate<X>
+public interface Visitor<T>
 {
-    private final Y param;
-    private final BinaryPredicate<X, Y> callee;
-
-    public BindParam(final Y param, final BinaryPredicate<X, Y> callee)
-    {
-        this.param = param;
-        this.callee = callee;
-    }
-
-    public void apply(X x)
-    {
-        callee.apply(x, param);
-    }
+    void visit(T t);
 }

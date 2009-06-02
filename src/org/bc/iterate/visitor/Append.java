@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-package org.bc.iterate;
+package org.bc.iterate.visitor;
 
-public interface Predicate<T>
+import org.bc.iterate.BinaryVisitor;
+
+import java.io.IOException;
+
+public class Append<X> implements BinaryVisitor<X, Appendable>
 {
-    void apply(T t);
+    public void visit(X x, Appendable appendable)
+    {
+        try {
+            appendable.append(x.toString());
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
 }

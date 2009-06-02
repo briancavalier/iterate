@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.predicate;
+package org.bc.iterate.visitor;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import org.bc.iterate.TernaryVisitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-public class CollectTest
+public class Mapper<X, Y> implements TernaryVisitor<X, Y, Map<Y, X>>
 {
-    @Test
-    public void basic()
+    public void visit(X value, Y key, Map<Y, X> map)
     {
-        List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-        List<Integer> results = new ArrayList<Integer>(expected.size());
-
-        Collect<Integer> c = new Collect<Integer>();
-        for (Integer i : expected) {
-            c.apply(i, results);
-        }
-
-        assertEquals(expected, results);
+        //noinspection unchecked
+        map.put(key, value);
     }
 }
