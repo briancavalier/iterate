@@ -60,11 +60,6 @@ public class Strings
         return join(items, new ToString<X>(), result, separator);
     }
 
-    public static <X> Function<X, String> toString()
-    {
-        return new ToString<X>();
-    }
-
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Function<X, String> toString, Y result)
             throws IOException
     {

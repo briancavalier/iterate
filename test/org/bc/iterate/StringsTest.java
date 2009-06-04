@@ -16,7 +16,7 @@
 
 package org.bc.iterate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -62,6 +62,46 @@ public class StringsTest
         assertEquals("foo | bar", Strings.join(Arrays.asList("foo", "bar")));
         assertEquals("foo | bar", Strings.join(Arrays.asList("foo", "bar"), new StringBuilder(32)).toString());
     }
+
+    @Test
+    public void upperCase()
+    {
+        assertEquals("UPPER", Strings.upperCase().apply("upper"));
+        assertEquals("UPPER", Strings.upperCase().apply("Upper"));
+        assertEquals("UPPER", Strings.upperCase().apply("UPPER"));
+        assertEquals("", Strings.upperCase().apply(""));
+    }
+
+    @Test
+    public void lowerCase()
+    {
+        assertEquals("LOWER", Strings.lowerCase().apply("lower"));
+        assertEquals("LOWER", Strings.lowerCase().apply("Lower"));
+        assertEquals("LOWER", Strings.lowerCase().apply("LOWER"));
+        assertEquals("LOWER", Strings.lowerCase().apply("LOWER"));
+        assertEquals("", Strings.lowerCase().apply(""));
+    }
+
+    @Test
+    public void containsString()
+    {
+        assertTrue(Strings.contains("foo").eval("foobar"));
+        assertTrue(Strings.contains("bar").eval("foobar"));
+        assertTrue(Strings.contains("bar").eval("foobarbaz"));
+        assertFalse(Strings.contains("bar").eval("foobabaz"));
+        assertFalse(Strings.contains("bar").eval(""));
+    }
+
+    @Test
+    public void containsChar()
+    {
+        assertTrue(Strings.contains('f').eval("foobar"));
+        assertTrue(Strings.contains('b').eval("foobar"));
+        assertTrue(Strings.contains('z').eval("foobarbaz"));
+        assertFalse(Strings.contains('r').eval("foobabaz"));
+        assertFalse(Strings.contains('r').eval(""));
+    }
+
 
     @Test
     public void smartTitleCase()
