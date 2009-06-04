@@ -4,7 +4,6 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.RegexFind;
-import org.bc.iterate.function.RegexReplace;
 import org.bc.iterate.function.ToString;
 import org.bc.iterate.iterable.*;
 import org.bc.iterate.net.Urls;
@@ -506,24 +505,6 @@ public class Iterate<X> implements Iterable<X>
     public static <X> Function<X, String> toString()
     {
         return new ToString<X>();
-    }
-
-    /**
-     * @return a {@link Function} that will return the result of replacing all occurrences of {@code Pattern} with
-     *         {@code replacement} on {@code x}
-     */
-    public static Function<String, String> replace(Pattern pattern, String replacement)
-    {
-        return new RegexReplace(pattern, replacement);
-    }
-
-    /**
-     * @return a {@link Function} that will return the result of replacing all occurrences of {@code Pattern} with
-     *         {@code replacement} on {@code x}
-     */
-    public static Function<String, String> replace(String pattern, String replacement)
-    {
-        return new RegexReplace(Pattern.compile(pattern), replacement);
     }
 
     /**

@@ -18,6 +18,7 @@ package org.bc.iterate.examples;
 
 import static org.bc.iterate.Iterate.*;
 import org.bc.iterate.iterable.LineReaderIterable;
+import org.bc.iterate.Strings;
 
 import java.io.IOException;
 
@@ -32,6 +33,6 @@ public class SedExample
 
         final LineReaderIterable lines = (args.length >= 3) ? line(args[2]) : line(System.in);
 
-        each(lines).map(replace(args[0], args[1])).visit(println(), System.out);
+        each(lines).map(Strings.replace(args[0], args[1])).visit(println(), System.out);
     }
 }

@@ -75,10 +75,10 @@ public class StringsTest
     @Test
     public void lowerCase()
     {
-        assertEquals("LOWER", Strings.lowerCase().apply("lower"));
-        assertEquals("LOWER", Strings.lowerCase().apply("Lower"));
-        assertEquals("LOWER", Strings.lowerCase().apply("LOWER"));
-        assertEquals("LOWER", Strings.lowerCase().apply("LOWER"));
+        assertEquals("lower", Strings.lowerCase().apply("lower"));
+        assertEquals("lower", Strings.lowerCase().apply("Lower"));
+        assertEquals("lower", Strings.lowerCase().apply("LOWER"));
+        assertEquals("lower", Strings.lowerCase().apply("LOWER"));
         assertEquals("", Strings.lowerCase().apply(""));
     }
 
@@ -122,5 +122,11 @@ public class StringsTest
         assertEquals("The First Word Is Capitalized", Strings.titleCase("the first word is capitalized"));
         assertEquals("I Love My iPhone", Strings.titleCase("i love my iPhone"));
         assertEquals("This Is Why I Love My iPhone", Strings.titleCase("this is why i love my iPhone"));
+    }
+
+    @Test
+    public void tr()
+    {
+        assertEquals("hello", Strings.tr("h3ll0", "03", "oe"));
     }
 }

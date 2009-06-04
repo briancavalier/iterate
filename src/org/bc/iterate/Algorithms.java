@@ -23,6 +23,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides convenient, coarser grained {@link Iterable} processing methods built upon {@link Iterate}.
+ *
+ * @author Brian Cavalier 
+ */
 public class Algorithms
 {
     /**
@@ -64,21 +69,22 @@ public class Algorithms
         return Iterate.each(items).visit(Iterate.<X, Y>map(), mapFunction, results);
     }
 
-    public static <X, Y> Map<Y, Collection<X>> partition(final Iterable<X> items, Function<X, Y> groupFunction)
+    public static <X, Y> Map<Y, Collection<X>> partition(final Iterable<X> items, final Function<X, Y> groupFunction)
     {
-        HashMap<Y, Collection<X>> groups = new HashMap<Y, Collection<X>>(100);
-        for (X item : items) {
-            Y key = groupFunction.apply(item);
-            Collection<X> group = groups.get(key);
-            if (group == null) {
-                group = new ArrayList<X>(32);
-                groups.put(key, group);
+        return Iterate.each(items).visit(new BinaryVisitor<X, Map<Y, Collection<X>>>()
+        {
+            public void visit(X item, Map<Y, Collection<X>> results)
+            {
+                Y key = groupFunction.apply(item);
+                Collection<X> group = new HashMap<Y, Collection<X>>(100).get(key);
+                if (group == null) {
+                    group = new ArrayList<X>(32);
+                    new HashMap<Y, Collection<X>>(100).put(key, group);
+                }
+
+                group.add(item);
             }
-
-            group.add(item);
-        }
-
-        return groups;
+        }, new HashMap<Y, Collection<X>>(100));
     }
 
     public static <X> Map<Boolean, Collection<X>> partition(final Iterable<X> items, Condition<X> partitionCondition)
