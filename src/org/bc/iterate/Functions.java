@@ -3,6 +3,7 @@
  */
 package org.bc.iterate;
 
+import org.bc.iterate.function.CompositeBinaryFunction;
 import org.bc.iterate.function.CompositeFunction;
 import org.bc.iterate.function.CompositeMonoid;
 
@@ -24,5 +25,11 @@ public class Functions
     public static <X> Function<X, X> compose(List<Function<X, X>> functions)
     {
         return new CompositeMonoid<X>(functions);
+    }
+
+    public static <X, Y, Z, R> BinaryFunction<X, R, Z> compose(BinaryFunction<X, R, Y> f,
+                                                               BinaryFunction<Y, R, Z> g)
+    {
+        return new CompositeBinaryFunction<X, Y, Z, R>(f, g);
     }
 }

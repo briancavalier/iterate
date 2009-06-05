@@ -3,14 +3,16 @@
  */
 package org.bc.iterate.function;
 
-import junit.framework.TestCase;
 import org.bc.iterate.Function;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-public class CompositeMonoidTest extends TestCase
+public class CompositeMonoidTest
 {
-    public void testApply() throws Exception
+    @Test
+    public void apply() throws Exception
     {
         final CompositeMonoid<String> f =
                 new CompositeMonoid<String>(Arrays.asList(new Function<String, String>()
@@ -28,6 +30,5 @@ public class CompositeMonoidTest extends TestCase
                 }));
 
         assertEquals("TEST", f.apply("  test  "));
-
     }
 }

@@ -3,14 +3,16 @@
  */
 package org.bc.iterate.function;
 
-import junit.framework.TestCase;
 import org.bc.iterate.Function;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class CompositeFunctionTest extends TestCase
+public class CompositeFunctionTest
 {
-    public void testApply() throws Exception
+    @Test
+    public void apply() throws Exception
     {
-        final CompositeFunction<String, Integer, String> fOfG =
+        final CompositeFunction<String, Integer, String> gOfF =
                 new CompositeFunction<String, Integer, String>(new Function<String, Integer>()
                 {
                     public Integer apply(String s)
@@ -25,6 +27,6 @@ public class CompositeFunctionTest extends TestCase
                     }
                 });
 
-        assertEquals("1234", fOfG.apply("1234"));
+        assertEquals("1234", gOfF.apply("1234"));
     }
 }
