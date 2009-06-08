@@ -388,6 +388,26 @@ public class Iterate<X> implements Iterable<X>
         }
     }
 
+    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
+    public static LineReaderIterable line(String url, Map<String, String> headers) throws IOException
+    {
+        try {
+            return new LineReaderIterable(Urls.reader(url, headers));
+        } catch (MalformedURLException ignored) {
+            return new LineReaderIterable(new FileReader(url));
+        }
+    }
+
+    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
+    public static LineReaderIterable line(String url, Charset charset, Map<String, String> headers) throws IOException
+    {
+        try {
+            return new LineReaderIterable(Urls.reader(url, charset, headers));
+        } catch (MalformedURLException ignored) {
+            return new LineReaderIterable(new InputStreamReader(new FileInputStream(url), charset));
+        }
+    }
+
     public static ByteBufferIterable bytes(InputStream in, int numBytesPerIteration)
     {
         return new ByteBufferIterable(in, numBytesPerIteration, true);

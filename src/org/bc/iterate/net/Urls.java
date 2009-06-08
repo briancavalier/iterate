@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,9 +52,9 @@ public class Urls
 
     protected static String detectCharset(final String contentType)
     {
-        if(contentType != null) {
+        if (contentType != null) {
             Matcher m = CHARSET_PATTERN.matcher(contentType);
-            if(m.matches() && m.groupCount() > 0) {
+            if (m.matches() && m.groupCount() > 0) {
                 return m.group(1);
             }
         }
@@ -76,6 +77,42 @@ public class Urls
                 if (ACCEPT_CHARSET_HEADER.equals(name.toLowerCase())) {
                     needCharset = false;
                 }
+            }
+        }
+
+        if (needCharset) {
+            urlConnection.setRequestProperty("Accept-Charset", charset.name());
+        }
+
+        return new InputStreamReader(urlConnection.getInputStream(), charset);
+    }
+
+    public static Reader reader(String url, Map<String, String> headers) throws IOException
+    {
+        final URLConnection urlConnection = new URL(url).openConnection();
+
+        // Set any supplied headers
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            urlConnection.setRequestProperty(header.getKey(), header.getValue());
+        }
+
+        String charset = detectCharset(urlConnection.getContentType());
+        return new InputStreamReader(urlConnection.getInputStream(),
+                                     (charset == null) ? DEFAULT_CHARSET : charset);
+    }
+
+    public static Reader reader(String url, Charset charset, Map<String, String> headers)
+            throws IOException
+    {
+        final URLConnection urlConnection = new URL(url).openConnection();
+
+        // Set any supplied headers
+        boolean needCharset = true;
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            final String name = header.getKey();
+            urlConnection.setRequestProperty(name, header.getValue());
+            if (ACCEPT_CHARSET_HEADER.equals(name.toLowerCase())) {
+                needCharset = false;
             }
         }
 
