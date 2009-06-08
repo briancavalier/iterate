@@ -408,31 +408,67 @@ public class Iterate<X> implements Iterable<X>
         }
     }
 
+    /**
+     * @param in                   {@link java.io.InputStream} from which to read bytes
+     * @param numBytesPerIteration maximum number of bytes per chunk
+     *
+     * @return an {@link Iterable} over {@code numBytesPerIteration}-size byte chunks read from {@code in}
+     */
     public static ByteBufferIterable bytes(InputStream in, int numBytesPerIteration)
     {
         return new ByteBufferIterable(in, numBytesPerIteration, true);
     }
 
+    /**
+     * @param channel              {@link java.nio.channels.ReadableByteChannel} from which to read bytes
+     * @param numBytesPerIteration maximum number of bytes per chunk
+     *
+     * @return an {@link Iterable} over {@code numBytesPerIteration}-size byte chunks read from {@code channel}
+     */
     public static ByteBufferIterable bytes(ReadableByteChannel channel, int numBytesPerIteration)
     {
         return new ByteBufferIterable(channel, numBytesPerIteration, true);
     }
 
+    /**
+     * @param in        {@link Readable} from which to read
+     * @param delimiter delimiter used to split tokens from {@code in}
+     *
+     * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
+     */
     public static Iterable<String> token(Readable in, Pattern delimiter)
     {
         return new TokenizerIterable(in, delimiter);
     }
 
+    /**
+     * @param in        {@link Readable} from which to read
+     * @param delimiter delimiter used to split tokens from {@code in}
+     *
+     * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
+     */
     public static Iterable<String> token(Readable in, String delimiter)
     {
         return new TokenizerIterable(in, Pattern.compile(delimiter));
     }
 
+    /**
+     * @param in    {@link Readable} from which to read data for matching
+     * @param regex {@link Pattern} to match
+     *
+     * @return an {@link Iterable} over all substrings matching {@code regex}
+     */
     public static Iterable<String> match(Readable in, Pattern regex)
     {
         return new RegexMatchIterable(in, regex);
     }
 
+    /**
+     * @param in    {@link Readable} from which to read data for matching
+     * @param regex regular expression to match.
+     *
+     * @return an {@link Iterable} over all substrings matching {@code regex}
+     */
     public static Iterable<String> match(Readable in, String regex)
     {
         return new RegexMatchIterable(in, Pattern.compile(regex));
