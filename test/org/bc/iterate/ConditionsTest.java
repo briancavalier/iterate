@@ -154,5 +154,4 @@ public class ConditionsTest
         assertTrue(Conditions.in(Arrays.asList(1, 2, 3)).eval(2));
         assertFalse(Conditions.in(Arrays.asList(1, 2, 3)).eval(4));        
     }
-
 }

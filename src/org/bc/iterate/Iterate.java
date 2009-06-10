@@ -185,13 +185,34 @@ public class Iterate<X> implements Iterable<X>
      * @param f     {@link BinaryFunction} to apply
      * @param param value to pass as second parameter to {@code f.apply()}
      *
-     * @return {@code param}
+     * @return reduced value
      */
     public <Y> Y reduce(BinaryFunction<? super X, ? super Y, ? extends Y> f, Y param)
     {
         Y result = param;
         for (X x : this) {
             result = f.apply(x, result);
+        }
+
+        return result;
+    }
+
+    /**
+     * Works like {@link Iterate#reduce(BinaryFunction, Object)}, but uses the first value in {@code this.iterator()} as
+     * the second parameter in the initial call to f.apply().  For example, if this.iterator() iterates over all
+     * positive integers from 1 to 100, the first call to f.apply() would be {@code f.apply(2,1)} , and the second call
+     * will be {@code f.apply(3,f.apply(2,1))}
+     *
+     * @param f {@link BinaryFunction} to apply
+     *
+     * @return reduced value
+     */
+    public X reduce(BinaryFunction<? super X, ? super X, ? extends X> f)
+    {
+        final Iterator<X> iter = this.iterator();
+        X result = iter.next();
+        while (iter.hasNext()) {
+            result = f.apply(iter.next(), result);
         }
 
         return result;

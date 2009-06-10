@@ -18,10 +18,7 @@ package org.bc.iterate;
 
 import org.bc.iterate.visitor.Count;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Provides convenient, coarser grained {@link Iterable} processing methods built upon {@link Iterate}.
@@ -209,6 +206,11 @@ public class Algorithms
                                                                   Function<Integer, X> generator)
     {
         return Iterate.each(Iterate.upto(n)).map(generator).visit(Iterate.collect(), results);
+    }
+
+    public static <X> List<X> generate(int n, Function<Integer, X> generator)
+    {
+        return generate(n, new ArrayList<X>(n), generator);
     }
 
     private Algorithms()

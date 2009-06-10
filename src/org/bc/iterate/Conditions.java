@@ -219,12 +219,12 @@ public class Conditions
         };
     }
 
-    public static Condition random(final float chance)
+    public static Condition chance(final double chance)
     {
         return new Condition() {
 
             public boolean eval(Object x) {
-                return Math.random() > chance;
+                return Math.random() < chance;
             }
         };
     }
