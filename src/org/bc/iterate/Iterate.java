@@ -210,12 +210,16 @@ public class Iterate<X> implements Iterable<X>
     public X reduce(BinaryFunction<? super X, ? super X, ? extends X> f)
     {
         final Iterator<X> iter = this.iterator();
-        X result = iter.next();
-        while (iter.hasNext()) {
-            result = f.apply(iter.next(), result);
+        if (iter.hasNext()) {
+            X result = iter.next();
+            while (iter.hasNext()) {
+                result = f.apply(iter.next(), result);
+            }
+
+            return result;
         }
 
-        return result;
+        return null;
     }
 
     /**

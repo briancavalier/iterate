@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Functions
 {
-    public static <X> Function<X, X> identity()
+    public static <X> Function<X, X> identity(Class<? extends X> clazz)
     {
         return new Identity<X>();
     }
@@ -37,6 +37,39 @@ public class Functions
                                                                BinaryFunction<Y, R, Z> g)
     {
         return new CompositeBinaryFunction<X, Y, Z, R>(f, g);
+    }
+
+    public static <X, Y, Z, R> BinaryFunction<X, R, Z> compose(BinaryFunction<X, R, Y> f,
+                                                               Function<Y, Z> g)
+    {
+        return new CompositeBinaryFunction<X, Y, Z, R>(f, Functions.<Y, R, Z>unbind(g));
+    }
+
+    public static <X, Y, Z, R> BinaryFunction<X, R, Z> compose(Function<X, Y> f, BinaryFunction<Y, R, Z> g)
+    {
+        return new CompositeBinaryFunction<X, Y, Z, R>(Functions.<X, R, Y>unbind(f), g);
+    }
+
+    public static <X, Y, Z> Function<X, Z> bind(final Y paramToBind, final BinaryFunction<X, Y, Z> callee)
+    {
+        return new Function<X, Z>()
+        {
+            public Z apply(X x)
+            {
+                return callee.apply(x, paramToBind);
+            }
+        };
+    }
+
+    public static <X, Y, Z> BinaryFunction<X, Y, Z> unbind(final Function<X, Z> callee)
+    {
+        return new BinaryFunction<X, Y, Z>()
+        {
+            public Z apply(X x, Y y)
+            {
+                return callee.apply(x);
+            }
+        };
     }
 
     public static <X> Function<X, X> conditional(final Condition<X> condition, final Function<X, X> f)
