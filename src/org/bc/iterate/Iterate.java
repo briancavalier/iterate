@@ -228,7 +228,7 @@ public class Iterate<X> implements Iterable<X>
      * @param visitor {@link TernaryVisitor} to apply
      * @param f       {@link Function} to apply to each item to generate the second param passed to {@code
      *                predicate.apply()}
-     * @param param   value to pass as third paramter to {@code predicate.apply()}
+     * @param param   value to pass as third parameter to {@code predicate.apply()}
      *
      * @return {@code param}
      */
