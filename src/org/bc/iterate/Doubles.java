@@ -5,6 +5,11 @@ package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
 
+/**
+ * This class provides {@link Function}s, {@link Visitor}s, etc. for {@code double}s and {@link Double}s.
+ *
+ * @author Brian Cavalier
+ */
 public class Doubles
 {
     public static Function<Double, Double> identity()

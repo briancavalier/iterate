@@ -5,6 +5,11 @@ package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
 
+/**
+ * This class provides {@link Function}s, {@link Visitor}s, etc. for {@code long}s and {@link Long}s.
+ *
+ * @author Brian Cavalier
+ */
 public class Longs
 {
     public static Function<Long, Long> identity()
