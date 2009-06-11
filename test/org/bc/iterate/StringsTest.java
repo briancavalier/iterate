@@ -129,4 +129,28 @@ public class StringsTest
     {
         assertEquals("hello", Strings.tr("h3ll0", "03", "oe"));
     }
+
+    @Test
+    public void split()
+    {
+        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split().apply("This is a test", "\\s+"));
+    }
+
+    @Test
+    public void splitWithLimit()
+    {
+        assertEquals(Arrays.asList("This", "is a test"), Strings.split(2).apply("This is a test", "\\s+"));
+    }
+
+    @Test
+    public void builderWithInitialCapacity()
+    {
+        assertEquals(100, Strings.builder(100).capacity());        
+    }
+
+    @Test
+    public void builderWithInitialValue()
+    {
+        assertEquals("This is a test", Strings.builder("This is a test").toString());
+    }
 }

@@ -20,10 +20,7 @@ import org.bc.iterate.function.RegexReplace;
 import org.bc.iterate.function.ToString;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -166,6 +163,28 @@ public class Strings
             public String apply(String s)
             {
                 return tr(s, targetChars, replacementChars);
+            }
+        };
+    }
+
+    public static BinaryFunction<String, String, List<String>> split()
+    {
+        return new BinaryFunction<String, String, List<String>>()
+        {
+            public List<String> apply(String s, String separator)
+            {
+                return Arrays.asList(s.split(separator));
+            }
+        };
+    }
+
+    public static BinaryFunction<String, String, List<String>> split(final int limit)
+    {
+        return new BinaryFunction<String, String, List<String>>()
+        {
+            public List<String> apply(String s, String separator)
+            {
+                return Arrays.asList(s.split(separator, limit));
             }
         };
     }
