@@ -6,7 +6,7 @@ package org.bc.iterate;
 import org.bc.iterate.function.Identity;
 
 /**
- * This class provides {@link Function}s, {@link Visitor}s, etc. for {@code int}s and {@link Integer}s.
+ * This class provides {@link Function}s and {@link Visitor}s for {@code int}s and {@link Integer}s.
  *
  * @author Brian Cavalier
  */
