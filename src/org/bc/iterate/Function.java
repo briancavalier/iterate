@@ -1,11 +1,11 @@
 /*
- * Copyright 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2009 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,15 @@
 
 package org.bc.iterate;
 
+/**
+ * A {@code Function} represents a mathematical function {@code f(x) = y}, and is one of the main concepts used in the
+ * Iterate library.  Functions can be applied to items in an {@link Iterable} using {@link Iterate#map(Function)}, and
+ * can be composed using the various {@code compose(...)} methods in {@link org.bc.iterate.Functions}.
+ *
+ * @author Brian Cavalier
+ * @param <X> argument (domain) type
+ * @param <Y> result (range) type
+ */
 public interface Function<X, Y>
 {
     Y apply(X x);

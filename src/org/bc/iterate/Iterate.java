@@ -1,6 +1,19 @@
 /*
- * Copyright (c) 2007-2008, mSpoke. All Rights Reserved.
+ * Copyright (c) 2007-2009 Brian Cavalier
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.bc.iterate;
 
 import org.bc.iterate.function.RegexFind;
@@ -147,26 +160,26 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * Applies {@code predicate} to each item
+     * Applies {@code visitor} to each item
      *
-     * @param predicate {@link Visitor} to apply
+     * @param visitor {@link Visitor} to apply
      *
-     * @return {@code predicate}
+     * @return {@code visitor}
      */
-    public <P extends Visitor<? super X>> P visit(P predicate)
+    public <V extends Visitor<? super X>> V visit(V visitor)
     {
         for (X x : this) {
-            predicate.visit(x);
+            visitor.visit(x);
         }
 
-        return predicate;
+        return visitor;
     }
 
     /**
-     * Applies {@code predicate.apply(item,param)} to each item
+     * Applies {@code visitor.visit(item,param)} to each item
      *
      * @param visitor {@link BinaryVisitor} to apply
-     * @param param   value to pass as second parameter to {@code predicate.apply()}
+     * @param param   value to pass as second parameter to {@code visitor.visit()}
      *
      * @return {@code param}
      */
@@ -223,12 +236,12 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * Applies {@code predicate.apply(item,f.map(item), param}) to each item
+     * Applies {@code visitor.visit(item,f.map(item), param}) to each item
      *
      * @param visitor {@link TernaryVisitor} to apply
      * @param f       {@link Function} to apply to each item to generate the second param passed to {@code
-     *                predicate.apply()}
-     * @param param   value to pass as third parameter to {@code predicate.apply()}
+     *                visitor.visit()}
+     * @param param   value to pass as third parameter to {@code visitor.visit()}
      *
      * @return {@code param}
      */
