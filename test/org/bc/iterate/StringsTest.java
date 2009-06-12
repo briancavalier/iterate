@@ -157,6 +157,8 @@ public class StringsTest
     @Test
     public void split()
     {
+        assertEquals(Arrays.asList("This is a test"), Strings.split("This is a test", 'x'));
+
         assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("This is a test", ' '));
         assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("This  is   a      test", ' '));
         assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("  This  is   a      test   ", ' '));
