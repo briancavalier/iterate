@@ -156,6 +156,22 @@ public class Strings
         };
     }
 
+
+    /**
+     * @return a {@link Function} that will trim leading and trailing whitespace from {@code
+     *         x}.
+     */
+    public static Function<String, String> trim()
+    {
+        return new Function<String, String>()
+        {
+            public String apply(final String s)
+            {
+                return s.trim();
+            }
+        };
+    }
+
     public static Function<String, String> tr(final String targetChars, final String replacementChars)
     {
         return new Function<String, String>()

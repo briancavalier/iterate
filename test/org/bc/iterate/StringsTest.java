@@ -169,7 +169,15 @@ public class StringsTest
 
         assertEquals(Arrays.asList("This is a test"), Strings.split("This is a test", ' ', 1));
         assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("This is a test", ' ', 5));
+    }
 
+    @Test
+    public void trim()
+    {
+        assertEquals("This is a test", Strings.trim().apply("  This is a test  "));
+        assertEquals("This is a test", Strings.trim().apply("  This is a test"));
+        assertEquals("This is a test", Strings.trim().apply("This is a test  "));
+        assertEquals("This is a test", Strings.trim().apply("This is a test"));
     }
 
 }
