@@ -131,15 +131,15 @@ public class StringsTest
     }
 
     @Test
-    public void split()
+    public void splitWithoutLimit()
     {
-        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split().apply("This is a test", "\\s+"));
+        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("\\s+").apply("This is a test"));
     }
 
     @Test
     public void splitWithLimit()
     {
-        assertEquals(Arrays.asList("This", "is a test"), Strings.split(2).apply("This is a test", "\\s+"));
+        assertEquals(Arrays.asList("This", "is a test"), Strings.split("\\s+", 2).apply("This is a test"));
     }
 
     @Test
@@ -153,4 +153,21 @@ public class StringsTest
     {
         assertEquals("This is a test", Strings.builder("This is a test").toString());
     }
+    
+    @Test
+    public void split()
+    {
+        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("This is a test", ' '));
+        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("This  is   a      test", ' '));
+        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("  This  is   a      test   ", ' '));
+
+        assertEquals(Arrays.asList("This", "is a test"), Strings.split("This is a test", ' ', 2));
+        assertEquals(Arrays.asList("This", "is", "a      test"), Strings.split("This  is   a      test", ' ', 3));
+        assertEquals(Arrays.asList("This", "is   a      test   "), Strings.split("  This  is   a      test   ", ' ', 2));
+
+        assertEquals(Arrays.asList("This is a test"), Strings.split("This is a test", ' ', 1));
+        assertEquals(Arrays.asList("This", "is", "a", "test"), Strings.split("This is a test", ' ', 5));
+
+    }
+
 }

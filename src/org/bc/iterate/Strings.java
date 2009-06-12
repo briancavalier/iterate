@@ -149,7 +149,7 @@ public class Strings
     {
         return new Function<String, String>()
         {
-            public String apply(String s)
+            public String apply(final String s)
             {
                 return s.replace(target, replacement);
             }
@@ -160,33 +160,121 @@ public class Strings
     {
         return new Function<String, String>()
         {
-            public String apply(String s)
+            public String apply(final String s)
             {
                 return tr(s, targetChars, replacementChars);
             }
         };
     }
 
-    public static BinaryFunction<String, String, List<String>> split()
+    public static Function<String, List<String>> split(final String separator)
     {
-        return new BinaryFunction<String, String, List<String>>()
+        return new Function<String, List<String>>()
         {
-            public List<String> apply(String s, String separator)
+            public List<String> apply(final String s)
             {
                 return Arrays.asList(s.split(separator));
             }
         };
     }
 
-    public static BinaryFunction<String, String, List<String>> split(final int limit)
+    public static Function<String, List<String>> split(final String separator, final int limit)
     {
-        return new BinaryFunction<String, String, List<String>>()
+        return new Function<String, List<String>>()
         {
-            public List<String> apply(String s, String separator)
+            public List<String> apply(final String s)
             {
                 return Arrays.asList(s.split(separator, limit));
             }
         };
+    }
+
+    public static Function<String, List<String>> split(final char separator)
+    {
+        return new Function<String, List<String>>()
+        {
+            public List<String> apply(final String s)
+            {
+                return split(s, separator);
+            }
+        };
+    }
+
+    public static Function<String, List<String>> split(final char separator, final int limit)
+    {
+        return new Function<String, List<String>>()
+        {
+            public List<String> apply(final String s)
+            {
+                return split(s, separator, limit);
+            }
+        };
+    }
+
+    public static List<String> split(final String s, final char separator, final int limit)
+    {
+        if(limit <= 0) {
+            throw new IllegalArgumentException("limit must be >= 1");
+        } else if (limit == 1) {
+            return Arrays.asList(s);
+        }
+        
+        List<String> results = new ArrayList<String>(limit);
+        final int len = s.length();
+
+        int i = 0;
+        while(i < len && separator == s.charAt(i)) {
+            i++;
+        }
+
+        int start = i;
+        int last = limit - 1;
+        while(i < len && results.size() < last) {
+            final char c = s.charAt(i);
+            if(c == separator) {
+                results.add(s.substring(start, i));
+                i++;
+                while(i < len && separator == s.charAt(i)) {
+                    i++;
+                }
+                start = i;
+            }
+            i++;
+        }
+
+        if(start < len && results.size() < limit) {
+            results.add(s.substring(start, len));
+        }
+        return results;
+    }
+
+    public static List<String> split(final String s, final char separator)
+    {
+        final int len = s.length();
+        List<String> results = new ArrayList<String>(2 + (len / 5));
+
+        int i = 0;
+        while(i < len && separator == s.charAt(i)) {
+            i++;
+        }
+
+        int start = i;
+        for(; i< len; i++) {
+            final char c = s.charAt(i);
+            if(c == separator) {
+                results.add(s.substring(start, i));
+                i++;
+                while(i < len && separator == s.charAt(i)) {
+                    i++;
+                }
+                start = i;
+            }
+        }
+
+        if(start < len) {
+            results.add(s.substring(start, len));
+        }
+        return results;
     }
 
     /**
