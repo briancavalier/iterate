@@ -17,6 +17,7 @@
 package org.bc.iterate;
 
 import org.bc.iterate.condition.RegexMatch;
+import org.bc.iterate.condition.FunctionCondition;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -227,5 +228,10 @@ public class Conditions
                 return Math.random() < chance;
             }
         };
+    }
+
+    public static <X, Y> Condition<X> foo(final Function<X, Y> f, final Condition<Y> yCondition)
+    {
+        return new FunctionCondition<X, Y>(f, yCondition);
     }
 }

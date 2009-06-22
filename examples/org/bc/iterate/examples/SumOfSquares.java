@@ -15,13 +15,13 @@
  */
 package org.bc.iterate.examples;
 
+import org.bc.iterate.BinaryFunction;
+import org.bc.iterate.Function;
 import static org.bc.iterate.Functions.compose;
 import static org.bc.iterate.Integers.square;
 import static org.bc.iterate.Integers.sum;
 import static org.bc.iterate.Iterate.each;
 import static org.bc.iterate.Iterate.range;
-import org.bc.iterate.Function;
-import org.bc.iterate.BinaryFunction;
 
 public class SumOfSquares
 {

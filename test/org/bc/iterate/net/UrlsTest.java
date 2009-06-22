@@ -24,14 +24,14 @@ public class UrlsTest
     public void detectCharset()
     {
         // Negative cases
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset(null));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset(""));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset("foo"));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset("foo;bar"));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset("charset=bar"));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset("foo;blah=bar"));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset("foo;charset bar"));
-        assertEquals(Urls.DEFAULT_CHARSET, Urls.detectCharset("foo;charset="));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset(null));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset(""));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset("foo"));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset("foo;bar"));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset("charset=bar"));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset("foo;blah=bar"));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset("foo;charset bar"));
+        assertEquals(Urls.DEFAULT_CHARSET_STRING, Urls.detectCharset("foo;charset="));
 
         // Positive cases
         assertEquals("iso-8859-1", Urls.detectCharset("foo;charset=iso-8859-1"));

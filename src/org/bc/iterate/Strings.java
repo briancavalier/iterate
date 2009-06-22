@@ -158,8 +158,7 @@ public class Strings
 
 
     /**
-     * @return a {@link Function} that will trim leading and trailing whitespace from {@code
-     *         x}.
+     * @return a {@link Function} that will trim leading and trailing whitespace from {@code x}.
      */
     public static Function<String, String> trim()
     {
@@ -227,30 +226,57 @@ public class Strings
         };
     }
 
+    /**
+     * @param beforeAndAfter {@code String} to prepend and append
+     *
+     * @return a {@link org.bc.iterate.Function} that will return {@code beforeAndAfter + x + beforeAndAfter}
+     */
+    public static Function<String, String> surround(final String beforeAndAfter)
+    {
+        return surround(beforeAndAfter, beforeAndAfter);
+    }
+
+    /**
+     * @param before {@code String} to prepend
+     * @param after  {@code String} to append
+     *
+     * @return a {@link org.bc.iterate.Function} that will return {@code before + x + after}
+     */
+    public static Function<String, String> surround(final String before, final String after)
+    {
+        return new Function<String, String>()
+        {
+            public String apply(final String s)
+            {
+                return before + s + after;
+            }
+        };
+    }
+
     public static List<String> split(final String s, final char separator, final int limit)
     {
-        if(limit <= 0) {
+        if (limit <= 0) {
             throw new IllegalArgumentException("limit must be >= 1");
         } else if (limit == 1) {
             return Arrays.asList(s);
         }
-        
+
         List<String> results = new ArrayList<String>(limit);
         final int len = s.length();
 
         int i = 0;
-        while(i < len && separator == s.charAt(i)) {
+        while (i < len && separator == s.charAt(i)) {
             i++;
         }
 
         int start = i;
         int last = limit - 1;
-        while(i < len && results.size() < last) {
+        while (i < len && results.size() < last) {
             final char c = s.charAt(i);
-            if(c == separator) {
+            if (c == separator) {
                 results.add(s.substring(start, i));
                 i++;
-                while(i < len && separator == s.charAt(i)) {
+                while (i < len && separator == s.charAt(i)) {
                     i++;
                 }
                 start = i;
@@ -258,7 +284,7 @@ public class Strings
             i++;
         }
 
-        if(start < len && results.size() < limit) {
+        if (start < len && results.size() < limit) {
             results.add(s.substring(start, len));
         }
         return results;
@@ -270,24 +296,24 @@ public class Strings
         List<String> results = new ArrayList<String>(2 + (len / 5));
 
         int i = 0;
-        while(i < len && separator == s.charAt(i)) {
+        while (i < len && separator == s.charAt(i)) {
             i++;
         }
 
         int start = i;
-        for(; i< len; i++) {
+        for (; i < len; i++) {
             final char c = s.charAt(i);
-            if(c == separator) {
+            if (c == separator) {
                 results.add(s.substring(start, i));
                 i++;
-                while(i < len && separator == s.charAt(i)) {
+                while (i < len && separator == s.charAt(i)) {
                     i++;
                 }
                 start = i;
             }
         }
 
-        if(start < len) {
+        if (start < len) {
             results.add(s.substring(start, len));
         }
         return results;

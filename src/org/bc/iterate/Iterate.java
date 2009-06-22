@@ -72,6 +72,11 @@ public class Iterate<X> implements Iterable<X>
         return each(map.entrySet());
     }
 
+    public static <X, Y extends Collection<X>> IterateCollection<X, Y> wrap(Y collection)
+    {
+        return new IterateCollection<X, Y>(collection);
+    }
+
     protected Iterable<X> iterable;
 
     protected Iterate(Iterable<X> items)
@@ -254,6 +259,16 @@ public class Iterate<X> implements Iterable<X>
         }
 
         return param;
+    }
+
+    public Iterate<X> append(Iterable<X> items)
+    {
+        return new Iterate<X>(flatten(this, items));
+    }
+
+    public Iterate<X> prepend(Iterable<X> items)
+    {
+        return new Iterate<X>(flatten(items, this));
     }
 
     /**
