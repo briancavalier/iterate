@@ -114,4 +114,19 @@ public class AlgorithmsTest
         final List<String> values = Arrays.asList("a", "b", "a", "c", "a", "d", "e");
         assertEquals(Arrays.asList("a", "a", "a"), Algorithms.select(values, new ArrayList<String>(10), Conditions.eq("a")));
     }
+
+    @Test
+    public void map1()
+    {
+        final List<String> values = Arrays.asList("a", "b", "c");
+        final List<String> results =
+                Algorithms.map(values, new ArrayList<String>(10), new Function<String, String>()
+                {
+                    public String apply(String s)
+                    {
+                        return s + "1";
+                    }
+                });
+        assertEquals(Arrays.asList("a1", "b1", "c1"), results);
+    }
 }

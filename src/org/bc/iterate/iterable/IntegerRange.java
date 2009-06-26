@@ -16,6 +16,8 @@
 
 package org.bc.iterate.iterable;
 
+import java.util.NoSuchElementException;
+
 public class IntegerRange extends IterableBase<Integer>
 {
     protected int start;
@@ -48,9 +50,12 @@ public class IntegerRange extends IterableBase<Integer>
         return start < end;
     }
 
-    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
     public Integer next()
     {
-        return start++;
+        if(start < end) {
+            return start++;
+        } else {
+            throw new NoSuchElementException("Reached end value " + end);
+        }
     }
 }

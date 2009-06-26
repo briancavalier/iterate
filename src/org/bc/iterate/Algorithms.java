@@ -34,9 +34,9 @@ public class Algorithms
      * @param items       items to be mapped
      * @param mapFunction {@link Function} to apply to each element of {@code items}
      *
-     * @return a {@code Collection} containing 1 resulting mapped value for each item in {@code items}
+     * @return a {@code List} containing 1 resulting mapped value for each item in {@code items}
      */
-    public static <X, Y> Collection<Y> map(Iterable<X> items, Function<X, Y> mapFunction)
+    public static <X, Y> List<Y> map(Iterable<X> items, Function<X, Y> mapFunction)
     {
         return map(items, new ArrayList<Y>(100), mapFunction);
     }
@@ -51,7 +51,7 @@ public class Algorithms
      *
      * @return {@code results}
      */
-    public static <X, Y> Collection<Y> map(final Iterable<X> items, Collection<Y> results, Function<X, Y> mapFunction)
+    public static <X, Y, C extends Collection<? super Y>> C map(final Iterable<X> items, C results, Function<X, Y> mapFunction)
     {
         return Iterate.each(items).map(mapFunction).visit(Iterate.collect(), results);
     }
