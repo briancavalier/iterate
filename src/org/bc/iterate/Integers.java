@@ -16,6 +16,9 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
+import org.bc.iterate.iterable.IterableBase;
+
+import java.util.Random;
 
 /**
  * This class provides {@link Function}s and {@link Visitor}s for {@code int}s and {@link Integer}s.
@@ -114,6 +117,42 @@ public class Integers
             public Integer apply(Integer i)
             {
                 return i * i * i;
+            }
+        };
+    }
+
+    public static Iterable<Integer> random(final int maxValueExclusive)
+    {
+        final Random random = new Random();
+        return new IterableBase<Integer>()
+        {
+            public boolean hasNext()
+            {
+                return true;
+            }
+
+            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+            public Integer next()
+            {
+                return random.nextInt(maxValueExclusive);
+            }
+        };
+    }
+
+    public static Iterable<Integer> random()
+    {
+        final Random random = new Random();
+        return new IterableBase<Integer>()
+        {
+            public boolean hasNext()
+            {
+                return true;
+            }
+
+            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+            public Integer next()
+            {
+                return random.nextInt();
             }
         };
     }

@@ -15,8 +15,11 @@
  */
 package org.bc.iterate;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.Iterator;
 
 public class IntegersTest
 {
@@ -62,5 +65,15 @@ public class IntegersTest
     public void cube()
     {
         assertEquals(Integer.valueOf(64), Integers.cube().apply(4));
+    }
+
+    @Test
+    public void random()
+    {
+        final int max = 100;
+        final Iterator<Integer> iterator = Integers.random(max).iterator();
+        for (int i=0; i<max*10; i++) {
+            assertTrue(iterator.next() < max);
+        }
     }
 }

@@ -16,6 +16,9 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
+import org.bc.iterate.iterable.IterableBase;
+
+import java.util.Random;
 
 /**
  * This class provides {@link Function}s and {@link Visitor}s for {@code float}s and {@link Float}s.
@@ -91,6 +94,24 @@ public class Floats
             public Float apply(Float i)
             {
                 return i * i * i;
+            }
+        };
+    }
+
+    public static Iterable<Float> random()
+    {
+        final Random random = new Random();
+        return new IterableBase<Float>()
+        {
+            public boolean hasNext()
+            {
+                return true;
+            }
+
+            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+            public Float next()
+            {
+                return random.nextFloat();
             }
         };
     }

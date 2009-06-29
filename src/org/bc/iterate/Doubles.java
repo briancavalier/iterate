@@ -16,6 +16,9 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
+import org.bc.iterate.iterable.IterableBase;
+
+import java.util.Random;
 
 /**
  * This class provides {@link Function}s and {@link Visitor}s for {@code double}s and {@link Double}s.
@@ -91,6 +94,24 @@ public class Doubles
             public Double apply(Double i)
             {
                 return i * i * i;
+            }
+        };
+    }
+
+    public static Iterable<Double> random()
+    {
+        final Random random = new Random();
+        return new IterableBase<Double>()
+        {
+            public boolean hasNext()
+            {
+                return true;
+            }
+
+            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+            public Double next()
+            {
+                return random.nextDouble();
             }
         };
     }

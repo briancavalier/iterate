@@ -16,6 +16,9 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
+import org.bc.iterate.iterable.IterableBase;
+
+import java.util.Random;
 
 /**
  * This class provides {@link Function}s and {@link Visitor}s for {@code long}s and {@link Long}s.
@@ -94,4 +97,23 @@ public class Longs
             }
         };
     }
+
+    public static Iterable<Long> random()
+    {
+        final Random random = new Random();
+        return new IterableBase<Long>()
+        {
+            public boolean hasNext()
+            {
+                return true;
+            }
+
+            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+            public Long next()
+            {
+                return random.nextLong();
+            }
+        };
+    }
+
 }
