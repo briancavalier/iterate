@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import java.util.Iterator;
+import java.util.Random;
 
 public class IntegersTest
 {
@@ -71,7 +72,7 @@ public class IntegersTest
     public void random()
     {
         final int max = 100;
-        final Iterator<Integer> iterator = Integers.random(max).iterator();
+        final Iterator<Integer> iterator = Integers.random(new Random(), max).iterator();
         for (int i=0; i<max*10; i++) {
             assertTrue(iterator.next() < max);
         }

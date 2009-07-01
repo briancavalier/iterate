@@ -123,7 +123,11 @@ public class Integers
 
     public static Iterable<Integer> random(final int maxValueExclusive)
     {
-        final Random random = new Random();
+        return random(new Random(), maxValueExclusive);
+    }
+
+    public static Iterable<Integer> random(final Random random, final int maxValueExclusive)
+    {
         return new IterableBase<Integer>()
         {
             public boolean hasNext()
@@ -141,7 +145,11 @@ public class Integers
 
     public static Iterable<Integer> random()
     {
-        final Random random = new Random();
+        return random(new Random());
+    }
+
+    public static Iterable<Integer> random(final Random random)
+    {
         return new IterableBase<Integer>()
         {
             public boolean hasNext()
