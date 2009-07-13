@@ -527,6 +527,28 @@ public class Iterate<X> implements Iterable<X>
         return new RegexMatchIterable(in, Pattern.compile(regex));
     }
 
+    /**
+     * @param in    {@link String} from which to read data for matching
+     * @param regex regular expression to match.
+     *
+     * @return an {@link Iterable} over all substrings matching {@code regex}
+     */
+    public static Iterable<String> match(String in, String regex)
+    {
+        return new RegexMatchIterable(new StringReader(in), Pattern.compile(regex));
+    }
+
+    /**
+     * @param in    {@link String} from which to read data for matching
+     * @param regex regular expression to match.
+     *
+     * @return an {@link Iterable} over all substrings matching {@code regex}
+     */
+    public static Iterable<String> match(String in, Pattern regex)
+    {
+        return new RegexMatchIterable(new StringReader(in), regex);
+    }
+
     //
     // Visitors
     //
