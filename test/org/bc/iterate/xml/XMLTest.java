@@ -24,6 +24,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+@SuppressWarnings({"ImplicitNumericConversion"})
 public class XMLTest
 {
     public final static String XML_DATA = "<?xml version=\"1.0\"?>"
@@ -44,7 +45,7 @@ public class XMLTest
     @Test
     public void testParse() throws IOException, JDOMException
     {
-        XML.parse(new ByteArrayInputStream(XML_DATA.getBytes()));
+        Assert.assertNotNull(XML.parse(new ByteArrayInputStream(XML_DATA.getBytes())));
     }
 
     @Test
