@@ -15,10 +15,7 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.function.CompositeBinaryFunction;
-import org.bc.iterate.function.CompositeFunction;
-import org.bc.iterate.function.CompositeMonoid;
-import org.bc.iterate.function.Identity;
+import org.bc.iterate.function.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,6 +67,16 @@ public class Functions
     public static <X, Y, Z, R> BinaryFunction<X, R, Z> compose(Function<X, Y> f, BinaryFunction<Y, R, Z> g)
     {
         return new CompositeBinaryFunction<X, Y, Z, R>(Functions.<X, R, Y>unbind(f), g);
+    }
+
+    public static <X, Y> Function<X, Y> invoke(final String methodName)
+    {
+        return new DynamicInvokerFunction<X, Y>(methodName);
+    }
+
+    public static <X, Y> Function<X, Y> invoke(final String methodName, final Object... params)
+    {
+        return new DynamicInvokerWithParamsFunction<X, Y>(methodName, params);
     }
 
     public static <X, Y, Z> Function<X, Z> bind(final Y paramToBind, final BinaryFunction<X, Y, Z> callee)

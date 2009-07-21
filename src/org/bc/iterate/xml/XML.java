@@ -30,8 +30,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * Iterators, Functions, etc. for XML documents.
+ *
+ * @author Brian Cavalier
+ */
 public class XML
 {
+    /**
+     * Parses the XML located at the supplied {@code urlOrPath}
+     *
+     * @return parsed {@link org.jdom.Document}
+     *
+     * @throws IOException
+     * @throws JDOMException
+     */
     public static Document parse(String urlOrPath) throws IOException, JDOMException
     {
         SAXBuilder builder = new SAXBuilder();
@@ -47,16 +60,30 @@ public class XML
         }
     }
 
+    /**
+     * Parses the XML in the supplied {@link java.io.InputStream}
+     *
+     * @return parsed {@link org.jdom.Document}
+     *
+     * @throws IOException
+     * @throws JDOMException
+     */
     public static Document parse(InputStream input) throws IOException, JDOMException
     {
-        return new SAXBuilder().build(input);        
+        return new SAXBuilder().build(input);
     }
 
+    /**
+     * @return a {@link org.jdom.Document} constructor from the supplied W3C {@link org.w3c.dom.Document}
+     */
     public static Document from(org.w3c.dom.Document w3cDocument)
     {
         return new DOMBuilder().build(w3cDocument);
     }
 
+    /**
+     * @return a {@link Function} that will return the child {@link Element}s  of its {@link Element} x argument.
+     */
     public static Function<Element, List<Element>> children()
     {
         return new Function<Element, List<Element>>()
@@ -68,6 +95,9 @@ public class XML
         };
     }
 
+    /**
+     * @return a {@link Function} that will return the named child {@link Element}s of its {@link Element} x argument.
+     */
     public static BinaryFunction<Element, String, List<Element>> childrenByName()
     {
         return new BinaryFunction<Element, String, List<Element>>()
@@ -79,12 +109,18 @@ public class XML
         };
     }
 
+    /**
+     * @return {@link List} of all child {@link Element}s of {@code parent}
+     */
     @SuppressWarnings({"unchecked"})
     public static List<Element> children(Element parent)
     {
         return parent.getChildren();
     }
 
+    /**
+     * @return {@link List} of all named child {@link Element}s of {@code parent}
+     */
     @SuppressWarnings({"unchecked"})
     public static List<Element> children(Element parent, String childElementName)
     {
