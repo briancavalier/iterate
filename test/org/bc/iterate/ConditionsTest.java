@@ -27,6 +27,13 @@ import java.util.Arrays;
 public class ConditionsTest
 {
     @Test
+    public void isNull()
+    {
+        assertTrue(Conditions.isNull().eval(null));
+        assertTrue(Conditions.notNull().eval(new Object()));
+    }
+
+    @Test
     public void eq()
     {
         assertTrue(Conditions.eq("c").eval("c"));

@@ -24,6 +24,28 @@ import java.util.regex.Pattern;
 
 public class Conditions
 {
+    public static Condition<Object> isNull()
+    {
+        return new Condition<Object>()
+        {
+            public boolean eval(Object o)
+            {
+                return o == null;
+            }
+        };
+    }
+
+    public static Condition<Object> notNull()
+    {
+        return new Condition<Object>()
+        {
+            public boolean eval(Object o)
+            {
+                return o != null;
+            }
+        };
+    }
+
     public static <X> Condition<X> eq(final Comparable<X> comparable)
     {
         return new Condition<X>()

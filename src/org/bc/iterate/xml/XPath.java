@@ -19,44 +19,108 @@ import org.jdom.*;
 
 import java.util.List;
 
+/**
+ * Iterators for selecting elements and attributes (or any JDOM node type) via XPath expressions
+ *
+ * @author Brian Cavalier
+ */
 public class XPath
 {
+    /**
+     * @param xpath        compiled XPath expression to evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of {@link org.jdom.Element}s matching {@code xpath}, rooted at {@code startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List<Element> elements(org.jdom.xpath.XPath xpath, Parent startingNode) throws JDOMException
     {
         //noinspection unchecked
         return nodes(xpath, startingNode);
     }
 
+    /**
+     * @param xpath        the {@code String} XPath expression to compile and then evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of {@link org.jdom.Element}s matching {@code xpath}, rooted at {@code startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List<Element> elements(String xpathExpression, Parent startingNode) throws JDOMException
     {
         //noinspection unchecked
         return nodes(org.jdom.xpath.XPath.newInstance(xpathExpression), startingNode);
     }
 
+    /**
+     * @param xpath        compiled XPath expression to evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of {@link org.jdom.Attribute}s matching {@code xpath}, rooted at {@code startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List<Attribute> attributes(org.jdom.xpath.XPath xpath, Parent startingNode) throws JDOMException
     {
         //noinspection unchecked
         return nodes(xpath, startingNode);
     }
 
+    /**
+     * @param xpath        compiled XPath expression to compile and then evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of {@link org.jdom.Attribute}s matching {@code xpath}, rooted at {@code startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List<Attribute> attributes(String xpathExpression, Parent startingNode) throws JDOMException
     {
         //noinspection unchecked
         return nodes(org.jdom.xpath.XPath.newInstance(xpathExpression), startingNode);
     }
 
+    /**
+     * @param xpath        compiled XPath expression to evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of {@link org.jdom.Text}s (text nodes) matching {@code xpath}, rooted at {@code
+     *         startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List<Text> text(org.jdom.xpath.XPath xpath, Parent startingNode) throws JDOMException
     {
         //noinspection unchecked
         return nodes(xpath, startingNode);
     }
 
+    /**
+     * @param xpath        compiled XPath expression to compile and then evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of {@link org.jdom.Text}s (text nodes) matching {@code xpath}, rooted at {@code
+     *         startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List<Text> text(String xpathExpression, Parent startingNode) throws JDOMException
     {
         //noinspection unchecked
         return nodes(org.jdom.xpath.XPath.newInstance(xpathExpression), startingNode);
     }
 
+    /**
+     * @param xpath        compiled XPath expression to evaluate
+     * @param startingNode the root node to use when applying {@code cpath}.
+     *
+     * @return the {@code List} of JDOM nodes ({@link org.jdom.Element}, {@link org.jdom.Attribute}, {@link
+     *         org.jdom.Text}, etc.) matching {@code xpath}, rooted at {@code startingNode}
+     *
+     * @throws JDOMException
+     */
     public static List nodes(org.jdom.xpath.XPath xpath, Parent startingNode) throws JDOMException
     {
         return xpath.selectNodes(startingNode);
