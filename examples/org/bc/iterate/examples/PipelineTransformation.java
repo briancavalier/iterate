@@ -16,23 +16,22 @@
 package org.bc.iterate.examples;
 
 import static org.bc.iterate.Algorithms.generate;
-import static org.bc.iterate.Integers.*;
-import static org.bc.iterate.Iterate.*;
+import static org.bc.iterate.Integers.identity;
+import static org.bc.iterate.Integers.square;
+import static org.bc.iterate.Iterate.collect;
+import static org.bc.iterate.Iterate.each;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PipelineModification
+public class PipelineTransformation
 {
     public static void main(String[] args)
     {
-        List<Integer> ints = generate(10, identity());
-        System.out.println(each(range(10, 100)).visit(collect(), wrap(ints)).map(square()).reduce(sum()));
-
         // First, square the items in the original list, then inject some new items before them in the pipeline
         // Then collect all items and print the resulting list
-        ints = generate(10, identity());
+        List<Integer> ints = generate(10, identity());
         System.out.println(each(ints).map(square()).prepend(Arrays.asList(1, 2, 3)).visit(collect(), new ArrayList<Integer>(13)));
 
         // First, square the items in the original list, then inject some new items after them in the pipeline
@@ -40,5 +39,8 @@ public class PipelineModification
         ints = generate(10, identity());
         System.out.println(each(ints).map(square()).append(Arrays.asList(1, 2, 3)).visit(collect(), new ArrayList<Integer>(13)));
 
+        ints = generate(10, identity());
+        System.out.println(each(ints).map(square()).slice(1, 5).visit(collect(), new ArrayList<Integer>(13)));
+        System.out.println(each(ints).map(square()).slice(1).visit(collect(), new ArrayList<Integer>(13)));
     }
 }

@@ -86,15 +86,16 @@ public class Strings
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, final Function<X, String> toString,
                                                    final Y result, final String separator) throws IOException
     {
-        Iterator<X> iter = items.iterator();
-        if (iter.hasNext()) {
-            result.append(toString.apply(iter.next()));
-        }
+        if (items != null) {
+            Iterator<X> iter = items.iterator();
+            if (iter.hasNext()) {
+                result.append(toString.apply(iter.next()));
+            }
 
-        while (iter.hasNext()) {
-            result.append(separator).append(toString.apply(iter.next()));
+            while (iter.hasNext()) {
+                result.append(separator).append(toString.apply(iter.next()));
+            }
         }
-
         return result;
     }
 

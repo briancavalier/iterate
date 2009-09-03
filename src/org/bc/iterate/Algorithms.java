@@ -205,7 +205,7 @@ public class Algorithms
     public static <X, Y extends Collection<? super X>> Y generate(int n, Y results,
                                                                   Function<Integer, X> generator)
     {
-        return Iterate.each(Iterate.upto(n)).map(generator).visit(Iterate.collect(), results);
+        return Iterate.each(Integers.upto(n)).map(generator).visit(Iterate.collect(), results);
     }
 
     public static <X> List<X> generate(int n, Function<Integer, X> generator)

@@ -17,6 +17,8 @@ package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
 import org.bc.iterate.iterable.IterableBase;
+import org.bc.iterate.iterable.IntegerRange;
+import org.bc.iterate.iterable.StepIntegerRange;
 
 import java.util.Random;
 
@@ -163,5 +165,56 @@ public class Integers
                 return random.nextInt();
             }
         };
+    }
+
+    /**
+     * @param start first integer value
+     * @param end   exclusive last integer value
+     *
+     * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
+     *         (exclusive)
+     */
+    public static Iterable<Integer> range(int start, int end)
+    {
+        return new IntegerRange(start, end);
+    }
+
+    /**
+     * @param start first integer value
+     * @param end   exclusive last integer value
+     * @param step  integer distance to step between each iteration.  For example, if {@code start = 0}, {@code end =
+     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements: {@code [ 0,
+     *              2, 4 ]}
+     *
+     * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
+     *         (exclusive), stepping by {@code step}
+     */
+    public static Iterable<Integer> range(int start, int end, int step)
+    {
+        return new StepIntegerRange(start, end, step);
+    }
+
+    /**
+     * @param end exclusive last integer value
+     *
+     * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
+     *         (exclusive)
+     */
+    public static Iterable<Integer> upto(int end)
+    {
+        return new IntegerRange(0, end);
+    }
+
+    /**
+     * @param end  exclusive last integer value
+     * @param step integer distance to step between each iteration.  For example, {@code end = 5}, {@code step = 2}, the
+     *             resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]}
+     *
+     * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
+     *         (exclusive), stepping by {@code step}
+     */
+    public static Iterable<Integer> upto(int end, int step)
+    {
+        return new StepIntegerRange(0, end, step);
     }
 }

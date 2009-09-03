@@ -53,6 +53,8 @@ public class StringsTest
 
         assertEquals("", Strings.join(new ArrayList<String>(0)));
         assertEquals("", Strings.join(new ArrayList<String>(0), new StringBuilder(32)).toString());
+
+        assertEquals("", Strings.join(null));
     }
 
     @Test

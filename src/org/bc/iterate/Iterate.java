@@ -261,14 +261,29 @@ public class Iterate<X> implements Iterable<X>
         return param;
     }
 
-    public Iterate<X> append(Iterable<X> items)
+    public <Y, IY extends Iterable<Y>> Iterate<Y> transform(Function<Iterable<X>, IY> transformFunc)
     {
-        return new Iterate<X>(flatten(this, items));
+        return new Iterate<Y>(transformFunc.apply(this));
     }
 
-    public Iterate<X> prepend(Iterable<X> items)
+    public Iterate<X> prepend(Iterable<X> itemsToPrepend)
     {
-        return new Iterate<X>(flatten(items, this));
+        return new Iterate<X>(new FlattenIterable<X>(Arrays.asList(itemsToPrepend, this)));
+    }
+
+    public Iterate<X> append(Iterable<X> itemsToAppend)
+    {
+        return new Iterate<X>(new FlattenIterable<X>(Arrays.asList(this, itemsToAppend)));
+    }
+
+    public Iterate<X> slice(int start, int end)
+    {
+        return new Iterate<X>(new SliceIterable<X>(this, start, end));
+    }
+
+    public Iterate<X> slice(int start)
+    {
+        return new Iterate<X>(new SliceIterable<X>(this, start));
     }
 
     /**
@@ -351,57 +366,6 @@ public class Iterate<X> implements Iterable<X>
     public static <X> Iterable<X> flatten(Iterable<X>... nested)
     {
         return new FlattenIterable<X>(Arrays.asList(nested));
-    }
-
-    /**
-     * @param start first integer value
-     * @param end   exclusive last integer value
-     *
-     * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
-     *         (exclusive)
-     */
-    public static Iterable<Integer> range(int start, int end)
-    {
-        return new IntegerRange(start, end);
-    }
-
-    /**
-     * @param start first integer value
-     * @param end   exclusive last integer value
-     * @param step  integer distance to step between each iteration.  For example, if {@code start = 0}, {@code end =
-     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements: {@code [ 0,
-     *              2, 4 ]}
-     *
-     * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
-     *         (exclusive), stepping by {@code step}
-     */
-    public static Iterable<Integer> range(int start, int end, int step)
-    {
-        return new StepIntegerRange(start, end, step);
-    }
-
-    /**
-     * @param end exclusive last integer value
-     *
-     * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
-     *         (exclusive)
-     */
-    public static Iterable<Integer> upto(int end)
-    {
-        return new IntegerRange(0, end);
-    }
-
-    /**
-     * @param end  exclusive last integer value
-     * @param step integer distance to step between each iteration.  For example, {@code end = 5}, {@code step = 2}, the
-     *             resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]}
-     *
-     * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
-     *         (exclusive), stepping by {@code step}
-     */
-    public static Iterable<Integer> upto(int end, int step)
-    {
-        return new StepIntegerRange(0, end, step);
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
