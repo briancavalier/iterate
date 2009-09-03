@@ -261,26 +261,53 @@ public class Iterate<X> implements Iterable<X>
         return param;
     }
 
+    /**
+     * Allows general transformation of the entire pipeline of items, rather than on a per item basis
+     * (like {@link #map(Function)}, etc.). For example, sorting, iterating over only a sub-range of items
+     * (see {@link #slice(int, int)}, etc.
+     *
+     * @param transformFunc {@link Function} to transform the pipeline.
+     *
+     * @return a new {@link Iterate} over the transformed set of items. 
+     */
     public <Y, IY extends Iterable<Y>> Iterate<Y> transform(Function<Iterable<X>, IY> transformFunc)
     {
         return new Iterate<Y>(transformFunc.apply(this));
     }
 
+    /**
+     * @param itemsToPrepend items to append
+     * @return a new {@link Iterate} that has the supplied items prepended to the iteration order.
+     */
     public Iterate<X> prepend(Iterable<X> itemsToPrepend)
     {
         return new Iterate<X>(new FlattenIterable<X>(Arrays.asList(itemsToPrepend, this)));
     }
 
+    /**
+     * @param itemsToAppend items to append
+     * @return a new {@link Iterate} that has the supplied items appended to the iteration order.
+     */
     public Iterate<X> append(Iterable<X> itemsToAppend)
     {
         return new Iterate<X>(new FlattenIterable<X>(Arrays.asList(this, itemsToAppend)));
     }
 
+    /**
+     * @param start inclusive start index
+     * @param end exclusive end index
+     * @return a new {@link Iterate} that will only iterate over the items in the range from inclusive {@code start}
+     * to exclusive {@code end}.
+     */
     public Iterate<X> slice(int start, int end)
     {
         return new Iterate<X>(new SliceIterable<X>(this, start, end));
     }
 
+    /**
+     * @param start inclusive start index
+     * @return a new {@link Iterate} that will only iterate over the items starting at inclusive {@code start}.
+     */
     public Iterate<X> slice(int start)
     {
         return new Iterate<X>(new SliceIterable<X>(this, start));
