@@ -36,7 +36,7 @@ public class SumOfSquares
                 {
                     public Integer apply(Integer i)
                     {
-                        return i * i;  //To change body of implemented methods use File | Settings | File Templates.
+                        return i * i;
                     }
                 })
                 .reduce(new BinaryFunction<Integer, Integer, Integer>()
