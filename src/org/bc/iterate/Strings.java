@@ -62,7 +62,7 @@ public class Strings
         try {
             return join(items, builder, separator).toString();
         } catch (IOException ignored) {
-            return builder.toString();
+            return "";
         }
     }
 
@@ -77,10 +77,22 @@ public class Strings
         return join(items, new ToString<X>(), result, separator);
     }
 
+    public static <X> String join(final Iterable<X> items, Function<X, String> toString)
+            throws IOException
+    {
+        return join(items, toString, defaultJoinSeparator).toString();
+    }
+
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Function<X, String> toString, Y result)
             throws IOException
     {
         return join(items, toString, result, defaultJoinSeparator);
+    }
+
+    public static <X> StringBuilder join(final Iterable<X> items, Function<X, String> toString, String separator)
+            throws IOException
+    {
+        return join(items, toString, Strings.builder(DEFAULT_JOIN_BUFFER_SIZE), separator);
     }
 
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, final Function<X, String> toString,
@@ -400,6 +412,17 @@ public class Strings
         };
     }
 
+    public static Function<String, String> capitalize()
+    {
+        return new Function<String, String>()
+        {
+            public String apply(String s)
+            {
+                return initialCap(s).toString();
+            }
+        };
+    }
+
     public static String titleCase(String s)
     {
         if (s == null || s.length() == 0) {
@@ -441,7 +464,7 @@ public class Strings
             int i = 1;
             for (; i < words.length - 1; i++) {
                 final String word = words[i];
-                result.append(' ').append(LOWERCASE_TITLE_WORDS.contains(word) ? word : initialCap(word));
+                result.append(' ').append(LOWERCASE_TITLE_WORDS.contains(word) ? word : smartInitialCap(word));
             }
 
             i = words.length - 1;
@@ -470,8 +493,8 @@ public class Strings
     public final static Set<String> LOWERCASE_TITLE_WORDS;
 
     static {
-        LOWERCASE_TITLE_WORDS = new HashSet<String>(Arrays.asList("a", "an", "and", "as", "at", "be", "but", "en",
-                                                                  "for", "if", "in", "is", "of", "on", "or", "to",
+        LOWERCASE_TITLE_WORDS = new HashSet<String>(Arrays.asList("a", "an", "and", "as", "at", "be", "but", "by", "en",
+                                                                  "for", "if", "in", "is", "nor", "of", "on", "or", "to",
                                                                   "via", "v.", "vs."));
     }
 

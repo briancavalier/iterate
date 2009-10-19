@@ -18,6 +18,7 @@ package org.bc.iterate.function;
 import org.bc.iterate.reflect.ReflectionUtil;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * {@link org.bc.iterate.Function} to dynamically invoke a named method with parameters on its {@code x} argument.
@@ -32,6 +33,13 @@ public class DynamicInvokerWithParamsFunction<X, Y> extends DynamicInvokerFuncti
     public DynamicInvokerWithParamsFunction(String methodName, Object... params)
     {
         super(methodName);
+        this.params = params;
+    }
+
+    @SuppressWarnings({"AssignmentToCollectionOrArrayFieldFromParameter"})
+    public DynamicInvokerWithParamsFunction(Method method, Object... params)
+    {
+        super(method);
         this.params = params;
     }
 

@@ -37,6 +37,11 @@ public class DynamicInvokerFunction<X, Y> implements Function<X, Y>
         this.methodName = methodName;
     }
 
+    public DynamicInvokerFunction(Method method)
+    {
+        this.method = method;
+    }
+
     @SuppressWarnings({"unchecked"})
     public Y apply(X x)
     {

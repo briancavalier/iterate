@@ -24,7 +24,7 @@ public class IterateCollection<X, Y extends Collection<X>> extends Iterate<X> im
     @SuppressWarnings({"AssignmentToCollectionOrArrayFieldFromParameter"})
     public IterateCollection(Y wrapped)
     {
-        super(wrapped);
+        super(wrapped, wrapped.size());
         this.wrapped = wrapped;
     }
 

@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
  */
 public class Iterate<X> implements Iterable<X>
 {
+    private static final int DEFAULT_SIZE_ESTIMATE = 128;
 
     /**
      * @param items {@link Iterable} containing items over which to iterate
@@ -46,7 +47,19 @@ public class Iterate<X> implements Iterable<X>
      */
     public static <X> Iterate<X> each(final Iterable<X> items)
     {
-        return new Iterate<X>(items);
+        return new Iterate<X>(items, estimateSize(items));
+    }
+
+    @SuppressWarnings({"ChainOfInstanceofChecks"})
+    public static <X, I extends Iterable<X>> int estimateSize(I items)
+    {
+        int sizeEstimate = DEFAULT_SIZE_ESTIMATE;
+        if(items instanceof Collection) {
+            sizeEstimate = ((Collection)items).size();
+        } else if (items instanceof Iterate) {
+            sizeEstimate = ((Iterate<X>)items).sizeEstimate;
+        }
+        return sizeEstimate;
     }
 
     /**
@@ -56,7 +69,7 @@ public class Iterate<X> implements Iterable<X>
      */
     public static <X> Iterate<X> each(final X... items)
     {
-        return new Iterate<X>(new ArrayIterable<X>(items));
+        return new Iterate<X>(new ArrayIterable<X>(items), items.length);
     }
 
     /**
@@ -69,7 +82,7 @@ public class Iterate<X> implements Iterable<X>
      */
     public static <X, Y> Iterate<Map.Entry<X, Y>> each(final Map<X, Y> map)
     {
-        return each(map.entrySet());
+        return new Iterate<Map.Entry<X, Y>>(map.entrySet(), map.size());
     }
 
     public static <X, Y extends Collection<X>> IterateCollection<X, Y> wrap(Y collection)
@@ -79,9 +92,17 @@ public class Iterate<X> implements Iterable<X>
 
     protected Iterable<X> iterable;
 
+    private int sizeEstimate;
+
     protected Iterate(Iterable<X> items)
     {
         this.iterable = items;
+    }
+
+    protected Iterate(Iterable<X> items, int sizeEstimate)
+    {
+        this.iterable = items;
+        this.sizeEstimate = sizeEstimate;
     }
 
     protected Iterate()
@@ -139,38 +160,16 @@ public class Iterate<X> implements Iterable<X>
         return new Iterate<X>(new AfterIterable<X>(this, c));
     }
 
-    /**
-     * Creates a chained {@link Iterate} by invoking {@code f.apply()} on each items.
-     *
-     * @param f {@link Function} to apply to all items
-     *
-     * @return new chained {@link Iterate}
-     */
     public <Y> Iterate<Y> map(Function<? super X, ? extends Y> f)
     {
         return new Iterate<Y>(new FunctionalIterable<X, Y>(this, f));
     }
 
-    /**
-     * Creates a chained {@link Iterate} by invoking {@code f.apply(item,param)} on each items.
-     *
-     * @param f             {@link BinaryFunction} to apply to all items
-     * @param referenceData additional context will be passed as the second param to {@code f.apply}
-     *
-     * @return new chained {@link Iterate}
-     */
     public <Y, Z> Iterate<Y> map(BinaryFunction<? super X, ? super Z, Y> f, Z referenceData)
     {
         return new Iterate<Y>(new BinaryFunctionalIterable<X, Y, Z>(this, referenceData, f));
     }
 
-    /**
-     * Applies {@code visitor} to each item
-     *
-     * @param visitor {@link Visitor} to apply
-     *
-     * @return {@code visitor}
-     */
     public <V extends Visitor<? super X>> V visit(V visitor)
     {
         for (X x : this) {
@@ -180,14 +179,6 @@ public class Iterate<X> implements Iterable<X>
         return visitor;
     }
 
-    /**
-     * Applies {@code visitor.visit(item,param)} to each item
-     *
-     * @param visitor {@link BinaryVisitor} to apply
-     * @param param   value to pass as second parameter to {@code visitor.visit()}
-     *
-     * @return {@code param}
-     */
     public <Y> Y visit(BinaryVisitor<? super X, ? super Y> visitor, Y param)
     {
         for (X x : this) {
@@ -197,14 +188,6 @@ public class Iterate<X> implements Iterable<X>
         return param;
     }
 
-    /**
-     * Applies {@code param = f.apply(item,param)} to each item, thus updating the value of param after each iteration.
-     *
-     * @param f     {@link BinaryFunction} to apply
-     * @param param value to pass as second parameter to {@code f.apply()}
-     *
-     * @return reduced value
-     */
     public <Y> Y reduce(BinaryFunction<? super X, ? super Y, ? extends Y> f, Y param)
     {
         Y result = param;
@@ -215,16 +198,6 @@ public class Iterate<X> implements Iterable<X>
         return result;
     }
 
-    /**
-     * Works like {@link Iterate#reduce(BinaryFunction, Object)}, but uses the first value in {@code this.iterator()} as
-     * the second parameter in the initial call to f.apply().  For example, if this.iterator() iterates over all
-     * positive integers from 1 to 100, the first call to f.apply() would be {@code f.apply(2,1)} , and the second call
-     * will be {@code f.apply(3,f.apply(2,1))}
-     *
-     * @param f {@link BinaryFunction} to apply
-     *
-     * @return reduced value
-     */
     public X reduce(BinaryFunction<? super X, ? super X, ? extends X> f)
     {
         final Iterator<X> iter = this.iterator();
@@ -240,16 +213,6 @@ public class Iterate<X> implements Iterable<X>
         return null;
     }
 
-    /**
-     * Applies {@code visitor.visit(item,f.map(item), param}) to each item
-     *
-     * @param visitor {@link TernaryVisitor} to apply
-     * @param f       {@link Function} to apply to each item to generate the second param passed to {@code
-     *                visitor.visit()}
-     * @param param   value to pass as third parameter to {@code visitor.visit()}
-     *
-     * @return {@code param}
-     */
     public <Y, Z> Z visit(TernaryVisitor<? super X, ? super Y, Z> visitor,
                           Function<? super X, ? extends Y> f,
                           Z param)
@@ -310,7 +273,7 @@ public class Iterate<X> implements Iterable<X>
      */
     public Iterate<X> slice(int start)
     {
-        return new Iterate<X>(new SliceIterable<X>(this, start));
+        return new Iterate<X>(new SliceIterable<X>(this, start), Math.max(0, this.sizeEstimate - start));
     }
 
     /**

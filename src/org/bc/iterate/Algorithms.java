@@ -38,7 +38,7 @@ public class Algorithms
      */
     public static <X, Y> List<Y> map(Iterable<X> items, Function<X, Y> mapFunction)
     {
-        return map(items, new ArrayList<Y>(100), mapFunction);
+        return map(items, new ArrayList<Y>(Iterate.estimateSize(items)), mapFunction);
     }
 
     /**
@@ -58,7 +58,7 @@ public class Algorithms
 
     public static <X, Y> Map<Y, X> asMap(final Iterable<X> items, Function<X, Y> mapFunction)
     {
-        return asMap(items, new HashMap<Y, X>(100), mapFunction);
+        return asMap(items, new HashMap<Y, X>(Iterate.estimateSize(items)), mapFunction);
     }
 
     public static <X, Y> Map<Y, X> asMap(final Iterable<X> items, final Map<Y, X> results, Function<X, Y> mapFunction)
@@ -68,26 +68,29 @@ public class Algorithms
 
     public static <X, Y> Map<Y, Collection<X>> partition(final Iterable<X> items, final Function<X, Y> groupFunction)
     {
+        final int size = Iterate.estimateSize(items);
+        final int groupSize = (size / 2) + 1;
         return Iterate.each(items).visit(new BinaryVisitor<X, Map<Y, Collection<X>>>()
         {
             public void visit(X item, Map<Y, Collection<X>> results)
             {
                 Y key = groupFunction.apply(item);
-                Collection<X> group = new HashMap<Y, Collection<X>>(100).get(key);
+                Collection<X> group = results.get(key);
                 if (group == null) {
-                    group = new ArrayList<X>(32);
-                    new HashMap<Y, Collection<X>>(100).put(key, group);
+                    group = new ArrayList<X>(groupSize);
+                    results.put(key, group);
                 }
 
                 group.add(item);
             }
-        }, new HashMap<Y, Collection<X>>(100));
+        }, new HashMap<Y, Collection<X>>(size));
     }
 
     public static <X> Map<Boolean, Collection<X>> partition(final Iterable<X> items, Condition<X> partitionCondition)
     {
-        final ArrayList<X> falseResults = new ArrayList<X>(100);
-        final ArrayList<X> trueResults = new ArrayList<X>(100);
+        final int size = (Iterate.estimateSize(items) / 2) + 1;
+        final ArrayList<X> falseResults = new ArrayList<X>(size);
+        final ArrayList<X> trueResults = new ArrayList<X>(size);
 
         partition(items, trueResults, falseResults, partitionCondition);
 
@@ -176,7 +179,7 @@ public class Algorithms
      */
     public static <X> Collection<X> select(final Iterable<X> items, Condition<X> criteria)
     {
-        return Iterate.each(items).where(criteria).visit(Iterate.collect(), new ArrayList<X>(100));
+        return Iterate.each(items).where(criteria).visit(Iterate.collect(), new ArrayList<X>(Iterate.estimateSize(items)));
     }
 
     /**

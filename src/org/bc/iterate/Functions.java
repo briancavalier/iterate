@@ -17,6 +17,7 @@ package org.bc.iterate;
 
 import org.bc.iterate.function.*;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,9 +75,19 @@ public class Functions
         return new DynamicInvokerFunction<X, Y>(methodName);
     }
 
+    public static <X, Y> Function<X, Y> invoke(final Method method)
+    {
+        return new DynamicInvokerFunction<X, Y>(method);
+    }
+
     public static <X, Y> Function<X, Y> invoke(final String methodName, final Object... params)
     {
         return new DynamicInvokerWithParamsFunction<X, Y>(methodName, params);
+    }
+
+    public static <X, Y> Function<X, Y> invoke(final Method method, final Object... params)
+    {
+        return new DynamicInvokerWithParamsFunction<X, Y>(method, params);
     }
 
     public static <X, Y, Z> Function<X, Z> bind(final Y paramToBind, final BinaryFunction<X, Y, Z> callee)
