@@ -20,6 +20,7 @@ import org.bc.iterate.function.RegexFind;
 import org.bc.iterate.function.ToString;
 import org.bc.iterate.iterable.*;
 import org.bc.iterate.net.Urls;
+import org.bc.iterate.util.Pair;
 import org.bc.iterate.visitor.*;
 
 import java.io.*;
@@ -51,13 +52,15 @@ public class Iterate<X> implements Iterable<X>
     }
 
     @SuppressWarnings({"ChainOfInstanceofChecks"})
-    public static <X, I extends Iterable<X>> int estimateSize(I items)
+    public static int estimateSize(Object items)
     {
         int sizeEstimate = DEFAULT_SIZE_ESTIMATE;
         if(items instanceof Collection) {
             sizeEstimate = ((Collection)items).size();
+        } else if (items instanceof Map) {
+            sizeEstimate = ((Map)items).size();
         } else if (items instanceof Iterate) {
-            sizeEstimate = ((Iterate<X>)items).sizeEstimate;
+            sizeEstimate = ((Iterate)items).sizeEstimate;
         }
         return sizeEstimate;
     }
@@ -88,6 +91,11 @@ public class Iterate<X> implements Iterable<X>
     public static <X, Y extends Collection<X>> IterateCollection<X, Y> wrap(Y collection)
     {
         return new IterateCollection<X, Y>(collection);
+    }
+
+    public <K, Y> Iterate<Pair<X, Y>> join(Function<X, K> xKeyFunction, Iterable<Y> itemsToJoin, Function<Y, K> yKeyFunction)
+    {
+        return new Iterate<Pair<X, Y>>(new LeftIncrementalHashJoinIterable<X, K, Y>(this, xKeyFunction, itemsToJoin, yKeyFunction));
     }
 
     protected Iterable<X> iterable;
@@ -222,20 +230,6 @@ public class Iterate<X> implements Iterable<X>
         }
 
         return param;
-    }
-
-    /**
-     * Allows general transformation of the entire pipeline of items, rather than on a per item basis
-     * (like {@link #map(Function)}, etc.). For example, sorting, iterating over only a sub-range of items
-     * (see {@link #slice(int, int)}, etc.
-     *
-     * @param transformFunc {@link Function} to transform the pipeline.
-     *
-     * @return a new {@link Iterate} over the transformed set of items. 
-     */
-    public <Y, IY extends Iterable<Y>> Iterate<Y> transform(Function<Iterable<X>, IY> transformFunc)
-    {
-        return new Iterate<Y>(transformFunc.apply(this));
     }
 
     /**
@@ -624,5 +618,56 @@ public class Iterate<X> implements Iterable<X>
     public static Function<String, String> find(String pattern, int group)
     {
         return new RegexFind(Pattern.compile(pattern), group);
+    }
+
+    // Experimental terminal shortcut methods.
+    // These can be replicated easily using each().visit(), but these
+    // may provide more convenience and shorter code in most cases.
+
+    public <C extends Collection<? super X>> C add(C c)
+    {
+        return visit(collect(), c);
+    }
+
+    public List<X> list()
+    {
+        return add(new ArrayList<X>(estimateSize(iterable)));
+    }
+
+    public Set<X> set()
+    {
+        return add(new HashSet<X>(estimateSize(iterable)));
+    }
+
+    public <A extends Appendable> A append(A a) throws IOException
+    {
+        for (X x : this) {
+            a.append(x.toString());
+        }
+
+        return a;
+    }
+
+    public StringBuilder append(StringBuilder b)
+    {
+        return visit(append(), b);
+    }
+
+    public PrintStream println(PrintStream p)
+    {
+        for (X x : this) {
+            p.println(x);
+        }
+
+        return p;
+    }
+
+    public PrintWriter println(PrintWriter p)
+    {
+        for (X x : this) {
+            p.println(x);
+        }
+
+        return p;
     }
 }

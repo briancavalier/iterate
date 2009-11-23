@@ -20,6 +20,7 @@ import org.bc.iterate.function.*;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Helper methods for {@link Functions}, including composition, and creating conditional {@link Functions}.
@@ -68,6 +69,21 @@ public class Functions
     public static <X, Y, Z, R> BinaryFunction<X, R, Z> compose(Function<X, Y> f, BinaryFunction<Y, R, Z> g)
     {
         return new CompositeBinaryFunction<X, Y, Z, R>(Functions.<X, R, Y>unbind(f), g);
+    }
+
+    public static <X, Y> Function<X, Y> memoize(Function<X, Y> functionToMemoize)
+    {
+        return new MemoizedFunction<X, Y>(functionToMemoize);
+    }
+
+    public static <X, Y> Function<X, Y> memoize(Function<X, Y> functionToMemoize, Map<X, Y> resultsCache)
+    {
+        return new MemoizedFunction<X, Y>(functionToMemoize, resultsCache);
+    }
+
+    public static <X, Y> Function<X, Y> memoize(Function<X, Y> functionToMemoize, int resultsCacheSize)
+    {
+        return new MemoizedFunction<X, Y>(functionToMemoize, resultsCacheSize);
     }
 
     public static <X, Y> Function<X, Y> invoke(final String methodName)
