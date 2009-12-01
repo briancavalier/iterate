@@ -20,6 +20,7 @@ import org.bc.iterate.function.RegexFind;
 import org.bc.iterate.function.ToString;
 import org.bc.iterate.iterable.*;
 import org.bc.iterate.net.Urls;
+import org.bc.iterate.util.JoinResult;
 import org.bc.iterate.util.Pair;
 import org.bc.iterate.visitor.*;
 
@@ -93,9 +94,14 @@ public class Iterate<X> implements Iterable<X>
         return new IterateCollection<X, Y>(collection);
     }
 
-    public <K, Y> Iterate<Pair<X, Y>> join(Function<X, K> xKeyFunction, Iterable<Y> itemsToJoin, Function<Y, K> yKeyFunction)
+    public <K, Y> Iterate<JoinResult<K, X, Y>> join(Function<? super X, K> xKeyFunction, Iterable<Y> itemsToJoin, Function<? super Y, K> yKeyFunction)
     {
-        return new Iterate<Pair<X, Y>>(new LeftIncrementalHashJoinIterable<X, K, Y>(this, xKeyFunction, itemsToJoin, yKeyFunction));
+        return new Iterate<JoinResult<K, X, Y>>(new LeftIncrementalHashJoinIterable<X, K, Y>(this, xKeyFunction, itemsToJoin, yKeyFunction));
+    }
+
+    public <K> Iterate<JoinResult<K, X, X>> join(Iterable<X> itemsToJoin, Function<? super X, K> keyFunction)
+    {
+        return new Iterate<JoinResult<K, X, X>>(new LeftIncrementalHashJoinIterable<X, K, X>(this, keyFunction, itemsToJoin, keyFunction));
     }
 
     protected Iterable<X> iterable;

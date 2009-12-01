@@ -16,6 +16,8 @@
 
 package org.bc.iterate;
 
+import org.bc.iterate.function.Index;
+import org.bc.iterate.util.JoinResult;
 import org.bc.iterate.visitor.Count;
 
 import java.util.*;
@@ -64,6 +66,16 @@ public class Algorithms
     public static <X, Y> Map<Y, X> asMap(final Iterable<X> items, final Map<Y, X> results, Function<X, Y> mapFunction)
     {
         return Iterate.each(items).visit(Iterate.<X, Y>map(), mapFunction, results);
+    }
+
+    public static <X, Y, C extends Collection<JoinResult<Integer, X, Y>>> C zip(final Iterable<X> left, final Iterable<Y> right, C results)
+    {
+        return Iterate.each(left).join(new Index(), right, new Index()).add(results);
+    }
+
+    public static <X, Y> List<JoinResult<Integer, X, Y>> zip(final Iterable<X> left, final Iterable<Y> right)
+    {
+        return zip(left, right, new ArrayList<JoinResult<Integer,X,Y>>(Iterate.estimateSize(left)));
     }
 
     public static <X, Y> Map<Y, Collection<X>> partition(final Iterable<X> items, final Function<X, Y> groupFunction)

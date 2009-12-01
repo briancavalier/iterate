@@ -15,52 +15,28 @@
  */
 package org.bc.iterate.util;
 
-import org.bc.iterate.Function;
-
-public class Pair<X, Y>
+public class JoinResult<K, X, Y> extends Pair<X, Y>
 {
-    private final X x;
-    private final Y y;
+    private final K key;
 
-    public Pair(final X x, final Y y)
+    public JoinResult(K key, X x, Y y)
     {
-        this.x = x;
-        this.y = y;
+        super(x, y);
+        this.key = key;
     }
 
-    public X getX()
+    public K getKey()
     {
-        return x;
-    }
-
-    public Y getY()
-    {
-        return y;
-    }
-
-    public static class X<X, Y> implements Function<Pair<X, Y>, X>
-    {
-        public X apply(Pair<X, Y> pair)
-        {
-            return pair.getX();
-        }
-    }
-
-    public static class Y<X, Y> implements Function<Pair<X, Y>, Y>
-    {
-
-        public Y apply(Pair<X, Y> pair)
-        {
-            return pair.getY();
-        }
+        return key;
     }
 
     @Override
     public String toString()
     {
-        return "Pair{" +
-               "x=" + x +
-               ", y=" + y +
+        return "JoinResult{" +
+               "key=" + key +
+               ", x=" + getX() +
+               ", y=" + getY() +
                '}';
     }
 
@@ -70,16 +46,16 @@ public class Pair<X, Y>
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Pair)) {
+        if (!(o instanceof JoinResult)) {
+            return false;
+        }
+        if (!super.equals(o)) {
             return false;
         }
 
-        final Pair pair = (Pair) o;
+        final JoinResult that = (JoinResult) o;
 
-        if (x != null ? !x.equals(pair.x) : pair.x != null) {
-            return false;
-        }
-        if (y != null ? !y.equals(pair.y) : pair.y != null) {
+        if (key != null ? !key.equals(that.key) : that.key != null) {
             return false;
         }
 
@@ -89,8 +65,8 @@ public class Pair<X, Y>
     @Override
     public int hashCode()
     {
-        int result = x != null ? x.hashCode() : 0;
-        result = 31 * result + (y != null ? y.hashCode() : 0);
+        int result = super.hashCode();
+        result = 31 * result + (key != null ? key.hashCode() : 0);
         return result;
     }
 }
