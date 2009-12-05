@@ -25,35 +25,45 @@ import java.io.IOException;
 public class AppendWithSeparator<X> extends Append<X>
 {
     private final String separator;
-    private boolean useSeparator;
+    private AppendStep appendStep = new AppendStep();
 
     public AppendWithSeparator(String separator)
     {
         this.separator = separator;
-        reset();
     }
 
     public void visit(X x, Appendable appendable)
     {
-        if (useSeparator) {
-            try {
-                appendable.append(separator);
-            } catch (IOException e) {
-                System.err.println(e);
-            }
-        } else {
-            useSeparator = true;
+        try {
+            appendStep = appendStep.append(x, appendable);
+        } catch (IOException e) {
+            System.err.println(e);
         }
-
-        super.visit(x, appendable);
     }
 
     /**
      * After {@code reset()} is called, no separator will be appended before the item in the next call to
      * {@link #visit(Object, Appendable)}.
      */
-    public void reset()
+    public AppendWithSeparator reset()
     {
-        useSeparator = false;
+        appendStep = new AppendStep();
+        return this;
+    }
+
+    private class AppendStep {
+
+        public AppendStep append(X x, Appendable appendable) throws IOException {
+            appendable.append(x.toString());
+            return new SeparatorAppendStep();
+        }
+    }
+
+    private class SeparatorAppendStep extends AppendStep {
+        @Override
+        public AppendStep append(X x, Appendable appendable) throws IOException {
+            appendable.append(separator).append(x.toString());
+            return this;
+        }
     }
 }

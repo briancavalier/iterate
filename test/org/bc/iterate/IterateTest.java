@@ -238,7 +238,7 @@ public class IterateTest
     @Test
     public void append2()
     {
-        final AppendWithSeparator<Object> a = Iterate.append(",");
+        final AppendWithSeparator<Object> a = Iterate.append().with(",");
 
         Appendable results = Iterate.each(Arrays.asList(1, 2, 3, 4, 5)).visit(a, new StringBuilder(5));
         assertEquals("1,2,3,4,5", results.toString());

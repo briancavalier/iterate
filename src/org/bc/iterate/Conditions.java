@@ -252,7 +252,7 @@ public class Conditions
         };
     }
 
-    public static <X, Y> Condition<X> foo(final Function<X, Y> f, final Condition<Y> yCondition)
+    public static <X, Y> Condition<X> compose(final Function<X, Y> f, final Condition<Y> yCondition)
     {
         return new FunctionCondition<X, Y>(f, yCondition);
     }

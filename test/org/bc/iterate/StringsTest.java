@@ -60,9 +60,11 @@ public class StringsTest
     @Test
     public void defaultJoinSeparator() throws IOException
     {
+        String defaultJoinSeparator = Strings.getDefaultJoinSeparator();
         Strings.setDefaultJoinSeparator(" | ");
         assertEquals("foo | bar", Strings.join(Arrays.asList("foo", "bar")));
         assertEquals("foo | bar", Strings.join(Arrays.asList("foo", "bar"), new StringBuilder(32)).toString());
+        Strings.setDefaultJoinSeparator(defaultJoinSeparator);
     }
 
     @Test

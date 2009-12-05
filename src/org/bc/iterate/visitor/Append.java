@@ -30,4 +30,9 @@ public class Append<X> implements BinaryVisitor<X, Appendable>
             System.err.println(e);
         }
     }
+
+    public AppendWithSeparator<X> with(String separator)
+    {
+        return new AppendWithSeparator(separator);
+    }
 }

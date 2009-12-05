@@ -33,6 +33,11 @@ public class Strings
     private static String defaultJoinSeparator = ",";
     private static final int DEFAULT_JOIN_BUFFER_SIZE = 256;
 
+    public static String getDefaultJoinSeparator()
+    {
+        return defaultJoinSeparator;
+    }
+
     public static void setDefaultJoinSeparator(String separator)
     {
         defaultJoinSeparator = separator;

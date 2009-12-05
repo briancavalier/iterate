@@ -104,6 +104,16 @@ public class Iterate<X> implements Iterable<X>
         return new Iterate<JoinResult<K, X, X>>(new LeftIncrementalHashJoinIterable<X, K, X>(this, keyFunction, itemsToJoin, keyFunction));
     }
 
+    public <K, Y> Iterate<JoinResult<K, X, Y>> rjoin(Function<? super X, K> xKeyFunction, Iterable<Y> itemsToJoin, Function<? super Y, K> yKeyFunction)
+    {
+        return new Iterate<JoinResult<K, X, Y>>(new RightIncrementalHashJoinIterable<X, K, Y>(this, xKeyFunction, itemsToJoin, yKeyFunction));
+    }
+
+    public <K> Iterate<JoinResult<K, X, X>> rjoin(Iterable<X> itemsToJoin, Function<? super X, K> keyFunction)
+    {
+        return new Iterate<JoinResult<K, X, X>>(new RightIncrementalHashJoinIterable<X, K, X>(this, keyFunction, itemsToJoin, keyFunction));
+    }
+
     protected Iterable<X> iterable;
 
     private int sizeEstimate;
@@ -542,7 +552,7 @@ public class Iterate<X> implements Iterable<X>
     /**
      * @return a {@link BinaryVisitor} that will call {@code append(x)} on the {@link Appendable} {@code y}
      */
-    public static <X> BinaryVisitor<X, Appendable> append()
+    public static <X> Append<X> append()
     {
         return new Append<X>();
     }
