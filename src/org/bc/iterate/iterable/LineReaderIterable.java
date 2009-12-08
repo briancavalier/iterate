@@ -52,7 +52,7 @@ public class LineReaderIterable extends LookaheadIterable<String> implements Clo
                     // oh well, we tried
                 }
             }
-            return null;
+            return end();
 		}
     }
 

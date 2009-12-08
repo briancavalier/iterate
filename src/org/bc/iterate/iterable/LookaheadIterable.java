@@ -30,9 +30,9 @@ public abstract class LookaheadIterable<X> extends IterableBase<X>
         return this;
     }
 
-    public boolean hasNext()
+    public final boolean hasNext()
     {
-        if(next == null) {
+        if (next == null) {
             next = findNext();
         }
 
@@ -40,9 +40,9 @@ public abstract class LookaheadIterable<X> extends IterableBase<X>
     }
 
     @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-    public X next()
+    public final X next()
     {
-        if(next == null) {
+        if (next == null) {
             throw new NoSuchElementException();
         }
         X current = next;
@@ -51,5 +51,22 @@ public abstract class LookaheadIterable<X> extends IterableBase<X>
         return current;
     }
 
+    /**
+     * Returns a type safe indicator that {@link #findNext()} cannot find any more items, and any subsequent
+     * calls to {@link #findNext()} will also return the value of {@code end()}.
+     *
+     * @return In practice, this method currently always returns {@code null}.
+     */
+    protected final X end()
+    {
+        return null;
+    }
+
+    /**
+     * Subclasses should implement this method to return the next available item, or {@link #end()} if no more
+     * items are available.
+     *
+     * @return next item or {@link #end()}
+     */
     protected abstract X findNext();
 }

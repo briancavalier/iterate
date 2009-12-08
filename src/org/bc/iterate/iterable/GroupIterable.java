@@ -36,7 +36,7 @@ public class GroupIterable<X> extends LookaheadIterable<Collection<X>>
     protected Collection<X> findNext()
     {
         if (!iterator.hasNext()) {
-            return null;
+            return end();
         }
 
         List<X> nextGroup = new ArrayList<X>(groupSize);
