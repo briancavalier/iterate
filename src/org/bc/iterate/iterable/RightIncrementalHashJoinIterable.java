@@ -17,7 +17,7 @@ package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
 import org.bc.iterate.Iterate;
-import org.bc.iterate.util.JoinResult;
+import org.bc.iterate.relational.JoinResult;
 
 import java.util.*;
 

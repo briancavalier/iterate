@@ -123,6 +123,7 @@ public class Conditions
     }
 
     /**
+     * @param collection items will be checked for membership in this {@link Collection} 
      * @return a {@link Condition} that returns true iff {@code collection} contains the item passed to its {@link
      *         Condition#eval(Object)} method.
      */

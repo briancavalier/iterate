@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bc.iterate.util;
+package org.bc.iterate.relational;
+
+import org.bc.iterate.util.Pair;
 
 public class JoinResult<K, X, Y> extends Pair<X, Y>
 {

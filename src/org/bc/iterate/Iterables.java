@@ -17,6 +17,8 @@ package org.bc.iterate;
 
 import org.bc.iterate.iterable.FlattenIterable;
 
+import java.util.Iterator;
+
 public class Iterables
 {
     public static <X> Function<Iterable<Iterable<X>>, Iterable<X>> flatten()
@@ -26,6 +28,24 @@ public class Iterables
             public Iterable<X> apply(Iterable<Iterable<X>> nested)
             {
                 return new FlattenIterable<X>(nested);
+            }
+        };
+    }
+
+    /**
+     * Unfortunately necessary method that wraps an {@link java.util.Iterator} as an {@link Iterable}.  Ideally, this
+     * would simply be another variant of {@code each()}, but that makes {@code each(Iterable)} and {@code each(Iterator)} ambiguous.
+     *
+     * @param items {@link java.util.Iterator} to wrap as an {@link Iterable}
+     * @return {@link Iterable} whose {@link Iterable#iterator()} method will return {@code items}
+     */
+    public static <X> Iterable<X> of(final Iterator<X> items)
+    {
+        return new Iterable<X>()
+        {
+            public Iterator<X> iterator()
+            {
+                return items;
             }
         };
     }

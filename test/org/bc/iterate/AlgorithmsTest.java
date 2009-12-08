@@ -16,6 +16,7 @@
 
 package org.bc.iterate;
 
+import org.bc.iterate.relational.JoinResult;
 import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -148,5 +149,20 @@ public class AlgorithmsTest
                     }
                 });
         assertEquals(Arrays.asList("a1", "b1", "c1"), results);
+    }
+
+    @Test
+    public void zip1()
+    {
+        // Should result in a JoinResult that looks like: [(0,1,7), (1,2,8), (2,3,9)]
+        final List<JoinResult<Integer,Integer,Integer>> results = Algorithms.zip(Arrays.asList(1, 2, 3), Arrays.asList(7, 8, 9));
+        final Iterator<JoinResult<Integer, Integer, Integer>> r = results.iterator();
+        for(int i=0; i<3; i++) {
+            final JoinResult<Integer, Integer, Integer> result = r.next();
+            assertEquals(Integer.valueOf(i), result.getKey());
+            assertEquals(Integer.valueOf(i+1), result.getX());
+            assertEquals(Integer.valueOf(i+7), result.getY());
+        }
+
     }
 }

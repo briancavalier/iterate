@@ -39,6 +39,11 @@ public class Functions
         return new Identity<X>();
     }
 
+    public static Function<Object, Integer> index()
+    {
+        return new Index();
+    }
+
     public static <X, Y, Z> Function<X, Z> compose(Function<X, Y> f, Function<Y, Z> g)
     {
         return new CompositeFunction<X, Y, Z>(f, g);

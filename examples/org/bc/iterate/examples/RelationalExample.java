@@ -18,6 +18,7 @@ package org.bc.iterate.examples;
 import org.bc.iterate.Function;
 import org.bc.iterate.Functions;
 import org.bc.iterate.Iterate;
+import org.bc.iterate.relational.Join;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,16 +29,6 @@ public class RelationalExample
     {
         List<Integer> a = Arrays.asList(4, 5, 6);
         List<Integer> b = Arrays.asList(7, 8, 9);
-        Iterate.each(a).join(new Index(), b, new Index()).println(System.out);
-    }
-
-    public static class Index implements Function<Object, Integer>
-    {
-        private int index = 0;
-        
-        public Integer apply(Object o)
-        {
-            return index++;
-        }
+        Iterate.each(a).join(Join.left(Functions.index(), Functions.index()), b).println(System.out);
     }
 }
