@@ -22,15 +22,13 @@ import org.bc.iterate.relational.JoinResult;
 import java.util.*;
 
 /**
- * Performs a simple left outer join, using a <a href="http://en.wikipedia.org/wiki/Hash_join">hash join</a>, yielding
+ * Performs a simple inner join, using a <a href="http://en.wikipedia.org/wiki/Hash_join">hash join</a>, yielding
  * the joined {@link org.bc.iterate.util.Pair}s as its iterator's items.  The join is done incrementally rather than as
  * a batch operation.
  *
- * @param <X>
- * @param <K>
- * @param <Y>
+ * @author Brian Cavalier
  */
-public class InnerIncrementalHashJoinIterable<X, K, Y> extends LookaheadIterable<JoinResult<K, X, Y>>
+public class InnerIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIterable<K, X, Y>
 {
     private final Iterator<X> leftIterator;
     private final Function<? super X, K> xKeyFunction;
@@ -51,16 +49,10 @@ public class InnerIncrementalHashJoinIterable<X, K, Y> extends LookaheadIterable
     }
 
     @Override
-    public Iterator<JoinResult<K, X, Y>> iterator()
+    protected void prepareJoin()
     {
-        prepareJoin(rightIterable, yKeyFunction);
-        return super.iterator();
-    }
-
-    private void prepareJoin(Iterable<Y> right, Function<? super Y, K> yKeyFunction)
-    {
-        joinMap = new HashMap<K, List<Y>>(Iterate.estimateSize(right));
-        for (final Y y : right) {
+        joinMap = new HashMap<K, List<Y>>(Iterate.estimateSize(rightIterable));
+        for (final Y y : rightIterable) {
             //noinspection SuspiciousNameCombination
             K k = yKeyFunction.apply(y);
             List<Y> ys = joinMap.get(k);

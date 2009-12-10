@@ -29,7 +29,7 @@ public class InnerIncrementalHashJoinIterableTest
     public void testNext() throws Exception {
         List<Integer> items = Arrays.asList(1, 2, 3, 4);
         List<String> toJoin = Arrays.asList("one", "two", "four");
-        InnerIncrementalHashJoinIterable<Integer, String, String> j = new InnerIncrementalHashJoinIterable<Integer, String, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
+        InnerIncrementalHashJoinIterable<String, Integer, String> j = new InnerIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
         {
             public String apply(String s)
             {
@@ -53,7 +53,7 @@ public class InnerIncrementalHashJoinIterableTest
     public void testNextDuplicateKeys() throws Exception {
         List<Integer> items = Arrays.asList(1, 2, 3, 4);
         List<String> toJoin = Arrays.asList("one", "two", "four", "four2");
-        InnerIncrementalHashJoinIterable<Integer, String, String> j = new InnerIncrementalHashJoinIterable<Integer, String, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
+        InnerIncrementalHashJoinIterable<String, Integer, String> j = new InnerIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
         {
             public String apply(String s)
             {

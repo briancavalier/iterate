@@ -26,11 +26,9 @@ import java.util.*;
  * the joined {@link org.bc.iterate.util.Pair}s as its iterator's items.  The join is done incrementally rather than as
  * a batch operation.
  *
- * @param <X>
- * @param <K>
- * @param <Y>
+ * @author Brian Cavalier
  */
-public class LeftIncrementalHashJoinIterable<X, K, Y> extends IterableBase<JoinResult<K, X, Y>>
+public class LeftIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIterable<K, X, Y>
 {
     private final Iterator<X> leftIterator;
     private final Function<? super X, K> xKeyFunction;
@@ -51,16 +49,10 @@ public class LeftIncrementalHashJoinIterable<X, K, Y> extends IterableBase<JoinR
     }
 
     @Override
-    public Iterator<JoinResult<K, X, Y>> iterator()
+    protected void prepareJoin()
     {
-        prepareJoin(rightIterable, yKeyFunction);
-        return super.iterator();
-    }
-
-    private void prepareJoin(Iterable<Y> right, Function<? super Y, K> yKeyFunction)
-    {
-        joinMap = new HashMap<K, List<Y>>(Iterate.estimateSize(right));
-        for (final Y y : right) {
+        joinMap = new HashMap<K, List<Y>>(Iterate.estimateSize(rightIterable));
+        for (final Y y : rightIterable) {
             //noinspection SuspiciousNameCombination
             K k = yKeyFunction.apply(y);
             List<Y> ys = joinMap.get(k);
@@ -72,14 +64,10 @@ public class LeftIncrementalHashJoinIterable<X, K, Y> extends IterableBase<JoinR
         }
     }
 
-    public boolean hasNext()
+    @Override
+    protected JoinResult<K, X, Y> findNext()
     {
-        return leftIterator.hasNext() || (currentJoinIterator != null && currentJoinIterator.hasNext());
-    }
-
-    public JoinResult<K, X, Y> next()
-    {
-        if (currentJoinIterator == null || !currentJoinIterator.hasNext()) {
+        if (currentJoinIterator == null || (!currentJoinIterator.hasNext() && leftIterator.hasNext())) {
             final X x = leftIterator.next();
             final K key = xKeyFunction.apply(x);
             List<Y> currentYList = joinMap.get(key);
@@ -91,11 +79,10 @@ public class LeftIncrementalHashJoinIterable<X, K, Y> extends IterableBase<JoinR
                 }
                 currentJoinIterator = currentJoinList.iterator();
             } else {
-                currentJoinIterator = null;
                 return new JoinResult<K, X, Y>(key, x, null);
             }
         }
 
-        return currentJoinIterator.next();
+        return currentJoinIterator != null && currentJoinIterator.hasNext() ? currentJoinIterator.next() : end();
     }
 }

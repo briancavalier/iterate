@@ -29,7 +29,7 @@ public class RightIncrementalHashJoinIterableTest
     public void testNext() throws Exception {
         List<Integer> items = Arrays.asList(1, 2);
         List<String> toJoin = Arrays.asList("one", "two", "four");
-        RightIncrementalHashJoinIterable<Integer, String, String> j = new RightIncrementalHashJoinIterable<Integer, String, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
+        RightIncrementalHashJoinIterable<String, Integer, String> j = new RightIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
         {
             public String apply(String s)
             {
@@ -54,7 +54,7 @@ public class RightIncrementalHashJoinIterableTest
     public void testNextDuplicateKeys() throws Exception {
         List<Integer> items = Arrays.asList(1, 2, 3);
         List<String> toJoin = Arrays.asList("one", "two", "four");
-        RightIncrementalHashJoinIterable<Integer, String, String> j = new RightIncrementalHashJoinIterable<Integer, String, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
+        RightIncrementalHashJoinIterable<String, Integer, String> j = new RightIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
         {
             public String apply(String s)
             {

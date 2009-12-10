@@ -30,11 +30,9 @@ import java.util.Map;
 public class Functions
 {
     /**
-     * @param clazz type for which to return the {@link org.bc.iterate.function.Identity} {@link Function}
-     *
      * @return the {@link org.bc.iterate.function.Identity} {@link org.bc.iterate.Function} for the type {@code clazz}
      */
-    public static <X> Function<X, X> identity(Class<? extends X> clazz)
+    public static <X> Function<X, X> identity()
     {
         return new Identity<X>();
     }

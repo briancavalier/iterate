@@ -48,8 +48,8 @@ public class ByteBufferIterable extends LookaheadIterable<ByteBuffer> implements
         try {
             final int bytesRead = channel.read(buffer);
             return (bytesRead == -1) ? end() : buffer.asReadOnlyBuffer();
-        } catch(IOException ignored) {
-            if(close) {
+        } catch (IOException ignored) {
+            if (close) {
                 //noinspection UnusedCatchParameter
                 try {
                     close();
@@ -58,7 +58,7 @@ public class ByteBufferIterable extends LookaheadIterable<ByteBuffer> implements
                 }
             }
             return null;
-		}
+        }
     }
 
     public ByteBufferIterable setClose(boolean close)

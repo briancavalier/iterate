@@ -19,13 +19,13 @@ package org.bc.iterate.iterable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public abstract class LookaheadIterable<X> extends IterableBase<X>
+public abstract class LookaheadIterable<T> extends IterableBase<T>
 {
-    protected X next;
+    protected T next;
 
     @Override
     @SuppressWarnings({"RefusedBequest"})
-    public Iterator<X> iterator()
+    public Iterator<T> iterator()
     {
         return this;
     }
@@ -39,13 +39,13 @@ public abstract class LookaheadIterable<X> extends IterableBase<X>
         return (next != null);
     }
 
-    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-    public final X next()
+    public final T next()
     {
         if (next == null) {
             throw new NoSuchElementException();
         }
-        X current = next;
+
+        T current = next;
         next = findNext();
 
         return current;
@@ -57,7 +57,7 @@ public abstract class LookaheadIterable<X> extends IterableBase<X>
      *
      * @return In practice, this method currently always returns {@code null}.
      */
-    protected final X end()
+    protected final T end()
     {
         return null;
     }
@@ -68,5 +68,5 @@ public abstract class LookaheadIterable<X> extends IterableBase<X>
      *
      * @return next item or {@link #end()}
      */
-    protected abstract X findNext();
+    protected abstract T findNext();
 }
