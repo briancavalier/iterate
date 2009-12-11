@@ -76,7 +76,7 @@ public class Iterables
      *
      * @param nested 2D {@link Iterable} of {@link Iterable}
      *
-     * @return an {@link Iterable} over items in each of the supplied {@link Iterables}, which return items from the
+     * @return an {@link Iterable} over items in each of the supplied {@link Iterable}s, which return items from the
      * first {@link Iterable} until exhausted followed by items from the second {@link Iterable} until exhausted, and
      * so on.
      */
@@ -92,7 +92,7 @@ public class Iterables
      *
      * @param nested array of {@link Iterable}
      * 
-     * @return an {@link Iterable} over items in each of the supplied {@link Iterables}, which return items from the
+     * @return an {@link Iterable} over items in each of the supplied {@link Iterable}s, which return items from the
      * first {@link Iterable} until exhausted followed by items from the second {@link Iterable} until exhausted, and
      * so on.
      */
