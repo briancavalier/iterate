@@ -221,9 +221,18 @@ public class Algorithms
     public static <X, Y extends Collection<? super X>> Y generate(int n, Y results,
                                                                   Function<Integer, X> generator)
     {
-        return Iterate.each(Integers.upto(n)).map(generator).visit(Iterate.collect(), results);
+        return Iterate.each(Iterables.generate(n, generator)).visit(Iterate.collect(), results);
     }
 
+    /**
+     * Invokes {@code generator} {@code n} times, adding each result to {@code results}.
+     *
+     * @param n         number of times to invoke {@code generator}, and thus the number of items that will be added to
+     *                  {@code results}.
+     * @param generator {@link Function} to be invoked for each iteration
+     *
+     * @return a new {@link List} containing {@code n} generated items.
+     */
     public static <X> List<X> generate(int n, Function<Integer, X> generator)
     {
         return generate(n, new ArrayList<X>(n), generator);

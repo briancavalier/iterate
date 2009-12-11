@@ -16,39 +16,40 @@
 package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
+import org.bc.iterate.Integers;
 import org.bc.iterate.function.ToString;
+import org.bc.iterate.relational.JoinResult;
 import org.bc.iterate.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class RightIncrementalHashJoinIterableTest
 {
     @Test
-    public void testNext() throws Exception {
-        List<Integer> items = Arrays.asList(1, 2);
-        List<String> toJoin = Arrays.asList("one", "two", "four");
-        RightIncrementalHashJoinIterable<String, Integer, String> j = new RightIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
-        {
-            public String apply(String s)
-            {
-                return "one".equals(s) ? "1" : "two".equals(s) ? "2" : "4";
-            }
-        });
-        Map<String, Integer> results = new HashMap<String, Integer>(4);
-        for (Pair<Integer, String> joined : j) {
-            results.put(joined.getY(), joined.getX());
+    public void next()
+    {
+        RightIncrementalHashJoinIterable<Integer, Integer, Integer> j =
+                new RightIncrementalHashJoinIterable<Integer, Integer, Integer>(
+                        Arrays.asList(1, 2, 4, 5), Integers.identity(),
+                        Arrays.asList(1, 2, 3, 4), Integers.identity());
+        Map<Integer, Integer> results = new HashMap<Integer, Integer>(5);
+        for (JoinResult<Integer, Integer, Integer> result : j) {
+            results.put(result.getY(), result.getX());
         }
 
-        Assert.assertEquals(3, results.size());
-        Assert.assertEquals(new Integer(1), results.get("one"));
-        Assert.assertEquals(new Integer(2), results.get("two"));
-        // Left join should still contain items that did not appear in toJoin
-        Assert.assertTrue(results.containsKey("four"));
-        // But those items should have a null value for the right hand side
-        Assert.assertNull(results.get("four"));
+        assertEquals(Integer.valueOf(1), results.get(1));
+        assertEquals(Integer.valueOf(2), results.get(2));
+        assertEquals(Integer.valueOf(4), results.get(4));
+        assertTrue(results.containsKey(3));
+        assertNull(results.get(3));
     }
+
 
     @Test
     public void testNextDuplicateKeys() throws Exception {

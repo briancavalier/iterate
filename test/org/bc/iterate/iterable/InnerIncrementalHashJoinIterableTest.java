@@ -16,37 +16,36 @@
 package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
+import org.bc.iterate.Integers;
 import org.bc.iterate.function.ToString;
+import org.bc.iterate.relational.JoinResult;
 import org.bc.iterate.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 
+import static org.junit.Assert.*;
+
 public class InnerIncrementalHashJoinIterableTest
 {
     @Test
-    public void testNext() throws Exception {
-        List<Integer> items = Arrays.asList(1, 2, 3, 4);
-        List<String> toJoin = Arrays.asList("one", "two", "four");
-        InnerIncrementalHashJoinIterable<String, Integer, String> j = new InnerIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
-        {
-            public String apply(String s)
-            {
-                return "one".equals(s) ? "1" : "two".equals(s) ? "2" : "4";
-            }
-        });
-        Map<Integer, String> results = new HashMap<Integer, String>(4);
-        for (Pair<Integer, String> joined : j) {
-            results.put(joined.getX(), joined.getY());
+    public void next()
+    {
+        InnerIncrementalHashJoinIterable<Integer, Integer, Integer> j =
+                new InnerIncrementalHashJoinIterable<Integer, Integer, Integer>(
+                        Arrays.asList(1, 2, 4, 5), Integers.identity(),
+                        Arrays.asList(1, 2, 3, 4), Integers.identity());
+        Map<Integer, Integer> results = new HashMap<Integer, Integer>(5);
+        for (JoinResult<Integer, Integer, Integer> result : j) {
+            results.put(result.getX(), result.getY());
         }
 
-        Assert.assertEquals(3, results.size());
-        Assert.assertEquals("one", results.get(1));
-        Assert.assertEquals("two", results.get(2));
-        Assert.assertEquals("four", results.get(4));
-        // Inner join should not contain items that did not appear in toJoin
-        Assert.assertFalse(results.containsKey(3));
+        assertEquals(Integer.valueOf(1), results.get(1));
+        assertEquals(Integer.valueOf(2), results.get(2));
+        assertEquals(Integer.valueOf(4), results.get(4));
+        assertFalse(results.containsKey(3));
+        assertFalse(results.containsKey(5));
     }
 
     @Test

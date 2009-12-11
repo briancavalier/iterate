@@ -249,19 +249,6 @@ public class IterateTest
         assertEquals("1,2,3,4,51,2,3,4,5", results.toString());
     }
 
-    @Test
-    public void flatten()
-    {
-        final List<String> src = Arrays.asList("a", "b", "c", "i", "j", "k", "c", "b", "a");
-        final List<Collection<String>> nested = new ArrayList<Collection<String>>(3);
-        nested.add(src.subList(0, 3));
-        nested.add(src.subList(3, 6));
-        nested.add(src.subList(6, 9));
-
-        assertEquals(src, Iterate.each(Iterate.flatten(nested)).visit(Iterate.collect(), new ArrayList<String>(10)));
-    }
-
-
     private static class Counter<X> implements Visitor<X>
     {
         private int count = 0;

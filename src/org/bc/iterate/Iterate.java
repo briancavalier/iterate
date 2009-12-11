@@ -243,7 +243,7 @@ public class Iterate<X> implements Iterable<X>
      */
     public Iterate<X> prepend(Iterable<X> itemsToPrepend)
     {
-        return new Iterate<X>(new FlattenIterable<X>(Arrays.asList(itemsToPrepend, this)));
+        return new Iterate<X>(new ConcatIterable<X>(Arrays.asList(itemsToPrepend, this)));
     }
 
     /**
@@ -252,7 +252,7 @@ public class Iterate<X> implements Iterable<X>
      */
     public Iterate<X> append(Iterable<X> itemsToAppend)
     {
-        return new Iterate<X>(new FlattenIterable<X>(Arrays.asList(this, itemsToAppend)));
+        return new Iterate<X>(new ConcatIterable<X>(Arrays.asList(this, itemsToAppend)));
     }
 
     /**
@@ -328,30 +328,6 @@ public class Iterate<X> implements Iterable<X>
     public static <X> Iterable<Collection<X>> group(final Iterable<X> items, int groupSize)
     {
         return new GroupIterable<X>(items, groupSize);
-    }
-
-    /**
-     * Returns a flattened view of the nested {@link Iterable}s, such that calling next() after the last item of the
-     * first nested {@link Iterable} yields the first item of the second {@link Iterable}, calling next() again yields
-     * the second item of the second {@link Iterable}, and so on.
-     *
-     * @param nested 2D {@link Iterable} of {@link Iterable}
-     */
-    public static <X, Y extends Iterable<X>> Iterable<X> flatten(final Iterable<Y> nested)
-    {
-        return new FlattenIterable<X>(nested);
-    }
-
-    /**
-     * Returns a flattened view of the nested {@link Iterable}s, such that calling next() after the last item of the
-     * first nested {@link Iterable} yields the first item of the second {@link Iterable}, calling next() again yields
-     * the second item of the second {@link Iterable}, and so on.
-     *
-     * @param nested array of {@link Iterable}
-     */
-    public static <X> Iterable<X> flatten(Iterable<X>... nested)
-    {
-        return new FlattenIterable<X>(Arrays.asList(nested));
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
