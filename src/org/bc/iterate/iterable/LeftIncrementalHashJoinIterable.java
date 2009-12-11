@@ -52,15 +52,8 @@ public class LeftIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIte
     protected void prepareJoin()
     {
         joinMap = new HashMap<K, List<Y>>(Iterate.estimateSize(rightIterable));
-        for (final Y y : rightIterable) {
-            //noinspection SuspiciousNameCombination
-            K k = yKeyFunction.apply(y);
-            List<Y> ys = joinMap.get(k);
-            if (ys == null) {
-                ys = new ArrayList<Y>(16);
-                joinMap.put(k, ys);
-            }
-            ys.add(y);
+        for (final Y item : rightIterable) {
+            put(joinMap, yKeyFunction.apply(item), item);
         }
     }
 
