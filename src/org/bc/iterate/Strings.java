@@ -45,7 +45,6 @@ public class Strings
 
     /**
      * @param items items to join together into one {@code String}
-     *
      * @return a {@code String} from all items by invoking {@code toString} on each, and joining them together,
      *         separated by {@link Strings#defaultJoinSeparator}
      */
@@ -57,7 +56,6 @@ public class Strings
     /**
      * @param items     items to join together into one {@code String}
      * @param separator non-null String to place between each item in {@code items}
-     *
      * @return a {@code String} from all items by invoking {@code toString} on each, and joining them together,
      *         separated by {@code separator}
      */
@@ -116,6 +114,11 @@ public class Strings
         return result;
     }
 
+    /**
+     * @param contained {@link String} to find
+     * @return a {@link Condition} that returns {@code true} iff the {@link String} being evaluated
+     *         contains {@code contained}.
+     */
     public static Condition<String> contains(final String contained)
     {
         return new Condition<String>()
@@ -127,6 +130,11 @@ public class Strings
         };
     }
 
+    /**
+     * @param contained {@code char} to find
+     * @return a {@link Condition} that returns {@code true} iff the {@link String} being evaluated
+     *         contains the supplied {@code char}.
+     */
     public static Condition<String> contains(final char contained)
     {
         return new Condition<String>()
@@ -139,6 +147,8 @@ public class Strings
     }
 
     /**
+     * @param pattern     {@link Pattern} to search for
+     * @param replacement {@link String} to replace each occurrence of {@code pattern} with
      * @return a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code
      *         Pattern} with {@code replacement} on {@code x}
      */
@@ -148,6 +158,8 @@ public class Strings
     }
 
     /**
+     * @param pattern     {@link Pattern} to search for
+     * @param replacement {@link String} to replace each occurrence of {@code pattern} with
      * @return a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code
      *         Pattern} with {@code replacement} on {@code x}
      */
@@ -159,7 +171,6 @@ public class Strings
     /**
      * @param target      {@code char} to be replaced
      * @param replacement {@code char} with which to replace {@code target}
-     *
      * @return a {@link Function} that will replace all occurrences of {@code target} with {@code replacement} on {@code
      *         x}.
      */
@@ -246,7 +257,6 @@ public class Strings
 
     /**
      * @param beforeAndAfter {@code String} to prepend and append
-     *
      * @return a {@link org.bc.iterate.Function} that will return {@code beforeAndAfter + x + beforeAndAfter}
      */
     public static Function<String, String> surround(final String beforeAndAfter)
@@ -257,7 +267,6 @@ public class Strings
     /**
      * @param before {@code String} to prepend
      * @param after  {@code String} to append
-     *
      * @return a {@link org.bc.iterate.Function} that will return {@code before + x + after}
      */
     public static Function<String, String> surround(final String before, final String after)
@@ -342,10 +351,10 @@ public class Strings
      * {@code targetChars.charAt(0)} with {@code replacementChars.charAt(0)}, {@code targetChars.charAt(1)} with {@code
      * replacementChars.charAt(1)}, and so on.
      *
-     * @param s           {@code String} on which to performance character replacement
-     * @param targetChars {@link String} containing characters to replace
-     *
-     * @return replacementChars {@link String} containing corresponding characters with which to replace
+     * @param s                {@link String} on which to performance character replacement
+     * @param targetChars      {@link String} containing characters to replace
+     * @param replacementChars {@link String} charaters to use as replacements for {@code targetChars}
+     * @return {@link String} containing corresponding characters with which to replace
      */
     public static String tr(String s, String targetChars, String replacementChars)
     {
@@ -499,8 +508,8 @@ public class Strings
 
     static {
         LOWERCASE_TITLE_WORDS = new HashSet<String>(Arrays.asList("a", "an", "and", "as", "at", "be", "but", "by", "en",
-                                                                  "for", "if", "in", "is", "nor", "of", "on", "or", "to",
-                                                                  "via", "v.", "vs."));
+                "for", "if", "in", "is", "nor", "of", "on", "or", "to",
+                "via", "v.", "vs."));
     }
 
     public static StringBuilder builder(int size)

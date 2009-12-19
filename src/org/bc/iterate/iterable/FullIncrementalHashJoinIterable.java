@@ -22,7 +22,7 @@ import org.bc.iterate.relational.JoinResult;
 import java.util.*;
 
 /**
- * Performs a simple full outer join, using a <a href="http://en.wikipedia.org/wiki/Hash_join">hash join</a>, yielding
+ * Performs a full outer join, using a <a href="http://en.wikipedia.org/wiki/Hash_join">hash join</a>, yielding
  * the joined {@link org.bc.iterate.util.Pair}s as its iterator's items.  The join is done incrementally rather than as
  * a batch operation.
  *
