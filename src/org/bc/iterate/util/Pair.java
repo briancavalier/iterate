@@ -38,7 +38,7 @@ public class Pair<X, Y>
         return y;
     }
 
-    public static class X<X, Y> implements Function<Pair<X, Y>, X>
+    public static class GetX<X, Y> implements Function<Pair<X, Y>, X>
     {
         public X apply(Pair<X, Y> pair)
         {
@@ -46,7 +46,11 @@ public class Pair<X, Y>
         }
     }
 
-    public static class Y<X, Y> implements Function<Pair<X, Y>, Y>
+    public static <X, Y> Function<Pair<X, Y>, X> x() {
+        return new GetX<X, Y>();
+    }
+
+    public static class GetY<X, Y> implements Function<Pair<X, Y>, Y>
     {
 
         public Y apply(Pair<X, Y> pair)
@@ -55,13 +59,14 @@ public class Pair<X, Y>
         }
     }
 
+    public static <X, Y> Function<Pair<X, Y>, Y> y() {
+        return new GetY<X, Y>();
+    }
+
     @Override
     public String toString()
     {
-        return "Pair{" +
-               "x=" + x +
-               ", y=" + y +
-               '}';
+        return x.toString() + ',' + y;
     }
 
     @Override

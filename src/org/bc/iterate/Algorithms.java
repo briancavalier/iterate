@@ -19,6 +19,7 @@ package org.bc.iterate;
 import org.bc.iterate.function.Index;
 import org.bc.iterate.relational.Join;
 import org.bc.iterate.relational.JoinResult;
+import org.bc.iterate.util.Pair;
 import org.bc.iterate.visitor.Count;
 
 import java.util.*;
@@ -236,6 +237,69 @@ public class Algorithms
     public static <X> List<X> generate(int n, Provider<X> provider)
     {
         return generate(n, new ArrayList<X>(n), provider);
+    }
+
+    /**
+     * Sorts {@code itemsToSort} based on the order of items in {@code exampleOrder}.  Any items in {@code itemsToSort} that
+     * do not appear in {@code exampleOrder} <em>will not</em> be included in the returned results.
+     *
+     * @param exampleOrder example ordering by which {@code itemsToSort} will be sorted
+     * @param itemsToSort  items to be sorted.  Note that unlike {@link Collections#sort(java.util.List)}, this method does not
+     *                     modify {@code itemsToSort}.
+     * @return a {@link List} sorted in the order provided in {@code exampleOrder}
+     */
+    public static <X> List<X> sortByExample(final Iterable<X> exampleOrder, final Iterable<X> itemsToSort)
+    {
+        return sortByExample(exampleOrder, itemsToSort, Functions.<X>identity());
+    }
+
+    /**
+     * Sorts {@code itemsToSort} based on the order of items in {@code exampleOrder}.  Any items in {@code itemsToSort} that
+     * do not appear in {@code exampleOrder} <em>will not</em> be included in the returned results.
+     *
+     * @param exampleOrder example ordering by which {@code itemsToSort} will be sorted
+     * @param keyFunction  {@link Function} to provide a key by which items in {@code exampleOrder} and {@code itemsToSort} can be matched
+     * @param itemsToSort  items to be sorted.  Note that unlike {@link Collections#sort(java.util.List)}, this method does not
+     *                     modify {@code itemsToSort}.
+     * @return a {@link List} sorted in the order provided in {@code exampleOrder}
+     */
+    public static <K, X> List<X> sortByExample(final Iterable<X> exampleOrder, final Function<? super X, K> keyFunction, final Iterable<X> itemsToSort)
+    {
+        return sortByExample(exampleOrder, keyFunction, itemsToSort, keyFunction);
+    }
+
+    /**
+     * Sorts {@code itemsToSort} based on the order of items in {@code exampleOrder}.  Any items in {@code itemsToSort} that
+     * do not appear in {@code exampleOrder} <em>will not</em> be included in the returned results.
+     *
+     * @param exampleOrder example ordering by which {@code itemsToSort} will be sorted
+     * @param itemsToSort  items to be sorted.  Note that unlike {@link Collections#sort(java.util.List)}, this method does not
+     *                     modify {@code itemsToSort}.
+     * @param yKeyFunction  {@link Function} to provide a key by which items in {@code exampleOrder} and {@code itemsToSort} can be matched
+     * @return a {@link List} sorted in the order provided in {@code exampleOrder}
+     */
+    public static <X, Y> List<Y> sortByExample(final Iterable<X> exampleOrder, final Iterable<Y> itemsToSort, final Function<? super Y, X> yKeyFunction)
+    {
+        return sortByExample(exampleOrder, Functions.<X>identity(), itemsToSort, yKeyFunction);
+    }
+
+    /**
+     * Sorts {@code itemsToSort} based on the order of items in {@code exampleOrder}.  Any items in {@code itemsToSort} that
+     * do not appear in {@code exampleOrder} <em>will not</em> be included in the returned results.
+     *
+     * @param exampleOrder example ordering by which {@code itemsToSort} will be sorted
+     * @param xKeyFunction  {@link Function} to provide a key by which items in {@code exampleOrder} and {@code itemsToSort} can be matched
+     * @param itemsToSort  items to be sorted.  Note that unlike {@link Collections#sort(java.util.List)}, this method does not
+     *                     modify {@code itemsToSort}.
+     * @param yKeyFunction  {@link Function} to provide a key by which items in {@code itemsToSort} and {@code itemsToSort} can be matched
+     * @return a {@link List} sorted in the order provided in {@code exampleOrder}
+     */
+    public static <K, X, Y> List<Y> sortByExample(final Iterable<X> exampleOrder, final Function<? super X, K> xKeyFunction, final Iterable<Y> itemsToSort, final Function<? super Y, K> yKeyFunction)
+    {
+        // Use an inner join to correlate exampleOrder and itemsToSort to only items with appear in itemsToSort, but
+        // preserving the order provided in exampleOrder.
+        return Iterate.each(exampleOrder).join(Join.inner(xKeyFunction, yKeyFunction), itemsToSort)
+                .map(Pair.<X, Y>y()).add(new ArrayList<Y>(Iterate.estimateSize(itemsToSort)));
     }
 
     private Algorithms()

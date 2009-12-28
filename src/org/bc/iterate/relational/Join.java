@@ -74,6 +74,6 @@ public class Join
 
     public static <K, X> JoinStrategy<K, X, X> inner(final Function<? super X, K> keyFunction)
     {
-        return right(keyFunction, keyFunction);
+        return inner(keyFunction, keyFunction);
     }
 }
