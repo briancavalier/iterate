@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.bc.iterate.examples;
 
+import org.bc.iterate.Iterables;
+
 import static org.bc.iterate.Conditions.regex;
 import static org.bc.iterate.Iterate.*;
 
@@ -30,9 +32,10 @@ public class LinkExtractor
             System.exit(1);
         }
 
-        each(line(args[0]))
+        each(lines(args[0]))
                 .where(regex("\\<(a|link|img|script).+?(src|href)\\=.+?\\>"))
                 .map(find("(?:src|href)\\=[\\\"\\']([^#].*?)[\\\"\\']", 1))
-                .visit(println(), System.out);
+                .transform(Iterables.<String>sort())
+                .println(System.out);
     }
 }

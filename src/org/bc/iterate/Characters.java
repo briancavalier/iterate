@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bc.iterate.function;
 
-import org.bc.iterate.Function;
+package org.bc.iterate;
 
-public class CompositeFunction<X, Y, Z> implements Function<X, Z>
+import org.bc.iterate.function.Identity;
+import org.bc.iterate.iterable.IterableBase;
+
+import java.util.Random;
+
+/**
+ * This class provides {@link org.bc.iterate.Function}s and {@link org.bc.iterate.Visitor}s for {@code char}s and {@link Character}s.
+ *
+ * @author Brian Cavalier
+ */
+public class Characters
 {
-    final private Function<X,Y> f;
-    final private Function<Y,Z> g;
-
-    public CompositeFunction(final Function<X, Y> f, final Function<Y, Z> g)
+    public static Function<Character, Character> identity()
     {
-        this.f = f;
-        this.g = g;
-    }
-
-    public Z apply(X x)
-    {
-        return g.apply(f.apply(x));
+        return new Identity<Character>();
     }
 }

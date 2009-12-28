@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package org.bc.iterate.relational;
-
-import org.bc.iterate.relational.JoinResult;
+package org.bc.iterate;
 
 /**
+ * A Provider is an interface for an object that <em>provides</em> instances of a particular class via the
+ * {@link #get()} method.
+ *
  * @author bcavalier
  */
-public interface JoinStrategy<K, X, Y>
+public interface Provider<T>
 {
-    Iterable<JoinResult<K, X, Y>> join(Iterable<X> left, Iterable<Y> right);
+    /**
+     * @return an instance of {@code T}, or {@code null} if no instance can be provided.
+     */
+    T get();
 }

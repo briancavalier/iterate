@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 public class IntegerRange extends IterableBase<Integer>
 {
     protected int start;
-    protected int end;
+    protected final int end;
 
     public IntegerRange()
     {
@@ -39,10 +39,9 @@ public class IntegerRange extends IterableBase<Integer>
         this(start, Integer.MAX_VALUE);
     }
 
-    public IntegerRange to(int end)
+    public StepIntegerRange by(int step)
     {
-        this.end = end;
-        return this;
+        return new StepIntegerRange(start, end, step);
     }
 
     public boolean hasNext()

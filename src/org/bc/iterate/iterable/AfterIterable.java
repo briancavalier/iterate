@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ public class AfterIterable<X> extends FilterIterable<X>
 
     @SuppressWarnings({"RefusedBequest"})
     @Override
-    protected X findNext(final Iterator<X> iterator, final Condition<? super X> filter)
+    protected X findNext()
     {
         if (!found && iterator.hasNext()) {
             found = filter.eval(iterator.next());
         }
 
-        X next = null;
+        X next = end();
         while (iterator.hasNext()) {
             next = iterator.next();
             if (filter.eval(next)) {
-                next = null;
+                next = end();
                 found = true;
             }
         }

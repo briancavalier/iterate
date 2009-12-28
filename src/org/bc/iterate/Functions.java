@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,16 +142,32 @@ public class Functions
         };
     }
 
-    public static <X> Function<X, X> conditional(final Condition<X> condition,
-                                                 final Function<X, X> f1,
-                                                 final Function<X, X> f2)
+    public static <X, Y> Function<X, Y> conditional(final Condition<X> condition,
+                                                    final Function<X, Y> f1,
+                                                    final Function<X, Y> f2)
     {
-        return new Function<X, X>()
+        return new Function<X, Y>()
         {
-            public X apply(X x)
+            public Y apply(X x)
             {
                 return condition.eval(x) ? f1.apply(x) : f2.apply(x);
             }
         };
+    }
+
+    public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector, final List<Function<X, Y>> functions)
+    {
+        return new Function<X, Y>()
+        {
+            public Y apply(X x)
+            {
+                return functions.get(selector.apply(x) % functions.size()).apply(x);
+            }
+        };
+    }
+
+    public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector, final Function<X, Y>... functions)
+    {
+        return conditional(selector, Arrays.asList(functions));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.Identity;
-import org.bc.iterate.iterable.IterableBase;
 import org.bc.iterate.iterable.IntegerRange;
-import org.bc.iterate.iterable.StepIntegerRange;
+import org.bc.iterate.iterable.IterableBase;
 
 import java.util.Random;
 
@@ -38,7 +37,6 @@ public class Integers
     }
 
     /**
-     *
      * @return a {@link Function} that will parse a {@link String} into an {@link Integer}
      */
     public static Function<String, Integer> parse()
@@ -81,8 +79,7 @@ public class Integers
     }
 
     /**
-     *
-     * @return a {@link BinaryFunction} that returns the result of {@code Math.pow(x, y)} as a {@link Double} value.  
+     * @return a {@link BinaryFunction} that returns the result of {@code Math.pow(x,y)} as a {@link Double} value.
      */
     public static BinaryFunction<Integer, Double, Double> pow()
     {
@@ -123,11 +120,21 @@ public class Integers
         };
     }
 
+    /**
+     * @param maxValueExclusive random integers strictly less than this value will be returned by the {@link Iterable}
+     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@code maxValueExclusive}
+     */
     public static Iterable<Integer> random(final int maxValueExclusive)
     {
         return random(new Random(), maxValueExclusive);
     }
 
+    /**
+     * @param random {@link Random} to use to generate random integers.
+     * @param maxValueExclusive random integers strictly less than this value will be returned by the {@link Iterable}
+     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@code maxValueExclusive} using
+     * the supplied {@link Random}
+     */
     public static Iterable<Integer> random(final Random random, final int maxValueExclusive)
     {
         return new IterableBase<Integer>()
@@ -145,11 +152,19 @@ public class Integers
         };
     }
 
+    /**
+     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@link Integer#MAX_VALUE}
+     */
     public static Iterable<Integer> random()
     {
         return random(new Random());
     }
 
+    /**
+     * @param random {@link Random} to use to generate random integers.
+     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@link Integer#MAX_VALUE} using
+     *         the supplied {@link Random}.
+     */
     public static Iterable<Integer> random(final Random random)
     {
         return new IterableBase<Integer>()
@@ -170,51 +185,21 @@ public class Integers
     /**
      * @param start first integer value
      * @param end   exclusive last integer value
-     *
      * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
      *         (exclusive)
      */
-    public static Iterable<Integer> range(int start, int end)
+    public static IntegerRange range(int start, int end)
     {
         return new IntegerRange(start, end);
     }
 
     /**
-     * @param start first integer value
-     * @param end   exclusive last integer value
-     * @param step  integer distance to step between each iteration.  For example, if {@code start = 0}, {@code end =
-     *              5}, {@code step = 2}, the resulting {@link Iterable} will have the following elements: {@code [ 0,
-     *              2, 4 ]}
-     *
-     * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
-     *         (exclusive), stepping by {@code step}
-     */
-    public static Iterable<Integer> range(int start, int end, int step)
-    {
-        return new StepIntegerRange(start, end, step);
-    }
-
-    /**
      * @param end exclusive last integer value
-     *
      * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
      *         (exclusive)
      */
-    public static Iterable<Integer> upto(int end)
+    public static IntegerRange upto(int end)
     {
         return new IntegerRange(0, end);
-    }
-
-    /**
-     * @param end  exclusive last integer value
-     * @param step integer distance to step between each iteration.  For example, {@code end = 5}, {@code step = 2}, the
-     *             resulting {@link Iterable} will have the following elements: {@code [ 0, 2, 4 ]}
-     *
-     * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
-     *         (exclusive), stepping by {@code step}
-     */
-    public static Iterable<Integer> upto(int end, int step)
-    {
-        return new StepIntegerRange(0, end, step);
     }
 }

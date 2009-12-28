@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,21 @@
  */
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.Iterables;
+import org.bc.iterate.Iterate;
+
 import java.util.*;
 
+/**
+ * An {@link Iterable} that presents a sorted view of the items in another {@link Iterable} using a {@link Comparator}
+ *
+ * @author Brian Cavalier
+ */
 public class ComparatorSortIterable<X> implements Iterable<X>
 {
     private List<X> sorted;
-    private Iterable<X> source;
-    private Comparator<X> comparator;
+    private final Iterable<X> source;
+    private final Comparator<X> comparator;
 
     public ComparatorSortIterable(final Iterable<X> source, final Comparator<X> comparator)
     {
@@ -31,12 +39,8 @@ public class ComparatorSortIterable<X> implements Iterable<X>
 
     public Iterator<X> iterator()
     {
-        if (source == null) {
-            sorted = new ArrayList<X>(100);
-            for (X x : source) {
-                sorted.add(x);
-            }
-
+        if (sorted == null) {
+            sorted = Iterables.addAll(new ArrayList<X>(Iterate.estimateSize(source)), source);
             Collections.sort(sorted, comparator);
         }
         return sorted.iterator();

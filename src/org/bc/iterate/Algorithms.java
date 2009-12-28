@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Provides convenient, coarser grained {@link Iterable} processing methods built upon {@link Iterate}.
  *
- * @author Brian Cavalier 
+ * @author Brian Cavalier
  */
 public class Algorithms
 {
@@ -36,7 +36,6 @@ public class Algorithms
      *
      * @param items       items to be mapped
      * @param mapFunction {@link Function} to apply to each element of {@code items}
-     *
      * @return a {@code List} containing 1 resulting mapped value for each item in {@code items}
      */
     public static <X, Y> List<Y> map(Iterable<X> items, Function<X, Y> mapFunction)
@@ -51,10 +50,9 @@ public class Algorithms
      * @param items       items to be mapped
      * @param results     {@code Collection} to which results will be added.
      * @param mapFunction {@link Function} to apply to each element of {@code items}
-     *
      * @return {@code results}
      */
-    public static <X, Y, C extends Collection<? super Y>> C map(final Iterable<X> items, C results, Function<X, Y> mapFunction)
+    public static <X, Y, CollectionType extends Collection<? super Y>> CollectionType map(final Iterable<X> items, CollectionType results, Function<X, Y> mapFunction)
     {
         return Iterate.each(items).map(mapFunction).visit(Iterate.collect(), results);
     }
@@ -64,19 +62,19 @@ public class Algorithms
         return asMap(items, new HashMap<Y, X>(Iterate.estimateSize(items)), mapFunction);
     }
 
-    public static <X, Y> Map<Y, X> asMap(final Iterable<X> items, final Map<Y, X> results, Function<X, Y> mapFunction)
+    public static <X, Y, MapType extends Map<Y, X>> MapType asMap(final Iterable<X> items, final MapType results, Function<X, Y> mapFunction)
     {
-        return Iterate.each(items).visit(Iterate.<X, Y>map(), mapFunction, results);
+        return Iterate.each(items).visit(Iterate.map(mapFunction), results);
     }
 
-    public static <X, Y, C extends Collection<JoinResult<Integer, X, Y>>> C zip(final Iterable<X> left, final Iterable<Y> right, C results)
+    public static <X, Y, CollectionType extends Collection<JoinResult<Integer, X, Y>>> CollectionType zip(final Iterable<X> left, final Iterable<Y> right, CollectionType results)
     {
         return Iterate.each(left).join(Join.left(new Index(), new Index()), right).add(results);
     }
 
     public static <X, Y> List<JoinResult<Integer, X, Y>> zip(final Iterable<X> left, final Iterable<Y> right)
     {
-        return zip(left, right, new ArrayList<JoinResult<Integer,X,Y>>(Iterate.estimateSize(left)));
+        return zip(left, right, new ArrayList<JoinResult<Integer, X, Y>>(Iterate.estimateSize(left)));
     }
 
     public static <X, Y> Map<Y, Collection<X>> partition(final Iterable<X> items, final Function<X, Y> groupFunction)
@@ -128,7 +126,6 @@ public class Algorithms
      *
      * @param items    items to count
      * @param criteria {@link Condition} to evaluate for each item
-     *
      * @return count of items for which {@code criteria#apply(item) == true}
      */
     public static <X> int count(final Iterable<X> items, Condition<X> criteria)
@@ -141,7 +138,6 @@ public class Algorithms
      *
      * @param items    items to search
      * @param criteria {@link Condition} to evaluate for each item
-     *
      * @return the first item for which {@code criteria#apply(item) == true}
      */
     public static <X> X first(final Iterable<X> items, Condition<? super X> criteria)
@@ -158,7 +154,6 @@ public class Algorithms
     /**
      * @param items    items to evaluate
      * @param criteria criteria to use to evaluate {@code items}
-     *
      * @return true iff {@code criteria} evaluates to {@code true} for at least one item in {@code items}.
      */
     public static <X> boolean one(Iterable<X> items, Condition<? super X> criteria)
@@ -169,7 +164,6 @@ public class Algorithms
     /**
      * @param items    items to evaluate
      * @param criteria criteria to use to evaluate {@code items}
-     *
      * @return true iff {@code criteria} evaluates to {@code true} for aLL items in {@code items}.
      */
     public static <X> boolean all(Iterable<X> items, Condition<? super X> criteria)
@@ -187,7 +181,6 @@ public class Algorithms
      * @param items    items from which to select
      * @param criteria items matching this {@link Condition} will be selected and returned in the resulting {@link
      *                 java.util.Collection}
-     *
      * @return {@link Collection} of items from {@code items} matching {@code criteria}
      */
     public static <X> Collection<X> select(final Iterable<X> items, Condition<X> criteria)
@@ -199,11 +192,10 @@ public class Algorithms
      * @param items    items from which to select
      * @param results  items matching {@code criteria} will be added to this {@link Collection}
      * @param criteria items matching this {@link Condition} will be selected and added to {@code results}
-     *
      * @return results, which will contain items from {@code items} matching {@code criteria}
      */
-    public static <X, Y extends Collection<? super X>> Y select(final Iterable<X> items, Y results,
-                                                                Condition<X> criteria)
+    public static <X, CollectionType extends Collection<? super X>> CollectionType select(final Iterable<X> items, CollectionType results,
+                                                                                          Condition<X> criteria)
     {
         return Iterate.each(items).where(criteria).visit(Iterate.collect(), results);
     }
@@ -215,11 +207,10 @@ public class Algorithms
      *                  {@code results}.
      * @param results   {@code Collection} to which results will be added.
      * @param generator {@link Function} to be invoked for each iteration
-     *
      * @return {@code results}
      */
-    public static <X, Y extends Collection<? super X>> Y generate(int n, Y results,
-                                                                  Function<Integer, X> generator)
+    public static <X, CollectionType extends Collection<? super X>> CollectionType generate(int n, CollectionType results,
+                                                                                            Function<Integer, X> generator)
     {
         return Iterate.each(Iterables.generate(n, generator)).visit(Iterate.collect(), results);
     }
@@ -230,12 +221,21 @@ public class Algorithms
      * @param n         number of times to invoke {@code generator}, and thus the number of items that will be added to
      *                  {@code results}.
      * @param generator {@link Function} to be invoked for each iteration
-     *
      * @return a new {@link List} containing {@code n} generated items.
      */
     public static <X> List<X> generate(int n, Function<Integer, X> generator)
     {
         return generate(n, new ArrayList<X>(n), generator);
+    }
+
+    public static <X, CollectionType extends Collection<? super X>> CollectionType generate(int n, CollectionType results, Provider<X> provider)
+    {
+        return Iterate.each(Iterables.generate(n, provider)).add(results);
+    }
+
+    public static <X> List<X> generate(int n, Provider<X> provider)
+    {
+        return generate(n, new ArrayList<X>(n), provider);
     }
 
     private Algorithms()

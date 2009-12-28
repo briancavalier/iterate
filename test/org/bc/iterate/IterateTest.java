@@ -145,7 +145,7 @@ public class IterateTest
     @Test
     public void line4() throws IOException
     {
-        Iterable<String> lines = Iterate.line("http://briancavalier.blogspot.com", "Accept: text/html");
+        Iterable<String> lines = Iterate.lines("http://briancavalier.blogspot.com", "Accept: text/html");
         assertTrue(lines.iterator().hasNext());
 
         StringBuilder buf = new StringBuilder(100);
@@ -156,7 +156,7 @@ public class IterateTest
 
         File tmp = generateTempFile("Iterate.txt", buf.toString());
 
-        lines = Iterate.line(tmp.getAbsolutePath());
+        lines = Iterate.lines(tmp.getAbsolutePath());
         for (String line : lines) {
             assertEquals(buf.toString(), line);
         }
@@ -170,7 +170,7 @@ public class IterateTest
         final String utf8String = "te�st �\\n";
         File tmp = generateTempFile("Iterate.txt", utf8String, "UTF-8");
         int count = 0;
-        for (String line : Iterate.line(tmp.getAbsolutePath(), Charset.forName("UTF-8"))) {
+        for (String line : Iterate.lines(tmp.getAbsolutePath(), Charset.forName("UTF-8"))) {
             assertEquals(utf8String, line);
             count++;
         }
@@ -183,7 +183,7 @@ public class IterateTest
     {
         final List<String> test = Arrays.asList("a", "b", "c", "d");
         final List<String> results = new ArrayList<String>(10);
-        Iterate.each(test).visit(Iterate.bind(results, new BinaryVisitor<String, List<String>>()
+        Iterate.each(test).visit(Visitors.bind(results, new BinaryVisitor<String, List<String>>()
         {
             public void visit(String s, List<String> strings)
             {
@@ -200,7 +200,7 @@ public class IterateTest
         final List<String> test = Arrays.asList("a", "b", "c", "d");
         final List<String> results = new ArrayList<String>(10);
         final List<String> results2 = new ArrayList<String>(10);
-        Iterate.each(test).visit(Iterate.unbind(new Visitor<String>()
+        Iterate.each(test).visit(Visitors.unbind(new Visitor<String>()
         {
             public void visit(String s)
             {
