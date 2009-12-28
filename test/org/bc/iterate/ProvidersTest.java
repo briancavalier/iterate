@@ -57,7 +57,7 @@ public class ProvidersTest
     @Test
     public void compose() throws Exception
     {
-        assertEquals("123", Providers.compose(Strings.toString(), Providers.of(123)).get());
+        assertEquals("123", Providers.compose(Strings.<Integer>toString(), Providers.of(123)).get());
     }
 
     private void assertExpected(Provider<Integer> provider, int... expected)
