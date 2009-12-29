@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bc.iterate.visitor;
 
-import org.bc.iterate.BinaryVisitor;
+package org.bc.iterate;
 
-import java.util.Collection;
+import org.bc.iterate.visitor.BindParam;
+import org.bc.iterate.visitor.UnbindParam;
 
-public class Flatten<IX extends Iterable<X>, CX extends Collection<? super X>, X> implements BinaryVisitor<IX, CX>
+/**
+ * Helper methods for {@link Visitor}s
+ *
+ * @author Brian Cavalier
+ */
+public class Visitors
 {
-    public void visit(IX iterable, CX cx)
+    public static <X, Y> Visitor<X> bind(Y param, BinaryVisitor<X, Y> callee)
     {
-        for (X x : iterable) {
-            cx.add(x);
-        }
+        return new BindParam<X, Y>(param, callee);
+    }
+
+    public static <X, Y> BinaryVisitor<X, Y> unbind(Visitor<X> callee)
+    {
+        return new UnbindParam<X, Y>(callee);
     }
 }

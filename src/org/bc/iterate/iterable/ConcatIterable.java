@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.bc.iterate.iterable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -33,6 +34,11 @@ public class ConcatIterable<X> extends IterableBase<X>
     {
         this.nested = nested.iterator();
         this.current = this.nested.next().iterator();
+    }
+
+    public ConcatIterable(Iterable<X>... nested)
+    {
+        this(Arrays.asList(nested));
     }
 
     public boolean hasNext()

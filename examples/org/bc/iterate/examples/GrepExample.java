@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.bc.iterate.examples;
 
 import static org.bc.iterate.Conditions.regex;
@@ -28,7 +29,7 @@ public class GrepExample {
             System.exit(1);
         }
 
-        final Iterable<String> lines = (args.length >= 2) ? line(args[1]) : line(System.in);
+        final Iterable<String> lines = (args.length >= 2) ? lines(args[1]) : line(System.in);
 
         each(lines).where(regex(args[0])).visit(println(), System.out);
     }

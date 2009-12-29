@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,10 @@ import org.bc.iterate.Condition;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class FilterIterable<X> extends IterableBase<X>
+public class FilterIterable<X> extends LookaheadIterable<X>
 {
-    private final Condition<? super X> filter;
-    private final Iterator<X> iterator;
-    private X next;
+    protected final Condition<? super X> filter;
+    protected final Iterator<X> iterator;
 
     public FilterIterable(Iterable<X> iterable, Condition<? super X> filter)
     {
@@ -33,13 +32,8 @@ public class FilterIterable<X> extends IterableBase<X>
         this.iterator = iterable.iterator();
     }
 
-    public boolean hasNext()
-    {
-        next = findNext(iterator, filter);
-        return next != null;
-    }
-
-    protected X findNext(final Iterator<X> iterator, final Condition<? super X> filter)
+    @Override
+    protected X findNext()
     {
         while(iterator.hasNext()) {
             X item = iterator.next();
@@ -48,19 +42,7 @@ public class FilterIterable<X> extends IterableBase<X>
             }
         }
 
-        return null;
-    }
-
-    public X next()
-    {
-        if(next == null) {
-            next = findNext(iterator, filter);
-            if(next == null) {
-                throw new NoSuchElementException();
-            }
-        }
-
-        return next;
+        return end();
     }
 
     @SuppressWarnings({"RefusedBequest"})

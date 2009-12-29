@@ -3,10 +3,7 @@ package org.bc.iterate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -37,5 +34,17 @@ public class IterablesTest
         }
 
         assertEquals(10, results.size());
+    }
+
+    @Test
+    public void cycle()
+    {
+        final Iterator<Integer> cycle = Iterables.cycle(Arrays.asList(1, 2)).iterator();
+        assertEquals(Integer.valueOf(1), cycle.next());
+        assertEquals(Integer.valueOf(2), cycle.next());
+        assertEquals(Integer.valueOf(1), cycle.next());
+        assertEquals(Integer.valueOf(2), cycle.next());
+        assertEquals(Integer.valueOf(1), cycle.next());
+        assertEquals(Integer.valueOf(2), cycle.next());
     }
 }

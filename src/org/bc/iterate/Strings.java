@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,27 +30,17 @@ import java.util.regex.Pattern;
  */
 public class Strings
 {
-    private static String defaultJoinSeparator = ",";
-    private static final int DEFAULT_JOIN_BUFFER_SIZE = 256;
-
-    public static String getDefaultJoinSeparator()
-    {
-        return defaultJoinSeparator;
-    }
-
-    public static void setDefaultJoinSeparator(String separator)
-    {
-        defaultJoinSeparator = separator;
-    }
+    private static final String DEFAULT_JOIN_SEPARATOR = ",";
+    private static final int DEFAULT_JOIN_ITEM_SPACE = 32;
 
     /**
      * @param items items to join together into one {@code String}
      * @return a {@code String} from all items by invoking {@code toString} on each, and joining them together,
-     *         separated by {@link Strings#defaultJoinSeparator}
+     *         separated by {@link Strings#DEFAULT_JOIN_SEPARATOR}
      */
     public static <X> String join(final Iterable<X> items)
     {
-        return join(items, defaultJoinSeparator);
+        return join(items, DEFAULT_JOIN_SEPARATOR);
     }
 
     /**
@@ -61,7 +51,7 @@ public class Strings
      */
     public static <X> String join(final Iterable<X> items, final String separator)
     {
-        final StringBuilder builder = builder(DEFAULT_JOIN_BUFFER_SIZE);
+        final StringBuilder builder = builder(Iterate.estimateSize(items) + DEFAULT_JOIN_ITEM_SPACE);
         try {
             return join(items, builder, separator).toString();
         } catch (IOException ignored) {
@@ -71,7 +61,7 @@ public class Strings
 
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Y result) throws IOException
     {
-        return join(items, result, defaultJoinSeparator);
+        return join(items, result, DEFAULT_JOIN_SEPARATOR);
     }
 
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Y result, final String separator)
@@ -83,32 +73,32 @@ public class Strings
     public static <X> String join(final Iterable<X> items, Function<X, String> toString)
             throws IOException
     {
-        return join(items, toString, defaultJoinSeparator).toString();
+        return join(items, toString, DEFAULT_JOIN_SEPARATOR).toString();
     }
 
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Function<X, String> toString, Y result)
             throws IOException
     {
-        return join(items, toString, result, defaultJoinSeparator);
+        return join(items, toString, result, DEFAULT_JOIN_SEPARATOR);
     }
 
     public static <X> StringBuilder join(final Iterable<X> items, Function<X, String> toString, String separator)
             throws IOException
     {
-        return join(items, toString, Strings.builder(DEFAULT_JOIN_BUFFER_SIZE), separator);
+        return join(items, toString, Strings.builder(Iterate.estimateSize(items) * DEFAULT_JOIN_ITEM_SPACE), separator);
     }
 
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, final Function<X, String> toString,
                                                    final Y result, final String separator) throws IOException
     {
         if (items != null) {
-            Iterator<X> iter = items.iterator();
-            if (iter.hasNext()) {
-                result.append(toString.apply(iter.next()));
+            Iterator<X> iterator = items.iterator();
+            if (iterator.hasNext()) {
+                result.append(toString.apply(iterator.next()));
             }
 
-            while (iter.hasNext()) {
-                result.append(separator).append(toString.apply(iter.next()));
+            while (iterator.hasNext()) {
+                result.append(separator).append(toString.apply(iterator.next()));
             }
         }
         return result;
@@ -144,6 +134,14 @@ public class Strings
                 return s.indexOf(contained) != -1;
             }
         };
+    }
+
+    /**
+     * @return a {@link org.bc.iterate.Function} that returns the result of invoking {@code toString()} on {@code x}.
+     */
+    public static <X> Function<X, String> toString()
+    {
+        return new ToString<X>();
     }
 
     /**

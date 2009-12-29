@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.bc.iterate;
 
 import org.bc.iterate.function.RegexFind;
-import org.bc.iterate.function.ToString;
 import org.bc.iterate.iterable.*;
 import org.bc.iterate.net.Urls;
 import org.bc.iterate.relational.JoinResult;
@@ -40,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public class Iterate<X> implements Iterable<X>
 {
-    private static final int DEFAULT_SIZE_ESTIMATE = 128;
+    public static final int DEFAULT_SIZE_ESTIMATE = 128;
 
     /**
      * @param items {@link Iterable} containing items over which to iterate
@@ -49,20 +48,6 @@ public class Iterate<X> implements Iterable<X>
     public static <X> Iterate<X> each(final Iterable<X> items)
     {
         return new Iterate<X>(items, estimateSize(items));
-    }
-
-    @SuppressWarnings({"ChainOfInstanceofChecks"})
-    public static int estimateSize(Object items)
-    {
-        int sizeEstimate = DEFAULT_SIZE_ESTIMATE;
-        if (items instanceof Collection) {
-            sizeEstimate = ((Collection) items).size();
-        } else if (items instanceof Map) {
-            sizeEstimate = ((Map) items).size();
-        } else if (items instanceof Iterate) {
-            sizeEstimate = ((Iterate) items).sizeEstimate;
-        }
-        return sizeEstimate;
     }
 
     /**
@@ -145,6 +130,11 @@ public class Iterate<X> implements Iterable<X>
         return new Iterate<X>(new UntilIterable<X>(this, c));
     }
 
+    public Iterate<X> transform(Function<Iterable<X>, Iterable<X>> transformFunction)
+    {
+        return new Iterate<X>(transformFunction.apply(this));
+    }
+
     /**
      * Limits iteration to all items including and after the first item for which {@code c.eval(item) == true}
      *
@@ -224,7 +214,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * @deprecated This may be removed before version 1.0
+     * @deprecated This will be removed before version 1.0
      */
     public <Y, Z> Z visit(TernaryVisitor<? super X, ? super Y, Z> visitor,
                           Function<? super X, ? extends Y> f,
@@ -240,6 +230,7 @@ public class Iterate<X> implements Iterable<X>
     /**
      * @param itemsToPrepend items to append
      * @return a new {@link Iterate} that has the supplied items prepended to the iteration order.
+     * @deprecated use {@link #transform(Function)} plus {@link Iterables#prepend(Iterable)} instead
      */
     public Iterate<X> prepend(Iterable<X> itemsToPrepend)
     {
@@ -249,6 +240,7 @@ public class Iterate<X> implements Iterable<X>
     /**
      * @param itemsToAppend items to append
      * @return a new {@link Iterate} that has the supplied items appended to the iteration order.
+     * @deprecated use {@link #transform(Function)} plus {@link Iterables#append(Iterable)} instead
      */
     public Iterate<X> append(Iterable<X> itemsToAppend)
     {
@@ -286,29 +278,6 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * @param items {@code Collection} of items for which to return a sorted view
-     * @return a sorted view of {@code items}
-     */
-    public static <X extends Comparable<X>> Iterable<X> sorted(final Collection<X> items)
-    {
-        List<X> sorted = new ArrayList<X>(items);
-        Collections.sort(sorted);
-        return sorted;
-    }
-
-    /**
-     * @param items      {@code Collection} of items for which to return a sorted view
-     * @param comparator {@link java.util.Comparator} to use to sort the {@code items}
-     * @return a sorted view of {@code items}
-     */
-    public static <X> Iterable<X> sorted(final Collection<X> items, final Comparator<X> comparator)
-    {
-        List<X> sorted = new ArrayList<X>(items);
-        Collections.sort(sorted, comparator);
-        return sorted;
-    }
-
-    /**
      * Returns an {@link Iterable} which will group items in {@code items} into groups of size {@code groupSize} and
      * return each group as a {@code List}.  For example, if the supplied {@link Iterable} ({@code items}) has the
      * following 10 elements:
@@ -333,22 +302,22 @@ public class Iterate<X> implements Iterable<X>
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
     public static LineReaderIterable line(InputStream in)
     {
-        return line(new InputStreamReader(in));
+        return lines(new InputStreamReader(in));
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(InputStream in, Charset charset)
+    public static LineReaderIterable lines(InputStream in, Charset charset)
     {
-        return line(new InputStreamReader(in, charset));
+        return lines(new InputStreamReader(in, charset));
     }
 
-    public static LineReaderIterable line(Reader reader)
+    public static LineReaderIterable lines(Reader reader)
     {
         return new LineReaderIterable(reader);
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(String url, String... headers) throws IOException
+    public static LineReaderIterable lines(String url, String... headers) throws IOException
     {
         try {
             return new LineReaderIterable(Urls.reader(url, headers));
@@ -358,7 +327,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(String url, Charset charset, String... headers) throws IOException
+    public static LineReaderIterable lines(String url, Charset charset, String... headers) throws IOException
     {
         try {
             return new LineReaderIterable(Urls.reader(url, charset, headers));
@@ -368,7 +337,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(String url, Map<String, String> headers) throws IOException
+    public static LineReaderIterable lines(String url, Map<String, String> headers) throws IOException
     {
         try {
             return new LineReaderIterable(Urls.reader(url, headers));
@@ -378,7 +347,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(String url, Charset charset, Map<String, String> headers) throws IOException
+    public static LineReaderIterable lines(String url, Charset charset, Map<String, String> headers) throws IOException
     {
         try {
             return new LineReaderIterable(Urls.reader(url, charset, headers));
@@ -412,7 +381,7 @@ public class Iterate<X> implements Iterable<X>
      * @param delimiter delimiter used to split tokens from {@code in}
      * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
      */
-    public static Iterable<String> token(Readable in, Pattern delimiter)
+    public static Iterable<String> tokens(Readable in, Pattern delimiter)
     {
         return new TokenizerIterable(in, delimiter);
     }
@@ -422,7 +391,7 @@ public class Iterate<X> implements Iterable<X>
      * @param delimiter delimiter used to split tokens from {@code in}
      * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
      */
-    public static Iterable<String> token(Readable in, String delimiter)
+    public static Iterable<String> tokens(Readable in, String delimiter)
     {
         return new TokenizerIterable(in, Pattern.compile(delimiter));
     }
@@ -483,9 +452,17 @@ public class Iterate<X> implements Iterable<X>
      * @return a {@link BinaryVisitor} that will add all elements of the {@link Iterable} {@code x} to the {@link
      *         Collection} {@code y}
      */
-    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryVisitor<IX, CX> flatten()
+    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryVisitor<IX, CX> addAll()
     {
-        return new Flatten<IX, CX, X>();
+        return new BinaryVisitor<IX, CX>()
+        {
+            public void visit(IX iterable, CX cx)
+            {
+                for (X x : iterable) {
+                    cx.add(x);
+                }
+            }
+        };
     }
 
     /**
@@ -498,10 +475,27 @@ public class Iterate<X> implements Iterable<X>
 
     /**
      * @return a {@link TernaryVisitor} that will add the value {@code x} using the key {@code y} to the {@code Map z}
+     * @deprecated Use the {@link #map(Function)} with {@link #visit(BinaryVisitor, Object)} instead.
      */
     public static <X, Y> TernaryVisitor<X, Y, Map<Y, X>> map()
     {
         return new Mapper<X, Y>();
+    }
+
+    /**
+     * @param mapFunction {@link Function} that will be used to generate map keys for each item
+     * @return a {@link BinaryVisitor} that will app the value {@code x} to a supplied {@link Map} using the key
+     * generated by apply {@code mapFunction} to {@code x}
+     */
+    public static <X, Y> BinaryVisitor<? super X, Map<Y, X>> map(final Function<X, Y> mapFunction)
+    {
+        return new BinaryVisitor<X, Map<Y, X>>()
+        {
+            public void visit(X x, Map<Y, X> yxMap)
+            {
+                yxMap.put(mapFunction.apply(x), x);
+            }
+        };
     }
 
     /**
@@ -513,6 +507,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * @param separator {@code String} separator that will be appended between each item.
      * @return an {@link org.bc.iterate.visitor.AppendWithSeparator}
      */
     public static <X> AppendWithSeparator<X> append(final String separator)
@@ -536,29 +531,12 @@ public class Iterate<X> implements Iterable<X>
         return new PrintLine<X>();
     }
 
-    public static <X, Y> Visitor<X> bind(Y param, BinaryVisitor<X, Y> callee)
-    {
-        return new BindParam<X, Y>(param, callee);
-    }
-
-    public static <X, Y> BinaryVisitor<X, Y> unbind(Visitor<X> callee)
-    {
-        return new UnbindParam<X, Y>(callee);
-    }
-
     //
     // Functions
     //
 
     /**
-     * @return a {@link Function} that returns the result of invoking {@code toString()} on {@code x}.
-     */
-    public static <X> Function<X, String> toString()
-    {
-        return new ToString<X>();
-    }
-
-    /**
+     * @param pattern {@link Pattern} to find
      * @return a {@link Function} that will return the whole substring matched by {@code pattern}
      */
     public static Function<String, String> find(Pattern pattern)
@@ -567,6 +545,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * @param pattern regex pattern to find--will be compiled to a {@link Pattern} once, for faster execution.
      * @return a {@link Function} that will return the whole substring matched by {@code pattern}
      */
     public static Function<String, String> find(String pattern)
@@ -575,6 +554,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * @param pattern {@link Pattern} to find
+     * @param group number of the regex group to return when {@code pattern} is matched.
      * @return a {@link Function} that will return the specified {@code group} within the first substring matched by
      *         {@code pattern}
      */
@@ -584,6 +565,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * @param pattern regex pattern to find--will be compiled to a {@link Pattern} once, for faster execution.
+     * @param group number of the regex group to return when {@code pattern} is matched.
      * @return a {@link Function} that will return the specified {@code group} within the first substring matched by
      *         {@code pattern}
      */
@@ -596,7 +579,7 @@ public class Iterate<X> implements Iterable<X>
     // These can be replicated easily using each().visit(), but these
     // may provide more convenience and shorter code in most cases.
 
-    public <C extends Collection<? super X>> C add(C c)
+    public <CollectionType extends Collection<? super X>> CollectionType add(CollectionType c)
     {
         return visit(collect(), c);
     }
@@ -641,5 +624,27 @@ public class Iterate<X> implements Iterable<X>
         }
 
         return p;
+    }
+
+    /**
+     * Attempts to estimate the number of items in {@code items} by checking its type to see if it is a type with
+     * a known size, such as a {@link Collection} or {@link Map}, in which case {@link Collection#size()} or {@link Map#size()}
+     * is returned.  If it is an {@link Iterate}, its {@link Iterate#sizeEstimate} is returned.  Otherwise {@link #DEFAULT_SIZE_ESTIMATE}
+     * is returned.
+     * @param items thing whose size will be estimated
+     * @return estimated size of {@code items}, based on rules above.
+     */
+    @SuppressWarnings({"ChainOfInstanceofChecks"})
+    public static int estimateSize(Object items)
+    {
+        int sizeEstimate = DEFAULT_SIZE_ESTIMATE;
+        if (items instanceof Collection) {
+            sizeEstimate = ((Collection) items).size();
+        } else if (items instanceof Map) {
+            sizeEstimate = ((Map) items).size();
+        } else if (items instanceof Iterate) {
+            sizeEstimate = ((Iterate) items).sizeEstimate;
+        }
+        return sizeEstimate;
     }
 }

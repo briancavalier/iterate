@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,21 @@
  */
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.Iterables;
+import org.bc.iterate.Iterate;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class NaturalSortIterable<X> implements Iterable<X>
+/**
+ * An {@link Iterable} that presents a sorted view of the items in another {@link Iterable} using a the items'
+ * natural ordering.
+ *
+ * @author Brian Cavalier
+ */
+public class NaturalSortIterable<X extends Comparable<X>> implements Iterable<X>
 {
     private List<X> sorted;
     private Iterable<X> source;
@@ -32,23 +41,9 @@ public class NaturalSortIterable<X> implements Iterable<X>
 
     public Iterator<X> iterator()
     {
-        if(sorted == null) {
-            // This pretty much stinks, but is necessary because we don't want to force X to implement Comparable
-            // at the Iterate class level.
-            this.sorted = new ArrayList<X>(100);
-            for (X x : source) {
-                this.sorted.add(x);
-            }
-
-            if(sorted.size() > 0) {
-                X x = sorted.get(0);
-                if(x instanceof Comparable) {
-                    Collections.sort((List<? extends Comparable>)sorted);
-                } else {
-                    throw new IllegalStateException("Parameterized type X does not implement Comparable, and cannot be sorted by"
-                                                    + "natural order.  You must use sorted(Comparator) instead of sorted()");
-                }
-            }
+        if (sorted == null) {
+            this.sorted = Iterables.addAll(new ArrayList<X>(Iterate.estimateSize(source)), source);
+            Collections.sort(sorted);
         }
 
         return sorted.iterator();

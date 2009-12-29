@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.io.IOException;
 public class AppendWithSeparator<X> extends Append<X>
 {
     private final String separator;
-    private AppendStep appendStep = new AppendStep();
+    private boolean sep = false;
 
     public AppendWithSeparator(String separator)
     {
@@ -35,7 +35,11 @@ public class AppendWithSeparator<X> extends Append<X>
     public void visit(X x, Appendable appendable)
     {
         try {
-            appendStep = appendStep.append(x, appendable);
+            if(sep) {
+                appendable.append(separator);
+            }
+            appendable.append(x.toString());
+            sep = true;
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -44,26 +48,11 @@ public class AppendWithSeparator<X> extends Append<X>
     /**
      * After {@code reset()} is called, no separator will be appended before the item in the next call to
      * {@link #visit(Object, Appendable)}.
+     * @return this
      */
     public AppendWithSeparator reset()
     {
-        appendStep = new AppendStep();
+        sep = false;
         return this;
-    }
-
-    private class AppendStep {
-
-        public AppendStep append(X x, Appendable appendable) throws IOException {
-            appendable.append(x.toString());
-            return new SeparatorAppendStep();
-        }
-    }
-
-    private class SeparatorAppendStep extends AppendStep {
-        @Override
-        public AppendStep append(X x, Appendable appendable) throws IOException {
-            appendable.append(separator).append(x.toString());
-            return this;
-        }
     }
 }

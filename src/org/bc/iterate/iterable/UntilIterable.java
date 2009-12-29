@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ public class UntilIterable<X> extends FilterIterable<X>
 
     @SuppressWarnings({"RefusedBequest"})
     @Override
-    protected X findNext(final Iterator<X> iterator, final Condition<? super X> filter)
+    protected X findNext()
     {
-        X next = null;
+        X next = end();
         if (!done && iterator.hasNext()) {
             next = iterator.next();
             if (filter.eval(next)) {
-                next = null;
+                next = end();
                 done = true;
             }
         }

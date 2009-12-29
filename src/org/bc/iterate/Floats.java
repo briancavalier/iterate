@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,9 +98,22 @@ public class Floats
         };
     }
 
+    /**
+     * @return a inexhaustable {@link Iterable} of random {@link Float}s.  See {@link java.util.Random#nextFloat()}
+     * for numeric range of returned values.
+     */
     public static Iterable<Float> random()
     {
-        final Random random = new Random();
+       return random(new Random());
+    }
+
+    /**
+     * @param random {@link Random} to use to generate random {@link Float}s
+     * @return a inexhaustable {@link Iterable} of random {@link Float}s using the supplied {@link Random}.
+     * See {@link java.util.Random#nextFloat()} for numeric range of returned values.
+     */
+    public static Iterable<Float> random(final Random random)
+    {
         return new IterableBase<Float>()
         {
             public boolean hasNext()

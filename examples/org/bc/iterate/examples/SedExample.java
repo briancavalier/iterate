@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Brian Cavalier
+ * Copyright (c) 2007-2010 Brian Cavalier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class SedExample
             System.exit(1);
         }
 
-        final LineReaderIterable lines = (args.length >= 3) ? line(args[2]) : line(System.in);
+        final LineReaderIterable lines = (args.length >= 3) ? lines(args[2]) : line(System.in);
 
         each(lines).map(Strings.replace(args[0], args[1])).visit(println(), System.out);
     }
