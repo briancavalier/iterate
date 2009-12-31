@@ -16,12 +16,13 @@
 
 package org.bc.iterate;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 public class StringsTest
 {
@@ -38,18 +39,18 @@ public class StringsTest
 
 
         assertEquals("foo,bar,baz", Strings.join(Arrays.asList("foo", "bar", "baz"),
-                                                        new StringBuilder(32)).toString());
+                new StringBuilder(32)).toString());
         assertEquals("foobarbaz", Strings.join(Arrays.asList("foo", "bar", "baz"),
-                                                      new StringBuilder(32), "").toString());
+                new StringBuilder(32), "").toString());
         assertEquals("foo | bar | baz", Strings.join(Arrays.asList("foo", "bar", "baz"),
-                                                            new StringBuilder(32), " | ").toString());
+                new StringBuilder(32), " | ").toString());
 
         assertEquals("foo,bar,baz", Strings.join(Arrays.asList("foo", "bar", "baz"),
-                                                        new StringBuilder(32)).toString());
+                new StringBuilder(32)).toString());
         assertEquals("foobarbaz", Strings.join(Arrays.asList("foo", "bar", "baz"),
-                                                      new StringBuilder(32), "").toString());
+                new StringBuilder(32), "").toString());
         assertEquals("foo | bar | baz", Strings.join(Arrays.asList("foo", "bar", "baz"),
-                                                            new StringBuilder(32), " | ").toString());
+                new StringBuilder(32), " | ").toString());
 
         assertEquals("", Strings.join(new ArrayList<String>(0)));
         assertEquals("", Strings.join(new ArrayList<String>(0), new StringBuilder(32)).toString());
@@ -139,7 +140,7 @@ public class StringsTest
     @Test
     public void builderWithInitialCapacity()
     {
-        assertEquals(100, Strings.builder(100).capacity());        
+        assertEquals(100, Strings.builder(100).capacity());
     }
 
     @Test
@@ -147,7 +148,7 @@ public class StringsTest
     {
         assertEquals("This is a test", Strings.builder("This is a test").toString());
     }
-    
+
     @Test
     public void split()
     {

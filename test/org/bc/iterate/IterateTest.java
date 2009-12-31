@@ -249,6 +249,27 @@ public class IterateTest
         assertEquals("1,2,3,4,51,2,3,4,5", results.toString());
     }
 
+    @Test
+    public void estimateSize()
+    {
+        assertEquals(5, Iterate.estimateSize(Arrays.asList(1, 2, 3, 4, 5)));
+
+        Map<String, String> map = new HashMap<String, String>(3);
+        map.put("a", "a");
+        map.put("b", "b");
+        map.put("c", "c");
+        assertEquals(3, Iterate.estimateSize(map));
+
+        assertEquals(8, Iterate.estimateSize(new int[]{1, 2, 3, 4, 5, 6, 7, 8}));
+        assertEquals(3, Iterate.estimateSize(new String[]{"1", "2", "3"}));
+
+        assertEquals(16, Iterate.estimateSize("This is a string"));
+
+        assertEquals(4, Iterate.estimateSize(Iterate.each(1, 2, 3, 4)));
+
+        assertEquals(1, Iterate.estimateSize(new Object()));
+    }
+
     private static class Counter<X> implements Visitor<X>
     {
         private int count = 0;

@@ -17,7 +17,7 @@ package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
 import org.bc.iterate.Integers;
-import org.bc.iterate.function.ToString;
+import org.bc.iterate.Strings;
 import org.bc.iterate.relational.JoinResult;
 import org.bc.iterate.util.Pair;
 import org.junit.Assert;
@@ -25,9 +25,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RightIncrementalHashJoinIterableTest
 {
@@ -52,10 +50,11 @@ public class RightIncrementalHashJoinIterableTest
 
 
     @Test
-    public void testNextDuplicateKeys() throws Exception {
+    public void testNextDuplicateKeys() throws Exception
+    {
         List<Integer> items = Arrays.asList(1, 2, 3);
         List<String> toJoin = Arrays.asList("one", "two", "four");
-        RightIncrementalHashJoinIterable<String, Integer, String> j = new RightIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
+        RightIncrementalHashJoinIterable<String, Integer, String> j = new RightIncrementalHashJoinIterable<String, Integer, String>(items, Strings.string(), toJoin, new Function<String, String>()
         {
             public String apply(String s)
             {

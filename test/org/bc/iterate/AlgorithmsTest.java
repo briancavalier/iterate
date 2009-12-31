@@ -180,9 +180,9 @@ public class AlgorithmsTest
     public void sortByExample2()
     {
         List<Integer> example = asList(1, 3, 5, 2, 4, 6);
-        assertEquals(example, Algorithms.sortByExample(example, Strings.<Integer>toString(), asList(6, 5, 4, 3, 2, 1)));
-        assertEquals(asList(3, 5, 4), Algorithms.sortByExample(example, Strings.<Integer>toString(), asList(5, 4, 3)));
-        assertEquals(example, Algorithms.sortByExample(example, Strings.<Integer>toString(), asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
+        assertEquals(example, Algorithms.sortByExample(example, Strings.<Integer>string(), asList(6, 5, 4, 3, 2, 1)));
+        assertEquals(asList(3, 5, 4), Algorithms.sortByExample(example, Strings.<Integer>string(), asList(5, 4, 3)));
+        assertEquals(example, Algorithms.sortByExample(example, Strings.<Integer>string(), asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
     }
 
     private class Person {
@@ -239,8 +239,8 @@ public class AlgorithmsTest
     {
         List<Integer> example = asList(1, 3, 5, 2, 4, 6);
         final List<String> expected = asList("1", "3", "5", "2", "4", "6");
-        assertEquals(expected, Algorithms.sortByExample(example, Strings.<Integer>toString(), asList("6", "5", "4", "3", "2", "1"), Functions.<String>identity()));
-        assertEquals(asList("3", "5", "4"), Algorithms.sortByExample(example, Strings.<Integer>toString(), asList("5", "4", "3"), Functions.<String>identity()));
-        assertEquals(expected, Algorithms.sortByExample(example, Strings.<Integer>toString(), asList("1", "2", "3", "4", "5", "6", "7", "8", "9"), Functions.<String>identity()));
+        assertEquals(expected, Algorithms.sortByExample(example, Strings.<Integer>string(), asList("6", "5", "4", "3", "2", "1"), Functions.<String>identity()));
+        assertEquals(asList("3", "5", "4"), Algorithms.sortByExample(example, Strings.<Integer>string(), asList("5", "4", "3"), Functions.<String>identity()));
+        assertEquals(expected, Algorithms.sortByExample(example, Strings.<Integer>string(), asList("1", "2", "3", "4", "5", "6", "7", "8", "9"), Functions.<String>identity()));
     }
 }

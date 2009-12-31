@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.bc.iterate;
+package org.bc.logging;
 
 /**
- * A Provider is an interface for an object that <em>provides</em> instances of a particular class via the
- * {@link #get()} method.
- *
- * @author Brian Cavalier
+ * @author bcavalier
  */
-public interface Provider<T>
+public class LoggerFactory
 {
-    /**
-     * @return an instance of {@code T}, or {@code null} if no instance can be provided.
-     */
-    T get();
+    public static Logger getLogger(Class clazz)
+    {
+        return new JavaLoggingLogger(java.util.logging.Logger.getLogger(clazz.getName()));
+    }
+
+    public static Logger getLogger(String name)
+    {
+        return new JavaLoggingLogger(java.util.logging.Logger.getLogger(name));
+    }
 }

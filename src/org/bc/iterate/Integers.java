@@ -15,7 +15,6 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.function.Identity;
 import org.bc.iterate.iterable.IntegerRange;
 import org.bc.iterate.iterable.IterableBase;
 
@@ -29,11 +28,11 @@ import java.util.Random;
 public class Integers
 {
     /**
-     * @return the {@link org.bc.iterate.function.Identity} function for integers.
+     * @return the identity function for integers.
      */
     public static Function<Integer, Integer> identity()
     {
-        return new Identity<Integer>();
+        return Functions.identity();
     }
 
     /**
@@ -130,10 +129,10 @@ public class Integers
     }
 
     /**
-     * @param random {@link Random} to use to generate random integers.
+     * @param random            {@link Random} to use to generate random integers.
      * @param maxValueExclusive random integers strictly less than this value will be returned by the {@link Iterable}
      * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@code maxValueExclusive} using
-     * the supplied {@link Random}
+     *         the supplied {@link Random}
      */
     public static Iterable<Integer> random(final Random random, final int maxValueExclusive)
     {

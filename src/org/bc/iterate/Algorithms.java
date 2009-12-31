@@ -16,7 +16,6 @@
 
 package org.bc.iterate;
 
-import org.bc.iterate.function.Index;
 import org.bc.iterate.relational.Join;
 import org.bc.iterate.relational.JoinResult;
 import org.bc.iterate.util.Pair;
@@ -70,7 +69,7 @@ public class Algorithms
 
     public static <X, Y, CollectionType extends Collection<JoinResult<Integer, X, Y>>> CollectionType zip(final Iterable<X> left, final Iterable<Y> right, CollectionType results)
     {
-        return Iterate.each(left).join(Join.left(new Index(), new Index()), right).add(results);
+        return Iterate.each(left).join(Join.left(Functions.index(), Functions.index()), right).add(results);
     }
 
     public static <X, Y> List<JoinResult<Integer, X, Y>> zip(final Iterable<X> left, final Iterable<Y> right)

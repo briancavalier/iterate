@@ -17,17 +17,14 @@ package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
 import org.bc.iterate.Integers;
-import org.bc.iterate.function.ToString;
+import org.bc.iterate.Strings;
 import org.bc.iterate.relational.JoinResult;
 import org.bc.iterate.util.Pair;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LeftIncrementalHashJoinIterableTest
 {
@@ -51,10 +48,11 @@ public class LeftIncrementalHashJoinIterableTest
     }
 
     @Test
-    public void nextDuplicateKeys() throws Exception {
+    public void nextDuplicateKeys() throws Exception
+    {
         List<Integer> items = Arrays.asList(1, 2, 3, 4);
         List<String> toJoin = Arrays.asList("one", "two", "four", "four2");
-        LeftIncrementalHashJoinIterable<String, Integer, String> j = new LeftIncrementalHashJoinIterable<String, Integer, String>(items, new ToString<Integer>(), toJoin, new Function<String, String>()
+        LeftIncrementalHashJoinIterable<String, Integer, String> j = new LeftIncrementalHashJoinIterable<String, Integer, String>(items, Strings.string(), toJoin, new Function<String, String>()
         {
             public String apply(String s)
             {

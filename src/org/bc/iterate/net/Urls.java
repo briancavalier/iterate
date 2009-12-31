@@ -48,8 +48,7 @@ public class Urls
                 try {
                     return get(url, headers);
                 } catch (IOException e) {
-                    System.err.println(e);
-                    return e.toString();
+                    throw new RuntimeException(e);
                 }
             }
         };
@@ -94,7 +93,7 @@ public class Urls
         StringBuilder content = new StringBuilder(2048);
         CharBuffer buf = ByteBuffer.allocate(2048).asCharBuffer();
         Reader r = reader(url, headers);
-        while(r.read(buf) != -1) {
+        while (r.read(buf) != -1) {
             content.append(buf);
         }
 
@@ -118,7 +117,7 @@ public class Urls
         setHeaders(urlConnection, charset, headers);
 
         return new InputStreamReader(urlConnection.getInputStream(),
-                                     detectCharset(urlConnection.getContentType(), charset));
+                detectCharset(urlConnection.getContentType(), charset));
     }
 
     public static Reader reader(URLConnection connection) throws IOException
@@ -129,12 +128,12 @@ public class Urls
     @SuppressWarnings({"unchecked", "ChainOfInstanceofChecks"})
     private static void setHeaders(URLConnection urlConnection, Charset defaultAccept, Object... headers)
     {
-        if(headers.length > 0) {
-            if(headers[0] instanceof Collection) {
+        if (headers.length > 0) {
+            if (headers[0] instanceof Collection) {
                 setHeadersFromStrings(urlConnection, defaultAccept, (Iterable<String>) headers[0]);
-            } else if(headers[0] instanceof String) {
+            } else if (headers[0] instanceof String) {
                 setHeadersFromStrings(urlConnection, defaultAccept, new ArrayIterable<String>((String[]) headers));
-            } else if(headers[0] instanceof Map) {
+            } else if (headers[0] instanceof Map) {
                 setHeadersFromMap(urlConnection, defaultAccept, (Map<Object, Object>) headers[0]);
             }
         }
@@ -163,7 +162,7 @@ public class Urls
     private static void setHeadersFromMap(URLConnection urlConnection, Charset charset, Map<Object, Object> headers)
     {
         // Set any supplied headers
-        if(!headers.containsKey(ACCEPT_CHARSET_HEADER)) {
+        if (!headers.containsKey(ACCEPT_CHARSET_HEADER)) {
             urlConnection.setRequestProperty("Accept-Charset", charset.name());
         }
 
