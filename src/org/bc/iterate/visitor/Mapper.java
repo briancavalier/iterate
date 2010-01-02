@@ -20,6 +20,9 @@ import org.bc.iterate.TernaryVisitor;
 
 import java.util.Map;
 
+/**
+ * @deprecated will be removed in v1.0
+ */
 public class Mapper<X, Y> implements TernaryVisitor<X, Y, Map<Y, X>>
 {
     public void visit(X value, Y key, Map<Y, X> map)

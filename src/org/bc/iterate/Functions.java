@@ -30,18 +30,51 @@ import java.util.Map;
 public class Functions
 {
     /**
-     * @return the {@link org.bc.iterate.function.Identity} {@link org.bc.iterate.Function} for the type {@code clazz}
+     * the identity {@link org.bc.iterate.Function} for any type.
+     *
+     * @return the identity {@link org.bc.iterate.Function} for any type.
      */
     public static <X> Function<X, X> identity()
     {
-        return new Identity<X>();
+        // IntelliJ flags this as invalid, but it is legal, and compiles/works.
+        return (Function<X, X>) Identity.INSTANCE;
     }
 
+    private enum Identity implements Function<Object, Object>
+    {
+        INSTANCE;
+
+        public Object apply(Object o)
+        {
+            return o;
+        }
+    }
+
+    /**
+     * a {@link Function} that returns the number of times it has been invoked minus one.  That is, the first time
+     * it is called, it returns {@code 0}, the second time {@code 1}, and so on.
+     *
+     * @return a {@link Function} that returns the number of times it has been invoked minus one.
+     */
     public static Function<Object, Integer> index()
     {
-        return new Index();
+        return new Function<Object, Integer>()
+        {
+            private int index = 0;
+
+            public Integer apply(Object o)
+            {
+                return index++;
+            }
+        };
     }
 
+    /**
+     * a {@link Function} equivalent to {@code g(f)}, that is {code g.apply(f.apply(x))}.
+     * @param f inner {@link Function}
+     * @param g outer {@link Function}
+     * @return a {@link Function} equivalent to {@code g(f)}, that is {code g.apply(f.apply(x))}.
+     */
     public static <X, Y, Z> Function<X, Z> compose(Function<X, Y> f, Function<Y, Z> g)
     {
         return new CompositeFunction<X, Y, Z>(f, g);

@@ -15,7 +15,6 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.function.Identity;
 import org.bc.iterate.iterable.IterableBase;
 
 import java.util.Random;
@@ -29,7 +28,7 @@ public class Longs
 {
     public static Function<Long, Long> identity()
     {
-        return new Identity<Long>();
+        return Functions.identity();
     }
 
     public static Function<String, Long> parse()
@@ -100,7 +99,7 @@ public class Longs
 
     /**
      * @return a inexhaustable {@link Iterable} of random {@link Long}s. See {@link java.util.Random#nextLong()}
-     * for numeric range of returned values.
+     *         for numeric range of returned values.
      */
     public static Iterable<Long> random()
     {
@@ -123,7 +122,7 @@ public class Longs
     /**
      * @param random {@link Random} to use to generate random {@link Float}s
      * @return a inexhaustable {@link Iterable} of random {@link Long}s using the supplied {@link Random}.
-     * See {@link java.util.Random#nextLong()} for numeric range of returned values.
+     *         See {@link java.util.Random#nextLong()} for numeric range of returned values.
      */
     public static Iterable<Long> random(final Random random)
     {

@@ -21,6 +21,14 @@ import org.junit.Test;
 public class FunctionsTest
 {
     @Test
+    public void identity()
+    {
+        String s = "foo";
+        final String t = Functions.<String>identity().apply(s);
+        assertEquals(s, t);
+    }
+
+    @Test
     public void invoke() throws Exception
     {
         int i = 10;

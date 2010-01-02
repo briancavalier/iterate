@@ -1,245 +1,261 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="iterate" default="all">
-  
-  
-  <property file="iterate.properties"/>
-  <!-- Uncomment the following property if no tests compilation is needed -->
-  <!-- 
-  <property name="skip.tests" value="true"/>
-   -->
-  
-  <!-- Compiler options -->
-  
-  <property name="compiler.debug" value="on"/>
-  <property name="compiler.generate.no.warnings" value="off"/>
-  <property name="compiler.args" value=""/>
-  <property name="compiler.max.memory" value="128m"/>
-  <patternset id="ignored.files">
-    <exclude name="**/CVS/**"/>
-    <exclude name="**/SCCS/**"/>
-    <exclude name="**/RCS/**"/>
-    <exclude name="**/rcs/**"/>
-    <exclude name="**/.DS_Store/**"/>
-    <exclude name="**/.svn/**"/>
-    <exclude name="**/.sbas/**"/>
-    <exclude name="**/.IJI.*/**"/>
-    <exclude name="**/vssver.scc/**"/>
-    <exclude name="**/vssver2.scc/**"/>
-    <exclude name="**/iris_info.log*/**"/>
-    <exclude name="**/iris_debug.log*/**"/>
-    <exclude name="**/.pyc/**"/>
-    <exclude name="**/.pyo/**"/>
-    <exclude name="**/*.pyc/**"/>
-    <exclude name="**/*.pyo/**"/>
-    <exclude name="**/.git/**"/>
-    <exclude name="**/*.hprof/**"/>
-  </patternset>
-  <patternset id="library.patterns">
-    <include name="*.zip"/>
-    <include name="*.war"/>
-    <include name="*.egg"/>
-    <include name="*.ear"/>
-    <include name="*.swc"/>
-    <include name="*.jar"/>
-  </patternset>
-  <patternset id="compiler.resources">
-    <include name="**/?*.properties"/>
-    <include name="**/?*.xml"/>
-    <include name="**/?*.gif"/>
-    <include name="**/?*.png"/>
-    <include name="**/?*.jpeg"/>
-    <include name="**/?*.jpg"/>
-    <include name="**/?*.html"/>
-    <include name="**/?*.dtd"/>
-    <include name="**/?*.tld"/>
-  </patternset>
-  
-  
-  <!-- Project Libraries -->
-  
-  <path id="library.junit.classpath">
-    <pathelement location="/Users/brian/Documents/Work/mSpoke/svn/iris/trunk/lib/junit-4.4.jar"/>
-  </path>
-  
-  
-  <!-- Global Libraries -->
-  
-  
-  <!-- Application Server Libraries -->
-  
-  <!-- Modules -->
-  
-  
-  <!-- Module Iterate -->
-  
-  <dirname property="module.iterate.basedir" file="${ant.file}"/>
-  
-  
-  
-  <property name="compiler.args.iterate" value="${compiler.args}"/>
-  
-  <property name="iterate.output.dir" value="${module.iterate.basedir}/out/production/Iterate"/>
-  <property name="iterate.testoutput.dir" value="${module.iterate.basedir}/out/test/Iterate"/>
-  
-  <path id="iterate.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="iterate.module.classpath">
-    <pathelement location="${idea.home}/lib/junit-4.4.jar"/>
-    <path refid="library.junit.classpath"/>
-  </path>
-  
-  <path id="iterate.runtime.module.classpath">
-    <pathelement location="${iterate.output.dir}"/>
-    <pathelement location="${iterate.testoutput.dir}"/>
-    <pathelement location="${idea.home}/lib/junit-4.4.jar"/>
-    <path refid="library.junit.classpath"/>
-  </path>
-  
-  
-  <patternset id="excluded.from.module.iterate">
-    <patternset refid="ignored.files"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.iterate">
-    <patternset refid="excluded.from.module.iterate"/>
-  </patternset>
-  
-  <path id="iterate.module.sourcepath">
-    <dirset dir="${module.iterate.basedir}">
-      <include name="src"/>
-    </dirset>
-  </path>
-  
-  <path id="iterate.module.test.sourcepath">
-    <dirset dir="${module.iterate.basedir}">
-      <include name="test"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.iterate" depends="compile.module.iterate.production,compile.module.iterate.tests" description="Compile module Iterate"/>
-  
-  <target name="compile.module.iterate.production" description="Compile module Iterate; production classes">
-    <mkdir dir="${iterate.output.dir}"/>
-    <javac destdir="${iterate.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.iterate}"/>
-      <bootclasspath refid="iterate.module.bootclasspath"/>
-      <classpath refid="iterate.module.classpath"/>
-      <src refid="iterate.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.iterate"/>
-    </javac>
-    
-    <copy todir="${iterate.output.dir}">
-      <fileset dir="${module.iterate.basedir}/src">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.iterate.tests" depends="compile.module.iterate.production" description="compile module Iterate; test classes" unless="skip.tests">
-    <mkdir dir="${iterate.testoutput.dir}"/>
-    <javac destdir="${iterate.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.iterate}"/>
-      <classpath refid="iterate.module.classpath"/>
-      <classpath>
-        <path refid="iterate.module.classpath"/>
+
+
+    <property file="iterate.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+   <property name="skip.tests" value="true"/>
+    -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="128m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/.sbas/**"/>
+        <exclude name="**/.IJI.*/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+        <exclude name="**/iris_info.log*/**"/>
+        <exclude name="**/iris_debug.log*/**"/>
+        <exclude name="**/.pyc/**"/>
+        <exclude name="**/.pyo/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/*.hprof/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.zip"/>
+        <include name="*.war"/>
+        <include name="*.egg"/>
+        <include name="*.ear"/>
+        <include name="*.swc"/>
+        <include name="*.jar"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <include name="**/?*.properties"/>
+        <include name="**/?*.xml"/>
+        <include name="**/?*.gif"/>
+        <include name="**/?*.png"/>
+        <include name="**/?*.jpeg"/>
+        <include name="**/?*.jpg"/>
+        <include name="**/?*.html"/>
+        <include name="**/?*.dtd"/>
+        <include name="**/?*.tld"/>
+    </patternset>
+
+
+    <!-- Project Libraries -->
+
+    <path id="library.junit.classpath">
+        <pathelement location="/Users/brian/Documents/Work/mSpoke/svn/iris/trunk/lib/junit-4.4.jar"/>
+    </path>
+
+
+    <!-- Global Libraries -->
+
+
+    <!-- Application Server Libraries -->
+
+    <!-- Modules -->
+
+
+    <!-- Module Iterate -->
+
+    <dirname property="module.iterate.basedir" file="${ant.file}"/>
+
+
+    <property name="compiler.args.iterate" value="${compiler.args}"/>
+
+    <property name="iterate.output.dir" value="${module.iterate.basedir}/out/production/Iterate"/>
+    <property name="iterate.testoutput.dir" value="${module.iterate.basedir}/out/test/Iterate"/>
+
+    <path id="iterate.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="iterate.module.classpath">
+        <pathelement location="${idea.home}/lib/junit-4.4.jar"/>
+        <path refid="library.junit.classpath"/>
+    </path>
+
+    <path id="iterate.runtime.module.classpath">
         <pathelement location="${iterate.output.dir}"/>
-      </classpath>
-      <src refid="iterate.module.test.sourcepath"/>
-      <patternset refid="excluded.from.compilation.iterate"/>
-    </javac>
-    
-    <copy todir="${iterate.testoutput.dir}">
-      <fileset dir="${module.iterate.basedir}/test">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="clean.module.iterate" description="cleanup module">
-    <delete dir="${iterate.output.dir}"/>
-    <delete dir="${iterate.testoutput.dir}"/>
-  </target>
-  
-  
-  <!-- Module examples -->
-  
-  <dirname property="module.examples.basedir" file="${ant.file}"/>
-  
-  
-  
-  <property name="compiler.args.examples" value="${compiler.args}"/>
-  
-  <property name="examples.output.dir" value="${module.examples.basedir}/out/production/examples"/>
-  <property name="examples.testoutput.dir" value="${module.examples.basedir}/out/test/examples"/>
-  
-  <path id="examples.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="examples.module.classpath">
-    <pathelement location="${iterate.output.dir}"/>
-    <pathelement location="${iterate.testoutput.dir}"/>
-  </path>
-  
-  <path id="examples.runtime.module.classpath">
-    <pathelement location="${examples.output.dir}"/>
-    <pathelement location="${examples.testoutput.dir}"/>
-    <path refid="iterate.runtime.module.classpath"/>
-  </path>
-  
-  
-  <patternset id="excluded.from.module.examples">
-    <patternset refid="ignored.files"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.examples">
-    <patternset refid="excluded.from.module.examples"/>
-  </patternset>
-  
-  <path id="examples.module.sourcepath">
-    <dirset dir="${module.examples.basedir}">
-      <include name="examples"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.examples" depends="compile.module.examples.production,compile.module.examples.tests" description="Compile module examples"/>
-  
-  <target name="compile.module.examples.production" depends="compile.module.iterate" description="Compile module examples; production classes">
-    <mkdir dir="${examples.output.dir}"/>
-    <javac destdir="${examples.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.examples}"/>
-      <bootclasspath refid="examples.module.bootclasspath"/>
-      <classpath refid="examples.module.classpath"/>
-      <src refid="examples.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.examples"/>
-    </javac>
-    
-    <copy todir="${examples.output.dir}">
-      <fileset dir="${module.examples.basedir}/examples">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.examples.tests" depends="compile.module.examples.production" description="compile module examples; test classes" unless="skip.tests"/>
-  
-  <target name="clean.module.examples" description="cleanup module">
-    <delete dir="${examples.output.dir}"/>
-    <delete dir="${examples.testoutput.dir}"/>
-  </target>
-  
-  <target name="init" description="Build initialization">
-    <!-- Perform any build initialization in this target -->
-  </target>
-  
-  <target name="clean" depends="clean.module.iterate, clean.module.examples" description="cleanup all"/>
-  
-  <target name="all" depends="init, clean, compile.module.iterate, compile.module.examples" description="build all"/>
+        <pathelement location="${iterate.testoutput.dir}"/>
+        <pathelement location="${idea.home}/lib/junit-4.4.jar"/>
+        <path refid="library.junit.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.iterate">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.iterate">
+        <patternset refid="excluded.from.module.iterate"/>
+    </patternset>
+
+    <path id="iterate.module.sourcepath">
+        <dirset dir="${module.iterate.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+    <path id="iterate.module.test.sourcepath">
+        <dirset dir="${module.iterate.basedir}">
+            <include name="test"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.iterate" depends="compile.module.iterate.production,compile.module.iterate.tests"
+            description="Compile module Iterate"/>
+
+    <target name="compile.module.iterate.production" description="Compile module Iterate; production classes">
+        <mkdir dir="${iterate.output.dir}"/>
+        <javac destdir="${iterate.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.iterate}"/>
+            <bootclasspath refid="iterate.module.bootclasspath"/>
+            <classpath refid="iterate.module.classpath"/>
+            <src refid="iterate.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.iterate"/>
+        </javac>
+
+        <copy todir="${iterate.output.dir}">
+            <fileset dir="${module.iterate.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.iterate.tests" depends="compile.module.iterate.production"
+            description="compile module Iterate; test classes" unless="skip.tests">
+        <mkdir dir="${iterate.testoutput.dir}"/>
+        <javac destdir="${iterate.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.iterate}"/>
+            <classpath refid="iterate.module.classpath"/>
+            <classpath>
+                <path refid="iterate.module.classpath"/>
+                <pathelement location="${iterate.output.dir}"/>
+            </classpath>
+            <src refid="iterate.module.test.sourcepath"/>
+            <patternset refid="excluded.from.compilation.iterate"/>
+        </javac>
+
+        <copy todir="${iterate.testoutput.dir}">
+            <fileset dir="${module.iterate.basedir}/test">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean.module.iterate" description="cleanup module">
+        <delete dir="${iterate.output.dir}"/>
+        <delete dir="${iterate.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module examples -->
+
+    <dirname property="module.examples.basedir" file="${ant.file}"/>
+
+
+    <property name="compiler.args.examples" value="${compiler.args}"/>
+
+    <property name="examples.output.dir" value="${module.examples.basedir}/out/production/examples"/>
+    <property name="examples.testoutput.dir" value="${module.examples.basedir}/out/test/examples"/>
+
+    <path id="examples.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="examples.module.classpath">
+        <pathelement location="${iterate.output.dir}"/>
+        <pathelement location="${iterate.testoutput.dir}"/>
+    </path>
+
+    <path id="examples.runtime.module.classpath">
+        <pathelement location="${examples.output.dir}"/>
+        <pathelement location="${examples.testoutput.dir}"/>
+        <path refid="iterate.runtime.module.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.examples">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.examples">
+        <patternset refid="excluded.from.module.examples"/>
+    </patternset>
+
+    <path id="examples.module.sourcepath">
+        <dirset dir="${module.examples.basedir}">
+            <include name="examples"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.examples" depends="compile.module.examples.production,compile.module.examples.tests"
+            description="Compile module examples"/>
+
+    <target name="compile.module.examples.production" depends="compile.module.iterate"
+            description="Compile module examples; production classes">
+        <mkdir dir="${examples.output.dir}"/>
+        <javac destdir="${examples.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.examples}"/>
+            <bootclasspath refid="examples.module.bootclasspath"/>
+            <classpath refid="examples.module.classpath"/>
+            <src refid="examples.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.examples"/>
+        </javac>
+
+        <copy todir="${examples.output.dir}">
+            <fileset dir="${module.examples.basedir}/examples">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.examples.tests" depends="compile.module.examples.production"
+            description="compile module examples; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.examples" description="cleanup module">
+        <delete dir="${examples.output.dir}"/>
+        <delete dir="${examples.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean" depends="clean.module.iterate, clean.module.examples" description="cleanup all"/>
+
+    <target name="all" depends="init, clean, compile.module.iterate, compile.module.examples" description="build all"/>
+
+    <target name="docs" depends="init" description="generate javadoc">
+        <mkdir dir="${module.iterate.basedir}/javadoc"/>
+        <javadoc access="protected" destdir="${module.iterate.basedir}/javadoc">
+            <fileset dir="${module.iterate.basedir}/src">
+                <include name="**/*.java"/>
+                <include name="**/package.html"/>
+            </fileset>
+        </javadoc>
+    </target>
 </project>

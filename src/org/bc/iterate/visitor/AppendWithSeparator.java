@@ -15,6 +15,10 @@
  */
 package org.bc.iterate.visitor;
 
+import org.bc.iterate.Function;
+import org.bc.logging.Logger;
+import org.bc.logging.LoggerFactory;
+
 import java.io.IOException;
 
 /**
@@ -35,24 +39,32 @@ public class AppendWithSeparator<X> extends Append<X>
     public void visit(X x, Appendable appendable)
     {
         try {
-            if(sep) {
+            if (sep) {
                 appendable.append(separator);
             }
-            appendable.append(x.toString());
+            appendable.append(toString.apply(x));
             sep = true;
         } catch (IOException e) {
-            System.err.println(e);
+            throw new RuntimeException("IOException trying to append item", e);
         }
     }
 
     /**
      * After {@code reset()} is called, no separator will be appended before the item in the next call to
      * {@link #visit(Object, Appendable)}.
+     *
      * @return this
      */
-    public AppendWithSeparator reset()
+    public AppendWithSeparator<X> reset()
     {
         sep = false;
+        return this;
+    }
+
+    @Override
+    public AppendWithSeparator<X> format(final Function<X, String> toString)
+    {
+        super.format(toString);
         return this;
     }
 }

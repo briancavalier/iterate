@@ -17,22 +17,32 @@
 package org.bc.iterate.visitor;
 
 import org.bc.iterate.BinaryVisitor;
+import org.bc.iterate.Function;
+import org.bc.iterate.Strings;
 
 import java.io.IOException;
 
 public class Append<X> implements BinaryVisitor<X, Appendable>
 {
+    protected Function<X, String> toString = Strings.string();
+
     public void visit(X x, Appendable appendable)
     {
         try {
-            appendable.append(x.toString());
+            appendable.append(toString.apply(x));
         } catch (IOException e) {
-            System.err.println(e);
+            throw new RuntimeException("IOException trying to append item", e);
         }
     }
 
     public AppendWithSeparator<X> with(String separator)
     {
-        return new AppendWithSeparator(separator);
+        return new AppendWithSeparator<X>(separator);
+    }
+
+    public Append<X> format(final Function<X, String> toString)
+    {
+        this.toString = toString;
+        return this;
     }
 }

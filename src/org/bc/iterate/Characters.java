@@ -16,11 +16,6 @@
 
 package org.bc.iterate;
 
-import org.bc.iterate.function.Identity;
-import org.bc.iterate.iterable.IterableBase;
-
-import java.util.Random;
-
 /**
  * This class provides {@link org.bc.iterate.Function}s and {@link org.bc.iterate.Visitor}s for {@code char}s and {@link Character}s.
  *
@@ -28,8 +23,12 @@ import java.util.Random;
  */
 public class Characters
 {
+    /**
+     * Returns the identity function for {@link Character}s
+     * @return the identity function for {@link Character}s
+     */
     public static Function<Character, Character> identity()
     {
-        return new Identity<Character>();
+        return Functions.identity();
     }
 }

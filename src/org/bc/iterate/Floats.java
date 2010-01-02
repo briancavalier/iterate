@@ -15,7 +15,6 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.function.Identity;
 import org.bc.iterate.iterable.IterableBase;
 
 import java.util.Random;
@@ -29,7 +28,7 @@ public class Floats
 {
     public static Function<Float, Float> identity()
     {
-        return new Identity<Float>();
+        return Functions.identity();
     }
 
     public static Function<String, Float> parse()
@@ -100,17 +99,17 @@ public class Floats
 
     /**
      * @return a inexhaustable {@link Iterable} of random {@link Float}s.  See {@link java.util.Random#nextFloat()}
-     * for numeric range of returned values.
+     *         for numeric range of returned values.
      */
     public static Iterable<Float> random()
     {
-       return random(new Random());
+        return random(new Random());
     }
 
     /**
      * @param random {@link Random} to use to generate random {@link Float}s
      * @return a inexhaustable {@link Iterable} of random {@link Float}s using the supplied {@link Random}.
-     * See {@link java.util.Random#nextFloat()} for numeric range of returned values.
+     *         See {@link java.util.Random#nextFloat()} for numeric range of returned values.
      */
     public static Iterable<Float> random(final Random random)
     {

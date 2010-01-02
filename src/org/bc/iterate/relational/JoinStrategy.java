@@ -19,7 +19,7 @@ package org.bc.iterate.relational;
 import org.bc.iterate.relational.JoinResult;
 
 /**
- * @author bcavalier
+ * @author Brian Cavalier
  */
 public interface JoinStrategy<K, X, Y>
 {

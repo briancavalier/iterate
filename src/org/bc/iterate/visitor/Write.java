@@ -17,8 +17,8 @@ package org.bc.iterate.visitor;
 
 import org.bc.iterate.BinaryVisitor;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 public class Write implements BinaryVisitor<String, Writer>
 {
@@ -27,7 +27,7 @@ public class Write implements BinaryVisitor<String, Writer>
         try {
             writer.write(s);
         } catch (IOException e) {
-            System.err.println(e); // FIXME: Need exception strategy here
+            throw new RuntimeException("IOException trying to write", e);
         }
     }
 }

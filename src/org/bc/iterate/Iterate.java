@@ -22,8 +22,10 @@ import org.bc.iterate.net.Urls;
 import org.bc.iterate.relational.JoinResult;
 import org.bc.iterate.relational.JoinStrategy;
 import org.bc.iterate.visitor.*;
+import org.bc.logging.Logger;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -42,8 +44,10 @@ public class Iterate<X> implements Iterable<X>
     public static final int DEFAULT_SIZE_ESTIMATE = 128;
 
     /**
+     * Creates an {@link Iterate} that will operate on the items in the supplied {@link Iterable}.
+     *
      * @param items {@link Iterable} containing items over which to iterate
-     * @return an {@link Iterate} internal iterator that will operate on the items in the supplied {@link Iterable}.
+     * @return an {@link Iterate} that will operate on the items in the supplied {@link Iterable}.
      */
     public static <X> Iterate<X> each(final Iterable<X> items)
     {
@@ -51,8 +55,10 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * Creates an {@link Iterate} that will operate on the items in the supplied array.
+     *
      * @param items array containing items over which to iterate
-     * @return an {@link Iterate} internal iterator that will operate on the items in the supplied array.
+     * @return an {@link Iterate} that will operate on the items in the supplied array.
      */
     public static <X> Iterate<X> each(final X... items)
     {
@@ -60,20 +66,16 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * Shortcut for {@code Iterate.each(map.entrySet())}
+     * Creates an {@link Iterate} that will operate on the {@link java.util.Map.Entry} items in {@code
+     * map.entrySet()}.  Shortcut for {@code Iterate.each(map.entrySet())}
      *
      * @param map This {@link Map}'s {@link Map#entrySet()} will be used for iteration
-     * @return an {@link Iterate} internal iterator that will operate on the {@link java.util.Map.Entry} items in {@code
+     * @return an {@link Iterate} that will operate on the {@link java.util.Map.Entry} items in {@code
      *         map.entrySet()}
      */
     public static <X, Y> Iterate<Map.Entry<X, Y>> each(final Map<X, Y> map)
     {
         return new Iterate<Map.Entry<X, Y>>(map.entrySet(), map.size());
-    }
-
-    public static <X, Y extends Collection<X>> IterateCollection<X, Y> wrap(Y collection)
-    {
-        return new IterateCollection<X, Y>(collection);
     }
 
     protected Iterable<X> iterable;
@@ -82,7 +84,7 @@ public class Iterate<X> implements Iterable<X>
 
     protected Iterate(Iterable<X> items)
     {
-        this.iterable = items;
+        this(items, estimateSize(items));
     }
 
     protected Iterate(Iterable<X> items, int sizeEstimate)
@@ -91,13 +93,8 @@ public class Iterate<X> implements Iterable<X>
         this.sizeEstimate = sizeEstimate;
     }
 
-    protected Iterate()
-    {
-        this(null);
-    }
-
     /**
-     * Narrow the scope to items for which {@code c.eval(item) == true}
+     * Narrow the scope of iteration to items for which {@code c.eval(item) == true}
      *
      * @param c {@link Condition} to evaluate for each item.
      * @return {@link Iterate} that will only iterate over items for which {@code c.eval(item) == true}
@@ -108,7 +105,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * Narrow the scope to items for which {@code c.compareTo(item) == 0}
+     * Narrow the scope of iteration to items for which {@code c.compareTo(item) == 0}
      *
      * @param c {@link Comparable} to compare with each item.
      * @return {@link Iterate} that will only iterate over items for which {@code c.compareTo(item) == 0}
@@ -167,6 +164,7 @@ public class Iterate<X> implements Iterable<X>
      */
     public <K, Y> Iterate<JoinResult<K, X, Y>> join(JoinStrategy<K, ? super X, ? super Y> strategy, Iterable<Y> itemsToJoin)
     {
+        //noinspection unchecked
         return new Iterate<JoinResult<K, X, Y>>(((JoinStrategy<K, X, Y>) strategy).join(this, itemsToJoin));
     }
 
@@ -179,18 +177,18 @@ public class Iterate<X> implements Iterable<X>
         return visitor;
     }
 
-    public <Y> Y visit(BinaryVisitor<? super X, ? super Y> visitor, Y param)
+    public <Y> Y visit(BinaryVisitor<? super X, ? super Y> visitor, Y parameter)
     {
         for (X x : this) {
-            visitor.visit(x, param);
+            visitor.visit(x, parameter);
         }
 
-        return param;
+        return parameter;
     }
 
-    public <Y> Y reduce(BinaryFunction<? super X, ? super Y, ? extends Y> f, Y param)
+    public <Y> Y reduce(BinaryFunction<? super X, ? super Y, ? extends Y> f, Y startingValue)
     {
-        Y result = param;
+        Y result = startingValue;
         for (X x : this) {
             result = f.apply(x, result);
         }
@@ -200,11 +198,11 @@ public class Iterate<X> implements Iterable<X>
 
     public X reduce(BinaryFunction<? super X, ? super X, ? extends X> f)
     {
-        final Iterator<X> iter = this.iterator();
-        if (iter.hasNext()) {
-            X result = iter.next();
-            while (iter.hasNext()) {
-                result = f.apply(iter.next(), result);
+        final Iterator<X> i = this.iterator();
+        if (i.hasNext()) {
+            X result = i.next();
+            while (i.hasNext()) {
+                result = f.apply(i.next(), result);
             }
 
             return result;
@@ -214,7 +212,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
-     * @deprecated This will be removed before version 1.0
+     * @deprecated will be removed before version 1.0
      */
     public <Y, Z> Z visit(TernaryVisitor<? super X, ? super Y, Z> visitor,
                           Function<? super X, ? extends Y> f,
@@ -248,6 +246,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * Limits iteration to the items between inclusive {@code start} and exclusive {@code end}
+     *
      * @param start inclusive start index
      * @param end   exclusive end index
      * @return a new {@link Iterate} that will only iterate over the items in the range from inclusive {@code start}
@@ -259,6 +259,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * Limits iteration to the items starting at inclusive {@code start}.
+     *
      * @param start inclusive start index
      * @return a new {@link Iterate} that will only iterate over the items starting at inclusive {@code start}.
      */
@@ -268,6 +270,10 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * {@link Iterator} over items in this {@link Iterate} view.  Typically, callers will not use this method,
+     * but instead will use the internal iteration methods {@code each}, {@code map}, {@code visit}, and {@code
+     * reduce}.
+     *
      * @return {@link Iterator} over items in this {@link Iterate} view.  Typically, callers will not use this method,
      *         but instead will use the internal iteration methods {@code each}, {@code map}, {@code visit}, and {@code
      *         reduce}.
@@ -300,7 +306,7 @@ public class Iterate<X> implements Iterable<X>
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
-    public static LineReaderIterable line(InputStream in)
+    public static LineReaderIterable lines(InputStream in)
     {
         return lines(new InputStreamReader(in));
     }
@@ -357,6 +363,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over {@code numBytesPerIteration}-size byte chunks read from {@code in}
+     *
      * @param in                   {@link java.io.InputStream} from which to read bytes
      * @param numBytesPerIteration maximum number of bytes per chunk
      * @return an {@link Iterable} over {@code numBytesPerIteration}-size byte chunks read from {@code in}
@@ -367,6 +375,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over {@code numBytesPerIteration}-size byte chunks read from {@code channel}
+     *
      * @param channel              {@link java.nio.channels.ReadableByteChannel} from which to read bytes
      * @param numBytesPerIteration maximum number of bytes per chunk
      * @return an {@link Iterable} over {@code numBytesPerIteration}-size byte chunks read from {@code channel}
@@ -377,6 +387,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
+     *
      * @param in        {@link Readable} from which to read
      * @param delimiter delimiter used to split tokens from {@code in}
      * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
@@ -387,6 +399,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
+     *
      * @param in        {@link Readable} from which to read
      * @param delimiter delimiter used to split tokens from {@code in}
      * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
@@ -407,6 +421,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over all substrings matching {@code regex}
+     *
      * @param in    {@link Readable} from which to read data for matching
      * @param regex regular expression to match.
      * @return an {@link Iterable} over all substrings matching {@code regex}
@@ -417,6 +433,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over all substrings matching {@code regex}
+     *
      * @param in    {@link String} from which to read data for matching
      * @param regex regular expression to match.
      * @return an {@link Iterable} over all substrings matching {@code regex}
@@ -427,6 +445,8 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * an {@link Iterable} over all substrings matching {@code regex}
+     *
      * @param in    {@link String} from which to read data for matching
      * @param regex regular expression to match.
      * @return an {@link Iterable} over all substrings matching {@code regex}
@@ -441,22 +461,34 @@ public class Iterate<X> implements Iterable<X>
     //
 
     /**
+     * a {@link BinaryVisitor} that will add the item {@code x} to the {@code Collection y}
+     *
      * @return a {@link BinaryVisitor} that will add the item {@code x} to the {@code Collection y}
      */
     public static <X> BinaryVisitor<X, Collection> collect()
     {
-        return new Collect<X>();
+        return new BinaryVisitor<X, Collection>()
+        {
+            public void visit(X x, Collection collection)
+            {
+                //noinspection unchecked
+                collection.add(x);
+            }
+        };
     }
 
     /**
+     * a {@link BinaryVisitor} that will add all elements of the {@link Iterable} {@code x} to the {@link
+     * Collection} {@code y}
+     *
      * @return a {@link BinaryVisitor} that will add all elements of the {@link Iterable} {@code x} to the {@link
      *         Collection} {@code y}
      */
-    public static <X, IX extends Iterable<X>, CX extends Collection<? super X>> BinaryVisitor<IX, CX> addAll()
+    public static <X, IterableType extends Iterable<X>, CollectionType extends Collection<? super X>> BinaryVisitor<IterableType, CollectionType> addAll()
     {
-        return new BinaryVisitor<IX, CX>()
+        return new BinaryVisitor<IterableType, CollectionType>()
         {
-            public void visit(IX iterable, CX cx)
+            public void visit(IterableType iterable, CollectionType cx)
             {
                 for (X x : iterable) {
                     cx.add(x);
@@ -483,9 +515,12 @@ public class Iterate<X> implements Iterable<X>
     }
 
     /**
+     * a {@link BinaryVisitor} that will app the value {@code x} to a supplied {@link Map} using the key
+     * generated by apply {@code mapFunction} to {@code x}
+     *
      * @param mapFunction {@link Function} that will be used to generate map keys for each item
      * @return a {@link BinaryVisitor} that will app the value {@code x} to a supplied {@link Map} using the key
-     * generated by apply {@code mapFunction} to {@code x}
+     *         generated by apply {@code mapFunction} to {@code x}
      */
     public static <X, Y> BinaryVisitor<? super X, Map<Y, X>> map(final Function<X, Y> mapFunction)
     {
@@ -555,7 +590,7 @@ public class Iterate<X> implements Iterable<X>
 
     /**
      * @param pattern {@link Pattern} to find
-     * @param group number of the regex group to return when {@code pattern} is matched.
+     * @param group   number of the regex group to return when {@code pattern} is matched.
      * @return a {@link Function} that will return the specified {@code group} within the first substring matched by
      *         {@code pattern}
      */
@@ -566,7 +601,7 @@ public class Iterate<X> implements Iterable<X>
 
     /**
      * @param pattern regex pattern to find--will be compiled to a {@link Pattern} once, for faster execution.
-     * @param group number of the regex group to return when {@code pattern} is matched.
+     * @param group   number of the regex group to return when {@code pattern} is matched.
      * @return a {@link Function} that will return the specified {@code group} within the first substring matched by
      *         {@code pattern}
      */
@@ -628,22 +663,46 @@ public class Iterate<X> implements Iterable<X>
 
     /**
      * Attempts to estimate the number of items in {@code items} by checking its type to see if it is a type with
-     * a known size, such as a {@link Collection} or {@link Map}, in which case {@link Collection#size()} or {@link Map#size()}
-     * is returned.  If it is an {@link Iterate}, its {@link Iterate#sizeEstimate} is returned.  Otherwise {@link #DEFAULT_SIZE_ESTIMATE}
-     * is returned.
+     * a known size:
+     * <ul>
+     * <li>a {@link Collection} or {@link Map}: {@link Collection#size()} or {@link Map#size()}</li>
+     * <li>an {@link Iterate}: {@link #sizeEstimate}</li>
+     * <li>any other type of {@link Iterable}: {@link #DEFAULT_SIZE_ESTIMATE}</li>
+     * <li>a {@link String}: {@link String#length()}
+     * <li>an array (e.g. int[], etc.): {@link Array#getLength(Object)}</li>
+     * <li>{@code null}: {@code 0}
+     * <li>anything else: {@code 1}
+     * </ul>
+     *
      * @param items thing whose size will be estimated
      * @return estimated size of {@code items}, based on rules above.
      */
     @SuppressWarnings({"ChainOfInstanceofChecks"})
     public static int estimateSize(Object items)
     {
-        int sizeEstimate = DEFAULT_SIZE_ESTIMATE;
+        if (items == null) {
+            return 0;
+        }
+
+        int sizeEstimate = 1;
         if (items instanceof Collection) {
             sizeEstimate = ((Collection) items).size();
         } else if (items instanceof Map) {
             sizeEstimate = ((Map) items).size();
         } else if (items instanceof Iterate) {
             sizeEstimate = ((Iterate) items).sizeEstimate;
+        } else if (items instanceof Iterable) {
+            // Just have to return something reasonable here
+            sizeEstimate = DEFAULT_SIZE_ESTIMATE;
+        } else if (items instanceof String) {
+            sizeEstimate = ((String) items).length();
+        } else if (items instanceof Object[]) {
+            // Separate cases for Object[] and primitive arrays because instanceof is typically much faster
+            // than Class.isArray(), but primitive arrays cannot be checked with instanceof.
+            // i.e. int[] instanceof Object[] == false
+            sizeEstimate = ((Object[]) items).length;
+        } else if (items.getClass().isArray()) {
+            sizeEstimate = Array.getLength(items);
         }
         return sizeEstimate;
     }

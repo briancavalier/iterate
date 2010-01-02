@@ -15,14 +15,13 @@
  */
 package org.bc.iterate.iterable;
 
-import org.bc.iterate.Function;
 import org.bc.iterate.Integers;
-import org.bc.iterate.function.ToString;
 import org.bc.iterate.relational.JoinResult;
-import org.bc.iterate.util.Pair;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 

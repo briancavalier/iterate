@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.Random;
 
 public class ConditionsTest
 {
@@ -160,5 +161,41 @@ public class ConditionsTest
     {
         assertTrue(Conditions.in(Arrays.asList(1, 2, 3)).eval(2));
         assertFalse(Conditions.in(Arrays.asList(1, 2, 3)).eval(4));        
+    }
+
+    @Test
+    public void chance()
+    {
+        // Test the chance algorithm, NOT Java's random number generator
+        Random fake0 = new FakeRandom(0.0);
+        Random fake4 = new FakeRandom(.4);
+        Random fake5 = new FakeRandom(.5);
+        Random fake6 = new FakeRandom(.6);
+        Random fake10 = new FakeRandom(1.0);
+        
+        assertTrue(Conditions.chance(.5, fake0).eval(new Object()));
+        assertTrue(Conditions.chance(.5, fake4).eval(new Object()));
+        assertFalse(Conditions.chance(.5, fake5).eval(new Object()));
+        assertFalse(Conditions.chance(.5, fake6).eval(new Object()));
+        assertFalse(Conditions.chance(.5, fake10).eval(new Object()));
+
+        assertTrue(Conditions.chance(.6, fake5).eval(new Object()));
+        assertFalse(Conditions.chance(.4, fake5).eval(new Object()));
+    }
+
+    private static class FakeRandom extends Random
+    {
+        private final double doubleValue;
+
+        public FakeRandom(double doubleValue)
+        {
+            this.doubleValue = doubleValue;
+        }
+
+        @Override
+        public double nextDouble()
+        {
+            return doubleValue;
+        }
     }
 }

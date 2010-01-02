@@ -15,7 +15,6 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.function.Identity;
 import org.bc.iterate.iterable.IterableBase;
 
 import java.util.Random;
@@ -29,7 +28,7 @@ public class Doubles
 {
     public static Function<Double, Double> identity()
     {
-        return new Identity<Double>();
+        return Functions.identity();
     }
 
     public static Function<String, Double> parse()
@@ -100,7 +99,7 @@ public class Doubles
 
     /**
      * @return a inexhaustable {@link Iterable} of random {@link Double}s. See {@link java.util.Random#nextDouble()}
-     * for numeric range of returned values.
+     *         for numeric range of returned values.
      */
     public static Iterable<Double> random()
     {
@@ -123,7 +122,7 @@ public class Doubles
     /**
      * @param random {@link Random} to use to generate random {@link Double}s
      * @return a inexhaustable {@link Iterable} of random {@link Double}s using the supplied {@link Random}.
-     * See {@link java.util.Random#nextDouble()} for numeric range of returned values.
+     *         See {@link java.util.Random#nextDouble()} for numeric range of returned values.
      */
     public static Iterable<Double> random(final Random random)
     {

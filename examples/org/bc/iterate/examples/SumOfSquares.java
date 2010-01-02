@@ -17,10 +17,9 @@ package org.bc.iterate.examples;
 
 import org.bc.iterate.BinaryFunction;
 import org.bc.iterate.Function;
-import org.bc.iterate.Integers;
+
 import static org.bc.iterate.Functions.compose;
-import static org.bc.iterate.Integers.square;
-import static org.bc.iterate.Integers.sum;
+import static org.bc.iterate.Integers.*;
 import static org.bc.iterate.Iterate.each;
 
 public class SumOfSquares
@@ -31,7 +30,7 @@ public class SumOfSquares
         // Each will print the same result, the sum of squared integers from 1 to 100: 338350
 
         // Using inline anonymous classes like lambda functions
-        System.out.println(each(Integers.range(1, 101))
+        System.out.println(each(range(1, 101))
                 .map(new Function<Integer, Integer>()
                 {
                     public Integer apply(Integer i)
@@ -48,22 +47,22 @@ public class SumOfSquares
         }, 0));
 
         // Using builtin Integers functions and so are more compact
-        System.out.println(each(Integers.range(1, 101))
+        System.out.println(each(range(1, 101))
                 .map(square())
                 .reduce(sum(), 0));
 
         // This one is my favorite--I feel it is the most readable
-        System.out.println(each(Integers.range(1, 101))
+        System.out.println(each(range(1, 101))
                 .map(square())
                 .reduce(sum()));
 
         // Using only reduce() with a composed binary function
         // Looking more LISP-like ...
-        System.out.println(each(Integers.range(1, 101))
+        System.out.println(each(range(1, 101))
                 .reduce(compose(square(), sum()), 0));
 
         // And finally, the most compact, but most LISP-like
-        System.out.println(each(Integers.range(1, 101))
+        System.out.println(each(range(1, 101))
                 .reduce(compose(square(), sum())));
 
     }
