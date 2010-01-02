@@ -19,9 +19,16 @@ package org.bc.iterate.relational;
 import org.bc.iterate.relational.JoinResult;
 
 /**
+ * A {@link JoinStrategy} represents an algorithm for performing a relational join on the items in two {@link Iterable}s
  * @author Brian Cavalier
  */
 public interface JoinStrategy<K, X, Y>
 {
+    /**
+     * Performs a relational join on the two supplied {@link Iterable}s
+     * @param left items on the left side of the relational join
+     * @param right items on the right side of the relational join
+     * @return an {@link Iterable} of {@link JoinResult}s of performing the join
+     */
     Iterable<JoinResult<K, X, Y>> join(Iterable<X> left, Iterable<Y> right);
 }

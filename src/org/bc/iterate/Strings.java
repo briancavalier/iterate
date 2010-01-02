@@ -30,12 +30,14 @@ import java.util.regex.Pattern;
 public class Strings
 {
     public static final String DEFAULT_JOIN_SEPARATOR = ",";
+
     private static final int DEFAULT_JOIN_ITEM_SPACE = 32;
 
     /**
      * Joins the supplied {@code items}, with {@link #DEFAULT_JOIN_SEPARATOR} between them.
      *
      * @param items items to join together into one {@code String}
+     *
      * @return a {@code String} of all items
      */
     public static <X> String join(final Iterable<X> items)
@@ -48,6 +50,7 @@ public class Strings
      *
      * @param items     items to join together into one {@code String}
      * @param separator non-null String to place between each item in {@code items}
+     *
      * @return a {@code String} of all items
      */
     public static <X> String join(final Iterable<X> items, final String separator)
@@ -61,11 +64,12 @@ public class Strings
     }
 
     /**
-     * Appends the supplied {@code items} to {@code result}, invoking {@code toString()} on each, with
-     * {@link #DEFAULT_JOIN_SEPARATOR} between them.
+     * Appends the supplied {@code items} to {@code result}, invoking {@code toString()} on each, with {@link
+     * #DEFAULT_JOIN_SEPARATOR} between them.
      *
      * @param items  items to join together into one {@code String}
      * @param result {@link Appendable} to which each item will be appended
+     *
      * @return {@code result}, to which all items have been appended
      */
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Y result) throws IOException
@@ -74,12 +78,13 @@ public class Strings
     }
 
     /**
-     * Appends the supplied {@code items} to {@code result}, invoking {@code toString()} on each, with
-     * {@code separator} between them.
+     * Appends the supplied {@code items} to {@code result}, invoking {@code toString()} on each, with {@code separator}
+     * between them.
      *
      * @param items     items to join together into one {@code String}
      * @param result    {@link Appendable} to which each item will be appended
      * @param separator non-null String to place between each item in {@code items}
+     *
      * @return {@code result}, to which all items have been appended
      */
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Y result, final String separator)
@@ -94,6 +99,7 @@ public class Strings
      *
      * @param items    items to join together into one {@code String}
      * @param toString {@link Function} to use to convert each item to a {@code String}
+     *
      * @return a {@code String} of all items
      */
     public static <X> String join(final Iterable<X> items, Function<X, String> toString)
@@ -109,6 +115,7 @@ public class Strings
      * @param items    items to join together into one {@code String}
      * @param toString {@link Function} to use to convert each item to a {@code String}
      * @param result   {@link Appendable} to which each item will be appended
+     *
      * @return {@code result}, to which all items have been appended
      */
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, Function<X, String> toString, Y result)
@@ -124,6 +131,7 @@ public class Strings
      * @param items     items to join together into one {@code String}
      * @param toString  {@link Function} to use to convert each item to a {@code String}
      * @param separator non-null String to place between each item in {@code items}
+     *
      * @return a {@code String} of all items
      */
     public static <X> StringBuilder join(final Iterable<X> items, Function<X, String> toString, String separator)
@@ -140,6 +148,7 @@ public class Strings
      * @param toString  {@link Function} to use to convert each item to a {@code String}
      * @param result    {@link Appendable} to which each item will be appended
      * @param separator non-null String to place between each item in {@code items}
+     *
      * @return {@code result}, to which all items have been appended
      */
     public static <X, Y extends Appendable> Y join(final Iterable<X> items, final Function<X, String> toString,
@@ -159,12 +168,12 @@ public class Strings
     }
 
     /**
-     * a {@link Condition} that returns {@code true} iff the {@link String} being evaluated
-     * contains {@code contained}.
+     * a {@link Condition} that returns {@code true} iff the {@link String} being evaluated contains {@code contained}.
      *
      * @param contained {@link String} to find
-     * @return a {@link Condition} that returns {@code true} iff the {@link String} being evaluated
-     *         contains {@code contained}.
+     *
+     * @return a {@link Condition} that returns {@code true} iff the {@link String} being evaluated contains {@code
+     *         contained}.
      */
     public static Condition<String> contains(final String contained)
     {
@@ -178,12 +187,13 @@ public class Strings
     }
 
     /**
-     * a {@link Condition} that returns {@code true} iff the {@link String} being evaluated
-     * contains the supplied {@code char}.
+     * a {@link Condition} that returns {@code true} iff the {@link String} being evaluated contains the supplied {@code
+     * char}.
      *
      * @param contained {@code char} to find
-     * @return a {@link Condition} that returns {@code true} iff the {@link String} being evaluated
-     *         contains the supplied {@code char}.
+     *
+     * @return a {@link Condition} that returns {@code true} iff the {@link String} being evaluated contains the
+     *         supplied {@code char}.
      */
     public static Condition<String> contains(final char contained)
     {
@@ -228,11 +238,12 @@ public class Strings
     }
 
     /**
-     * a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code
-     * Pattern} with {@code replacement} on {@code x}
+     * a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code Pattern}
+     * with {@code replacement} on {@code x}
      *
      * @param pattern     {@link Pattern} to search for
      * @param replacement {@link String} to replace each occurrence of {@code pattern} with
+     *
      * @return a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code
      *         Pattern} with {@code replacement} on {@code x}
      */
@@ -242,11 +253,12 @@ public class Strings
     }
 
     /**
-     * a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code
-     * Pattern} with {@code replacement} on {@code x}
+     * a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code Pattern}
+     * with {@code replacement} on {@code x}
      *
      * @param pattern     {@link Pattern} to search for
      * @param replacement {@link String} to replace each occurrence of {@code pattern} with
+     *
      * @return a {@link org.bc.iterate.Function} that will return the result of replacing all occurrences of {@code
      *         Pattern} with {@code replacement} on {@code x}
      */
@@ -260,6 +272,7 @@ public class Strings
      *
      * @param target      {@code char} to be replaced
      * @param replacement {@code char} with which to replace {@code target}
+     *
      * @return a {@link Function} that will replace all occurrences of {@code target} with {@code replacement} on {@code
      *         x}.
      */
@@ -297,11 +310,12 @@ public class Strings
     }
 
     /**
-     * a {@link Function} that will perform a <a href="http://en.wikipedia.org/wiki/Tr_(Unix)">unix-style tr</a>
-     * on its argument.
+     * a {@link Function} that will perform a <a href="http://en.wikipedia.org/wiki/Tr_(Unix)">unix-style tr</a> on its
+     * argument.
      *
      * @param targetChars      chars to be replaced
      * @param replacementChars corresponding chars to use as replacements.
+     *
      * @return a {@link Function} that will perform a <a href="http://en.wikipedia.org/wiki/Tr_(Unix)">unix-style tr</a>
      *         on its argument.
      */
@@ -316,6 +330,13 @@ public class Strings
         };
     }
 
+    /**
+     * a {@link Function} that will split its argument into tokens using the supplied {@code separator}
+     *
+     * @param separator {@code String} separator to use to split
+     *
+     * @return a {@link Function} that will split its argument into tokens using the supplied {@code separator}
+     */
     public static Function<String, List<String>> split(final String separator)
     {
         return new Function<String, List<String>>()
@@ -327,6 +348,15 @@ public class Strings
         };
     }
 
+    /**
+     * a {@link Function} that will split its argument into at most {@code limit} tokens using the supplied {@code
+     * separator}
+     *
+     * @param {@code String} separator separator to use to split
+     *
+     * @return a {@link Function} that will split its argument into at most {@code limit} tokens using the supplied
+     *         {@code separator}
+     */
     public static Function<String, List<String>> split(final String separator, final int limit)
     {
         return new Function<String, List<String>>()
@@ -338,6 +368,15 @@ public class Strings
         };
     }
 
+    /**
+     * a {@link Function} that will split its argument into tokens using the supplied {@code separator}. Note that
+     * this {@link Function} uses the faster {@link Strings#split(String, char)} helper rather than the slower,
+     * regex-based {@link String#split(String)}
+     *
+     * @param separator {@code char} separator to use to split
+     *
+     * @return a {@link Function} that will split its argument into tokens using the supplied {@code separator}
+     */
     public static Function<String, List<String>> split(final char separator)
     {
         return new Function<String, List<String>>()
@@ -349,6 +388,16 @@ public class Strings
         };
     }
 
+    /**
+     * a {@link Function} that will split its argument into tokens using the supplied {@code separator}. Note that
+     * this {@link Function} uses the faster {@link Strings#split(String, char)} helper rather than the slower,
+     * regex-based {@link String#split(String)}
+     *
+     * @param separator {@code char} separator to use to split
+     * @param limit     {@code String}s will be split into at most this many tokens
+     *
+     * @return a {@link Function} that will split its argument into tokens using the supplied {@code separator}
+     */
     public static Function<String, List<String>> split(final char separator, final int limit)
     {
         return new Function<String, List<String>>()
@@ -404,6 +453,7 @@ public class Strings
 
     /**
      * @param beforeAndAfter {@code String} to prepend and append
+     *
      * @return a {@link org.bc.iterate.Function} that will return {@code beforeAndAfter + x + beforeAndAfter}
      */
     public static Function<String, String> surround(final String beforeAndAfter)
@@ -414,6 +464,7 @@ public class Strings
     /**
      * @param before {@code String} to prepend
      * @param after  {@code String} to append
+     *
      * @return a {@link org.bc.iterate.Function} that will return {@code before + x + after}
      */
     public static Function<String, String> surround(final String before, final String after)
@@ -433,6 +484,7 @@ public class Strings
      * @param s         {@code String} to split
      * @param separator {@code s} will be split on occurrences of this {@code char}
      * @param limit     return at most this many tokens
+     *
      * @return a {@link List} containing at most {@code limit} tokens
      */
     public static List<String> split(final String s, final char separator, final int limit)
@@ -477,6 +529,7 @@ public class Strings
      *
      * @param s         {@code String} to split
      * @param separator {@code s} will be split on occurrences of this {@code char}
+     *
      * @return a {@link List} containing tokens
      */
     public static List<String> split(final String s, final char separator)
@@ -489,11 +542,12 @@ public class Strings
     /**
      * Splits {@code s} into tokens.
      *
-     * @param estimatedTokens an estimate of the number of resulting tokens, to aid in efficient memory allocation.
-     *                        This does not dictate or limit the number of tokens returns--it is <em>only</em> used
-     *                        to aid memory allocation.
+     * @param estimatedTokens an estimate of the number of resulting tokens, to aid in efficient memory allocation. This
+     *                        does not dictate or limit the number of tokens returns--it is <em>only</em> used to aid
+     *                        memory allocation.
      * @param s               {@code String} to split
      * @param separator       {@code s} will be split on occurrences of this {@code char}
+     *
      * @return a {@link List} containing tokens
      */
     public static List<String> split(int estimatedTokens, final String s, final char separator)
@@ -532,6 +586,7 @@ public class Strings
      *
      * @param s {@code String} in which to count
      * @param c {@code char} to count
+     *
      * @return number of occurrences of {@code c} in {@code s}
      */
     public static int count(final String s, final char c)
@@ -539,7 +594,9 @@ public class Strings
         final int len = s.length();
         int count = 0;
         for (int i = 0; i < len; i++) {
-            if (s.charAt(i) == c) count++;
+            if (s.charAt(i) == c) {
+                count++;
+            }
         }
 
         return count;
@@ -553,6 +610,7 @@ public class Strings
      * @param s                {@link String} on which to performance character replacement
      * @param targetChars      {@link String} containing characters to replace
      * @param replacementChars {@link String} charaters to use as replacements for {@code targetChars}
+     *
      * @return {@link String} containing corresponding characters with which to replace
      */
     public static String tr(String s, String targetChars, String replacementChars)
@@ -721,13 +779,16 @@ public class Strings
 
     static {
         LOWERCASE_TITLE_WORDS = new HashSet<String>(Arrays.asList("a", "an", "and", "as", "at", "be", "but", "by", "en",
-                "for", "if", "in", "is", "nor", "of", "on", "or", "to",
-                "via", "v.", "vs."));
+                                                                  "for", "if", "in", "is", "nor", "of", "on", "or",
+                                                                  "to",
+                                                                  "via", "v.", "vs."));
     }
 
     /**
      * Creates a {@link StringBuilder} whose initial capacity is {@code size}
+     *
      * @param size initial capacity
+     *
      * @return a {@link StringBuilder} whose initial capacity is {@code size}
      */
     public static StringBuilder builder(int size)
@@ -737,7 +798,9 @@ public class Strings
 
     /**
      * Creates a {@link StringBuilder} that contains a copy of {@code initialValue}
+     *
      * @param initialValue initial value to copy
+     *
      * @return a {@link StringBuilder} that contains a copy of {@code initialValue}
      */
     public static StringBuilder builder(CharSequence initialValue)

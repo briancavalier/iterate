@@ -17,6 +17,16 @@ package org.bc.iterate.relational;
 
 import org.bc.iterate.util.Pair;
 
+/**
+ * A {@link org.bc.iterate.relational.JoinResult} represents one pair of items, and the common key relating the pair,
+ * resulting from a relational join, most likely performed by a {@link JoinStrategy}.
+ *
+ * @param <K> common key type
+ * @param <X> left side of join type
+ * @param <Y> right side of join type
+ *
+ * @author Brian Cavalier
+ */
 public class JoinResult<K, X, Y> extends Pair<X, Y>
 {
     private final K key;
@@ -27,6 +37,10 @@ public class JoinResult<K, X, Y> extends Pair<X, Y>
         this.key = key;
     }
 
+    /**
+     * Gets the key that was used to join {@link #x} and {@link #y}
+     * @return the key that was used to join {@link #x} and {@link #y}
+     */
     public K getKey()
     {
         return key;
@@ -35,11 +49,7 @@ public class JoinResult<K, X, Y> extends Pair<X, Y>
     @Override
     public String toString()
     {
-        return "JoinResult{" +
-               "key=" + key +
-               ", x=" + getX() +
-               ", y=" + getY() +
-               '}';
+        return key.toString() + ':' + super.toString();
     }
 
     @Override
@@ -57,11 +67,7 @@ public class JoinResult<K, X, Y> extends Pair<X, Y>
 
         final JoinResult that = (JoinResult) o;
 
-        if (key != null ? !key.equals(that.key) : that.key != null) {
-            return false;
-        }
-
-        return true;
+        return key == null ? that.key == null : key.equals(that.key);
     }
 
     @Override
