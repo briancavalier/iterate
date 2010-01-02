@@ -127,4 +127,9 @@ public class XML
         return parent.getChildren(childElementName);
     }
 
+    private XML()
+    {
+        
+    }
+
 }
