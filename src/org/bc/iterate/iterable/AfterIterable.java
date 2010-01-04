@@ -28,22 +28,31 @@ public class AfterIterable<X> extends FilterIterable<X>
         super(items, condition);
     }
 
-    @SuppressWarnings({"RefusedBequest"})
     @Override
-    protected X findNext()
+    public Iterator<X> iterator()
     {
-        if (!found && iterator.hasNext()) {
-            found = filter.eval(iterator.next());
-        }
+        return new AfterIterator();
+    }
 
-        X next = end();
-        while (iterator.hasNext()) {
-            next = iterator.next();
-            if (filter.eval(next)) {
-                next = end();
-                found = true;
+    private class AfterIterator extends FilterIterator
+    {
+        @SuppressWarnings({"RefusedBequest"})
+        @Override
+        protected X findNext()
+        {
+            if (!found && iterator.hasNext()) {
+                found = filter.eval(iterator.next());
             }
+
+            X nextX = end();
+            while (iterator.hasNext()) {
+                nextX = iterator.next();
+                if (filter.eval(nextX)) {
+                    nextX = end();
+                    found = true;
+                }
+            }
+            return nextX;
         }
-        return next;
     }
 }

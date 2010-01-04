@@ -32,7 +32,7 @@ public class RightIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIt
 {
     private final Iterable<X> leftIterable;
     private final Function<? super X, K> xKeyFunction;
-    private final Iterator<Y> rightIterator;
+    private final Iterable<Y> rightIterable;
     private final Function<? super Y, K> yKeyFunction;
     private Map<K, List<X>> joinMap;
     private Iterator<JoinResult<K, X, Y>> currentJoinIterator;
@@ -44,38 +44,48 @@ public class RightIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIt
     {
         this.leftIterable = left;
         this.xKeyFunction = xKeyFunction;
-        this.rightIterator = right.iterator();
+        this.rightIterable = right;
         this.yKeyFunction = yKeyFunction;
     }
 
     @Override
-    protected void prepareJoin()
+    protected IncrementalJoinIterator createIterator()
     {
-        joinMap = new HashMap<K, List<X>>(Iterate.estimateSize(leftIterable));
-        for (final X item : leftIterable) {
-            put(joinMap, xKeyFunction.apply(item), item);
-        }
+        return new RightIncrementalHashJoinIterator();
     }
 
-    @Override
-    protected JoinResult<K, X, Y> findNext()
+    private class RightIncrementalHashJoinIterator extends IncrementalJoinIterator
     {
-        if (currentJoinIterator == null || (!currentJoinIterator.hasNext() && rightIterator.hasNext())) {
-            final Y item = rightIterator.next();
-            final K key = yKeyFunction.apply(item);
-            List<X> currentXList = joinMap.get(key);
-            if (currentXList != null) {
-                final ArrayList<JoinResult<K, X, Y>> currentJoinList =
-                        new ArrayList<JoinResult<K, X, Y>>(currentXList.size());
-                for (X x : currentXList) {
-                    currentJoinList.add(new JoinResult<K, X, Y>(key, x, item));
-                }
-                currentJoinIterator = currentJoinList.iterator();
-            } else {
-                return new JoinResult<K, X, Y>(key, null, item);
+        private final Iterator<Y> rightIterator = rightIterable.iterator();
+        @Override
+        protected void prepareJoin()
+        {
+            joinMap = new HashMap<K, List<X>>(Iterate.estimateSize(leftIterable));
+            for (final X item : leftIterable) {
+                put(joinMap, xKeyFunction.apply(item), item);
             }
         }
 
-        return currentJoinIterator != null && currentJoinIterator.hasNext() ? currentJoinIterator.next() : end();
+        @Override
+        protected JoinResult<K, X, Y> findNext()
+        {
+            if (currentJoinIterator == null || (!currentJoinIterator.hasNext() && rightIterator.hasNext())) {
+                final Y item = rightIterator.next();
+                final K key = yKeyFunction.apply(item);
+                List<X> currentXList = joinMap.get(key);
+                if (currentXList != null) {
+                    final ArrayList<JoinResult<K, X, Y>> currentJoinList =
+                            new ArrayList<JoinResult<K, X, Y>>(currentXList.size());
+                    for (X x : currentXList) {
+                        currentJoinList.add(new JoinResult<K, X, Y>(key, x, item));
+                    }
+                    currentJoinIterator = currentJoinList.iterator();
+                } else {
+                    return new JoinResult<K, X, Y>(key, null, item);
+                }
+            }
+
+            return currentJoinIterator != null && currentJoinIterator.hasNext() ? currentJoinIterator.next() : end();
+        }
     }
 }

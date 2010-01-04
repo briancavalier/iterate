@@ -28,9 +28,9 @@ public class SliceIterableTest
     public void testHasNext()
     {
         List<Integer> ints = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-        Assert.assertTrue(new SliceIterable<Integer>(ints, 0, 10).hasNext());
-        Assert.assertTrue(new SliceIterable<Integer>(ints, 0, 1).hasNext());
-        Assert.assertTrue(new SliceIterable<Integer>(ints, 9, 10).hasNext());
+        Assert.assertTrue(new SliceIterable<Integer>(ints, 0, 10).iterator().hasNext());
+        Assert.assertTrue(new SliceIterable<Integer>(ints, 0, 1).iterator().hasNext());
+        Assert.assertTrue(new SliceIterable<Integer>(ints, 9, 10).iterator().hasNext());
     }
 
     @SuppressWarnings({"ResultOfObjectAllocationIgnored"})

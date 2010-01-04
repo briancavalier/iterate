@@ -19,9 +19,9 @@ import org.bc.iterate.BinaryFunction;
 
 import java.util.Iterator;
 
-public class BinaryFunctionalIterable<X, Y, Z> extends IterableBase<Y>
+public class BinaryFunctionalIterable<X, Y, Z> implements Iterable<Y>
 {
-    private final Iterator<X> xItems;
+    private final Iterable<X> iterable;
 
     private Z param;
 
@@ -29,19 +29,34 @@ public class BinaryFunctionalIterable<X, Y, Z> extends IterableBase<Y>
 
     public BinaryFunctionalIterable(Iterable<X> xItems, Z param, BinaryFunction<? super X, ? super Z, Y> f)
     {
-        this.xItems = xItems.iterator();
+        this.iterable = xItems;
         this.f = f;
         this.param = param;
     }
 
-    public boolean hasNext()
+    @Override
+    public Iterator<Y> iterator()
     {
-        return xItems.hasNext();
+        return new BinaryFunctionalIterator();
     }
 
-    public Y next()
+    public String toString()
     {
-        return f.apply(xItems.next(), param);
+        return f.toString() + '(' + iterable + ", " + param + ')';
     }
 
+    private class BinaryFunctionalIterator extends AbstractIterator<Y>
+    {
+        private final Iterator<X> iterator = iterable.iterator();
+
+        public boolean hasNext()
+        {
+            return iterator.hasNext();
+        }
+
+        public Y next()
+        {
+            return f.apply(iterator.next(), param);
+        }
+    }
 }

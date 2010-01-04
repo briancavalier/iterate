@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class FullIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIterable<K, X, Y>
 {
-    private final Iterator<X> leftIterator;
+    private final Iterable<X> leftIterable;
     private final Function<? super X, K> xKeyFunction;
     private final Iterable<Y> rightIterable;
     private final Function<? super Y, K> yKeyFunction;
@@ -44,65 +44,76 @@ public class FullIncrementalHashJoinIterable<K, X, Y> extends IncrementalJoinIte
                                            Iterable<Y> right,
                                            Function<? super Y, K> yKeyFunction)
     {
-        this.leftIterator = left.iterator();
+        this.leftIterable = left;
         this.xKeyFunction = xKeyFunction;
         this.rightIterable = right;
         this.yKeyFunction = yKeyFunction;
     }
 
     @Override
-    protected void prepareJoin()
+    protected IncrementalJoinIterator createIterator()
     {
-        final int rightSize = Iterate.estimateSize(rightIterable);
-        rightMap = new HashMap<K, List<Y>>(rightSize);
-        Set<Y> rightItems = new LinkedHashSet<Y>(rightSize);
-        for (final Y item : rightIterable) {
-            rightItems.add(item);
-            put(rightMap, yKeyFunction.apply(item), item);
-        }
-
-        rightIterator = rightItems.iterator();
+        return new FullIncrementalHashJoinIterator();
     }
 
-    @Override
-    protected JoinResult<K, X, Y> findNext()
+    private class FullIncrementalHashJoinIterator extends IncrementalJoinIterator
     {
-        if (left) {
-            if (currentJoinIterator == null || !currentJoinIterator.hasNext()) {
-                // First do left join until all left items exhausted
-                final X item = leftIterator.next();
-                final K key = xKeyFunction.apply(item);
+        private final Iterator<X> leftIterator = leftIterable.iterator();
 
-                // Switch to right join mode if all left items have been joined.
-                left = leftIterator.hasNext();
-
-                List<Y> currentYList = rightMap.remove(key);
-                if (currentYList != null) {
-                    currentJoinIterator = buildLeftJoinIterator(key, item, currentYList);
-                } else {
-                    return new JoinResult<K, X, Y>(key, item, null);
-                }
+        @Override
+        protected void prepareJoin()
+        {
+            final int rightSize = Iterate.estimateSize(rightIterable);
+            rightMap = new HashMap<K, List<Y>>(rightSize);
+            Set<Y> rightItems = new LinkedHashSet<Y>(rightSize);
+            for (final Y item : rightIterable) {
+                rightItems.add(item);
+                put(rightMap, yKeyFunction.apply(item), item);
             }
-            return currentJoinIterator != null && currentJoinIterator.hasNext() ? currentJoinIterator.next() : end();
-        } else {
-            // Do right join until all right items exhausted
-            while (rightIterator.hasNext()) {
-                final Y item = rightIterator.next();
-                final K key = yKeyFunction.apply(item);
-                if (rightMap.containsKey(key)) {
-                    return new JoinResult<K, X, Y>(key, null, item);
-                }
-            }
-            return end();
-        }
-    }
 
-    private static <K, X, Y> Iterator<JoinResult<K, X, Y>> buildLeftJoinIterator(K key, X x, List<Y> yList)
-    {
-        final ArrayList<JoinResult<K, X, Y>> currentJoinList = new ArrayList<JoinResult<K, X, Y>>(yList.size());
-        for (Y y : yList) {
-            currentJoinList.add(new JoinResult<K, X, Y>(key, x, y));
+            rightIterator = rightItems.iterator();
         }
-        return currentJoinList.iterator();
+
+        private <K, X, Y> Iterator<JoinResult<K, X, Y>> buildLeftJoinIterator(K key, X x, List<Y> yList)
+        {
+            final ArrayList<JoinResult<K, X, Y>> currentJoinList = new ArrayList<JoinResult<K, X, Y>>(yList.size());
+            for (Y y : yList) {
+                currentJoinList.add(new JoinResult<K, X, Y>(key, x, y));
+            }
+            return currentJoinList.iterator();
+        }
+
+        @Override
+        protected JoinResult<K, X, Y> findNext()
+        {
+            if (left) {
+                if (currentJoinIterator == null || !currentJoinIterator.hasNext()) {
+                    // First do left join until all left items exhausted
+                    final X item = leftIterator.next();
+                    final K key = xKeyFunction.apply(item);
+
+                    // Switch to right join mode if all left items have been joined.
+                    left = leftIterator.hasNext();
+
+                    List<Y> currentYList = rightMap.remove(key);
+                    if (currentYList != null) {
+                        currentJoinIterator = buildLeftJoinIterator(key, item, currentYList);
+                    } else {
+                        return new JoinResult<K, X, Y>(key, item, null);
+                    }
+                }
+                return currentJoinIterator != null && currentJoinIterator.hasNext() ? currentJoinIterator.next() : end();
+            } else {
+                // Do right join until all right items exhausted
+                while (rightIterator.hasNext()) {
+                    final Y item = rightIterator.next();
+                    final K key = yKeyFunction.apply(item);
+                    if (rightMap.containsKey(key)) {
+                        return new JoinResult<K, X, Y>(key, null, item);
+                    }
+                }
+                return end();
+            }
+        }
     }
 }

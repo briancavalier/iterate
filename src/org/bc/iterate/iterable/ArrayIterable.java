@@ -16,13 +16,14 @@
 
 package org.bc.iterate.iterable;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayIterable<X> extends IterableBase<X>
+public class ArrayIterable<X> implements Iterable<X>
 {
     private final X[] array;
     private final int end;
-    private int index;
+    private final int start;
 
     public ArrayIterable(final X[] array)
     {
@@ -40,20 +41,43 @@ public class ArrayIterable<X> extends IterableBase<X>
         //noinspection AssignmentToCollectionOrArrayFieldFromParameter
         this.array = array;
         this.end = end;
-        this.index = start;
+        this.start = start;
     }
 
-    public boolean hasNext()
+    @Override
+    public Iterator<X> iterator()
     {
-        return index < end;
+        return new ArrayIterator();
     }
 
-    public X next()
+    @Override
+    public String toString()
     {
-        if(hasNext()) {
-            return array[index++];
+        return "[" + array[0] + ".." + array[array.length-1] + ']';
+    }
+
+    private class ArrayIterator implements Iterator<X>
+    {
+        private int index = start;
+
+        public boolean hasNext()
+        {
+            return index < end;
         }
-        
-        throw new NoSuchElementException();
+
+        public X next()
+        {
+            if(hasNext()) {
+                return array[index++];
+            }
+
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 }

@@ -19,25 +19,42 @@ import org.bc.iterate.Function;
 
 import java.util.Iterator;
 
-public class FunctionalIterable<X, Y> extends IterableBase<Y>
+public class FunctionalIterable<X, Y> implements Iterable<Y>
 {
-    private final Iterator<X> xItems;
+    private final Iterable<X> iterable;
 
     private final Function<? super X, ? extends Y> f;
 
     public FunctionalIterable(Iterable<X> xItems, Function<? super X, ? extends Y> f)
     {
-        this.xItems = xItems.iterator();
+        this.iterable = xItems;
         this.f = f;
     }
 
-    public boolean hasNext()
+    @Override
+    public Iterator<Y> iterator()
     {
-        return xItems.hasNext();
+        return new FunctionalIterator();
     }
 
-    public Y next()
+    @Override
+    public String toString()
     {
-        return f.apply(xItems.next());
+        return f.toString() + '(' + iterable.toString() + ')';
+    }
+
+    private class FunctionalIterator extends AbstractIterator<Y>
+    {
+        private final Iterator<X> iterator = iterable.iterator();
+
+        public boolean hasNext()
+        {
+            return iterator.hasNext();
+        }
+
+        public Y next()
+        {
+            return f.apply(iterator.next());
+        }
     }
 }

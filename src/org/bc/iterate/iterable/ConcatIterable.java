@@ -25,15 +25,13 @@ import java.util.Iterator;
  *
  * @author Brian Cavalier
  */
-public class ConcatIterable<X> extends IterableBase<X>
+public class ConcatIterable<X> implements Iterable<X>
 {
-    final private Iterator<? extends Iterable<X>> nested;
-    private Iterator<X> current;
+    private final Iterable<? extends Iterable<X>> nested;
 
     public ConcatIterable(Iterable<? extends Iterable<X>> nested)
     {
-        this.nested = nested.iterator();
-        this.current = this.nested.next().iterator();
+        this.nested = nested;
     }
 
     public ConcatIterable(Iterable<X>... nested)
@@ -41,33 +39,45 @@ public class ConcatIterable<X> extends IterableBase<X>
         this(Arrays.asList(nested));
     }
 
-    public boolean hasNext()
+    @Override
+    public Iterator<X> iterator()
     {
-        if (current.hasNext()) {
-            return true;
-        }
+        return new ConcatIterator();
+    }
 
-        if(nested.hasNext()) {
-            current = nested.next().iterator();
-            while(!current.hasNext() && nested.hasNext()) {
-                current = nested.next().iterator();
+    private class ConcatIterator implements Iterator<X>
+    {
+        private final Iterator<? extends Iterable<X>> nestedIter = nested.iterator();
+        private Iterator<X> current = nestedIter.next().iterator();
+
+        public boolean hasNext()
+        {
+            if (current.hasNext()) {
+                return true;
             }
 
-            return current.hasNext();
+            if(nestedIter.hasNext()) {
+                current = nestedIter.next().iterator();
+                while(!current.hasNext() && nestedIter.hasNext()) {
+                    current = nestedIter.next().iterator();
+                }
+
+                return current.hasNext();
+            }
+
+            return false;
         }
 
-        return false;
-    }
+        public X next()
+        {
+            return current.next();
+        }
 
-    public X next()
-    {
-        return current.next();
-    }
-
-    @SuppressWarnings({"RefusedBequest"})
-    @Override
-    public void remove()
-    {
-        current.remove();
+        @SuppressWarnings({"RefusedBequest"})
+        @Override
+        public void remove()
+        {
+            current.remove();
+        }
     }
 }

@@ -307,6 +307,12 @@ public class Strings
         {
             return s.trim();
         }
+
+        @Override
+        public String toString()
+        {
+            return "trim";
+        }
     }
 
     /**
@@ -704,6 +710,12 @@ public class Strings
             public String apply(String s)
             {
                 return initialCap(s).toString();
+            }
+
+            @Override
+            public String toString()
+            {
+                return "capitalize";
             }
         };
     }

@@ -28,20 +28,27 @@ import java.util.Map;
  * 
  * @author Brian Cavalier
  */
-public abstract class IncrementalJoinIterable<K, X, Y> extends LookaheadIterable<JoinResult<K, X, Y>>
+public abstract class IncrementalJoinIterable<K, X, Y> implements Iterable<JoinResult<K, X, Y>>
 {
     @Override
-    public Iterator<JoinResult<K, X, Y>> iterator()
+    public final Iterator<JoinResult<K, X, Y>> iterator()
     {
-        prepareJoin();
-        return super.iterator();
+        IncrementalJoinIterator i = createIterator();
+        i.prepareJoin();
+        return i;
     }
 
-    /**
-     * Subclasses should implement this to initialize any internal data structures required by their
-     * implementation of {@link #findNext()}. Called by @{link #iterator()} 
-     */
-    protected abstract void prepareJoin();
+    protected abstract IncrementalJoinIterator createIterator();
+
+    protected abstract class IncrementalJoinIterator extends LookaheadIterator<JoinResult<K, X, Y>>
+    {
+
+        /**
+         * Subclasses should implement this to initialize any internal data structures required by their
+         * implementation of {@link #findNext()}. Called by @{link #iterator()}
+         */
+        protected abstract void prepareJoin();
+    }
 
     protected static <K, T> void put(Map<K, List<T>> multimap, K key, T x)
     {

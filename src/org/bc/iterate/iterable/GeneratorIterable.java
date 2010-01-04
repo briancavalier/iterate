@@ -18,16 +18,17 @@ package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
 
+import java.util.Iterator;
+
 /**
  * {@link Iterable} that produces a specified number items using a supplied {@link Function}.
  *  
  * @author Brian Cavalier
  */
-public class GeneratorIterable<X> extends IterableBase<X>
+public class GeneratorIterable<X> implements Iterable<X>
 {
     private final int end;
     private final Function<Integer, X> generator;
-    private int index = 0;
 
     public GeneratorIterable(int n, Function<Integer, X> generator)
     {
@@ -35,13 +36,25 @@ public class GeneratorIterable<X> extends IterableBase<X>
         this.generator = generator;
     }
 
-    public boolean hasNext()
+    @Override
+    public Iterator<X> iterator()
     {
-        return index < end;
+        return new GeneratorIterator();
     }
 
-    public X next()
+    private class GeneratorIterator extends AbstractIterator<X>
     {
-        return generator.apply(index++);
+        private int index = 0;
+
+        public boolean hasNext()
+        {
+            return index < end;
+        }
+
+        @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+        public X next()
+        {
+            return generator.apply(index++);
+        }
     }
 }

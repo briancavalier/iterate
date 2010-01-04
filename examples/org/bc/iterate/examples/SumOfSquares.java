@@ -17,6 +17,8 @@ package org.bc.iterate.examples;
 
 import org.bc.iterate.BinaryFunction;
 import org.bc.iterate.Function;
+import org.bc.iterate.Integers;
+import org.bc.iterate.Iterate;
 
 import static org.bc.iterate.Functions.compose;
 import static org.bc.iterate.Integers.*;
@@ -64,6 +66,5 @@ public class SumOfSquares
         // And finally, the most compact, but most LISP-like
         System.out.println(each(range(1, 101))
                 .reduce(compose(square(), sum())));
-
     }
 }

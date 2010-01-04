@@ -19,35 +19,51 @@ package org.bc.iterate.iterable;
 import org.bc.iterate.Condition;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
-public class FilterIterable<X> extends LookaheadIterable<X>
+public class FilterIterable<X> implements Iterable<X>
 {
     protected final Condition<? super X> filter;
-    protected final Iterator<X> iterator;
+    protected final Iterable<X> iterable;
 
     public FilterIterable(Iterable<X> iterable, Condition<? super X> filter)
     {
         this.filter = filter;
-        this.iterator = iterable.iterator();
+        this.iterable = iterable;
     }
 
     @Override
-    protected X findNext()
+    public Iterator<X> iterator()
     {
-        while(iterator.hasNext()) {
-            X item = iterator.next();
-            if(filter.eval(item)) {
-                return item;
-            }
-        }
-
-        return end();
+        return new FilterIterator();
     }
 
-    @SuppressWarnings({"RefusedBequest"})
-    public void remove()
+    @Override
+    public String toString()
     {
-        iterator.remove();
+        return iterable.toString() + ' ' + filter;
+    }
+
+    protected class FilterIterator extends LookaheadIterator<X>
+    {
+        protected final Iterator<X> iterator = (Iterator<X>) iterable.iterator();
+
+        @Override
+        protected X findNext()
+        {
+            while (iterator.hasNext()) {
+                X item = iterator.next();
+                if (filter.eval(item)) {
+                    return item;
+                }
+            }
+
+            return end();
+        }
+
+        @SuppressWarnings({"RefusedBequest"})
+        public void remove()
+        {
+            iterator.remove();
+        }
     }
 }

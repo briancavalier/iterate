@@ -59,34 +59,49 @@ public class Iterables
     {
         final int n1 = n;
         final Provider<X> provider1 = provider;
-        return new LookaheadIterable<X>()
-        {
-            final int end = n1;
-            final Provider<X> provider = provider1;
-            int index = 0;
+
+        return new Iterable<X>() {
 
             @Override
-            protected X findNext()
+            public Iterator<X> iterator()
             {
-                if (index >= end) {
-                    return end();
-                } else {
-                    X x = provider.get();
-                    return x == null ? end() : x;
-                }
+                return new LookaheadIterator<X>()
+                {
+                    private final int end = n1;
+                    private final Provider<X> provider = provider1;
+                    private int index = 0;
+
+                    @Override
+                    protected X findNext()
+                    {
+                        if (index >= end) {
+                            return end();
+                        } else {
+                            X x = provider.get();
+                            return x == null ? end() : x;
+                        }
+                    }
+                };
             }
         };
     }
 
     public static <X> Iterable<X> generate(final Provider<X> provider)
     {
-        return new LookaheadIterable<X>()
+        return new Iterable<X>()
         {
             @Override
-            protected X findNext()
+            public Iterator<X> iterator()
             {
-                final X x = provider.get();
-                return x == null ? end() : x;
+                return new LookaheadIterator<X>()
+                {
+                    @Override
+                    protected X findNext()
+                    {
+                        final X x = provider.get();
+                        return x == null ? end() : x;
+                    }
+                };
             }
         };
     }
@@ -98,21 +113,28 @@ public class Iterables
      */
     public static <X> Iterable<X> cycle(final Iterable<X> iterable)
     {
-        return new IterableBase<X>()
+        return new Iterable<X>()
         {
-            Iterator<X> iterator = iterable.iterator();
-
-            public boolean hasNext()
+            @Override
+            public Iterator<X> iterator()
             {
-                return true;
-            }
+                return new AbstractIterator<X>()
+                {
+                    private Iterator<X> iterator = iterable.iterator();
 
-            public X next()
-            {
-                if (!iterator.hasNext()) {
-                    iterator = iterable.iterator();
-                }
-                return iterator.next();
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
+
+                    public X next()
+                    {
+                        if (!iterator.hasNext()) {
+                            iterator = iterable.iterator();
+                        }
+                        return iterator.next();
+                    }
+                };
             }
         };
     }

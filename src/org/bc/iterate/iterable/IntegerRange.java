@@ -16,9 +16,10 @@
 
 package org.bc.iterate.iterable;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class IntegerRange extends IterableBase<Integer>
+public class IntegerRange implements Iterable<Integer>
 {
     protected int start;
     protected final int end;
@@ -39,22 +40,50 @@ public class IntegerRange extends IterableBase<Integer>
         this(start, Integer.MAX_VALUE);
     }
 
+    @SuppressWarnings({"ClassReferencesSubclass"})
     public StepIntegerRange by(int step)
     {
         return new StepIntegerRange(start, end, step);
     }
 
-    public boolean hasNext()
+    public Iterator<Integer> iterator()
     {
-        return start < end;
+        return new IntegerRangeIterator();
     }
 
-    public Integer next()
+    @Override
+    public String toString()
     {
-        if(start < end) {
-            return start++;
-        } else {
-            throw new NoSuchElementException("Reached end value " + end);
+        return "[" + start + ".." + end + ']';
+    }
+
+    protected class IntegerRangeIterator implements Iterator<Integer>
+    {
+        protected int index;
+
+        public IntegerRangeIterator()
+        {
+            index = start;
+        }
+
+        public boolean hasNext()
+        {
+            return index < end;
+        }
+
+        public Integer next()
+        {
+            if(index < end) {
+                return index++;
+            } else {
+                throw new NoSuchElementException("Reached end value " + end);
+            }
+        }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
         }
     }
 }

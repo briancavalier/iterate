@@ -29,19 +29,28 @@ public class UntilIterable<X> extends FilterIterable<X>
         super(items, condition);
     }
 
-    @SuppressWarnings({"RefusedBequest"})
     @Override
-    protected X findNext()
+    public Iterator<X> iterator()
     {
-        X next = end();
-        if (!done && iterator.hasNext()) {
-            next = iterator.next();
-            if (filter.eval(next)) {
-                next = end();
-                done = true;
-            }
-        }
+        return new UntilIterator();
+    }
 
-        return next;
+    private class UntilIterator extends FilterIterator
+    {
+        @SuppressWarnings({"RefusedBequest"})
+        @Override
+        protected X findNext()
+        {
+            X nextX = end();
+            if (!done && iterator.hasNext()) {
+                nextX = iterator.next();
+                if (filter.eval(nextX)) {
+                    nextX = end();
+                    done = true;
+                }
+            }
+
+            return nextX;
+        }
     }
 }

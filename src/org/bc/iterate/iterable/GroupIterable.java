@@ -21,31 +21,42 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class GroupIterable<X> extends LookaheadIterable<Collection<X>>
+public class GroupIterable<X> implements Iterable<Collection<X>>
 {
-    private final Iterator<X> iterator;
+    private final Iterable<X> iterable;
     private final int groupSize;
 
     public GroupIterable(Iterable<X> iterable, int groupSize)
     {
-        this.iterator = iterable.iterator();
+        this.iterable = iterable;
         this.groupSize = groupSize;
     }
 
     @Override
-    protected Collection<X> findNext()
+    public Iterator<Collection<X>> iterator()
     {
-        if (!iterator.hasNext()) {
-            return end();
-        }
+        return new GroupIterator();
+    }
 
-        List<X> nextGroup = new ArrayList<X>(groupSize);
-        int i = 0;
-        while (i < groupSize && iterator.hasNext()) {
-            nextGroup.add(iterator.next());
-            i++;
-        }
+    private class GroupIterator extends LookaheadIterator<Collection<X>>
+    {
+        private final Iterator<X> iterator = iterable.iterator();
 
-        return nextGroup;
+        @Override
+        protected Collection<X> findNext()
+        {
+            if (!iterator.hasNext()) {
+                return end();
+            }
+
+            List<X> nextGroup = new ArrayList<X>(groupSize);
+            int i = 0;
+            while (i < groupSize && iterator.hasNext()) {
+                nextGroup.add(iterator.next());
+                i++;
+            }
+
+            return nextGroup;
+        }
     }
 }

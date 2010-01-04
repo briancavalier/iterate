@@ -18,12 +18,11 @@ package org.bc.iterate.iterable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class SliceIterable<X> extends IterableBase<X> 
+public class SliceIterable<X> implements Iterable<X>
 {
-    private final Iterator<X> items;
+    private final Iterable<X> items;
     private final int start;
     private final int end;
-    private int index = 0;
 
     public SliceIterable(final Iterable<X> items, final int start, final int end)
     {
@@ -31,7 +30,7 @@ public class SliceIterable<X> extends IterableBase<X>
             throw new IllegalArgumentException("start must be >= 0 and < end");
         }
         
-        this.items = items.iterator();
+        this.items = items;
         this.start = start;
         this.end = end;
     }
@@ -42,33 +41,45 @@ public class SliceIterable<X> extends IterableBase<X>
             throw new IllegalArgumentException("start must be >= 0");
         }
 
-        this.items = items.iterator();
+        this.items = items;
         this.start = start;
         this.end = -1;
     }
 
-    public boolean hasNext()
+    @Override
+    public Iterator<X> iterator()
     {
-        try {
-            while(index < start && items.hasNext()) {
-                index++;
-                items.next();
-            }
-        } catch(NoSuchElementException ignored) {
-            return false;
-        }
-
-        return (index >= start && index != end && items.hasNext());
+        return new SliceIterator();
     }
 
-    public X next()
+    private class SliceIterator extends AbstractIterator<X>
     {
-        if(end == -1 || index < end) {
-            index++;
-            return items.next();
+        private final Iterator<X> iterator = items.iterator();
+        private int index = 0;
+
+        public boolean hasNext()
+        {
+            try {
+                while(index < start && iterator.hasNext()) {
+                    index++;
+                    iterator.next();
+                }
+            } catch(NoSuchElementException ignored) {
+                return false;
+            }
+
+            return (index >= start && index != end && iterator.hasNext());
         }
 
-        throw new NoSuchElementException("Iterator is beyond slice range end: iter=" + index +
-                                         ", range=(" + start + ", " + end + ")");
+        public X next()
+        {
+            if(end == -1 || index < end) {
+                index++;
+                return iterator.next();
+            }
+
+            throw new NoSuchElementException("Iterator is beyond slice range end: iter=" + index +
+                                             ", range=(" + start + ", " + end + ")");
+        }
     }
 }

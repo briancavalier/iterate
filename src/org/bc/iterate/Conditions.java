@@ -108,6 +108,12 @@ public class Conditions
             {
                 return comparable.compareTo(x) < 0;
             }
+
+            @Override
+            public String toString()
+            {
+                return "> " + comparable;
+            }
         };
     }
 

@@ -16,6 +16,8 @@
 
 package org.bc.iterate.iterable;
 
+import java.util.Iterator;
+
 public class StepIntegerRange extends IntegerRange
 {
     private int step = 1;
@@ -38,11 +40,25 @@ public class StepIntegerRange extends IntegerRange
     }
 
     @Override
-    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException", "RefusedBequest"})
-    public Integer next()
+    public Iterator<Integer> iterator()
     {
-        int current = start;
-        start += step;
-        return current;
+        return new StepIntegerRangeInterator();
+    }
+
+    @Override
+    public String toString()
+    {
+        return step == 1 ? super.toString() : "[" + start + ".." + end + " by " + step + ']';
+    }
+
+    private class StepIntegerRangeInterator extends IntegerRangeIterator
+    {
+        @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException", "RefusedBequest"})
+        public Integer next()
+        {
+            int current = index;
+            index += step;
+            return current;
+        }
     }
 }

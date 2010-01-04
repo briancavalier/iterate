@@ -60,10 +60,17 @@ public class Integers
             {
                 return i1 + i2;
             }
+
+            public String toString()
+            {
+                return "+";
+            }
         };
     }
 
     /**
+     * a {@link BinaryFunction} that returns the result of multiplying its two arguments, i.e. {@code x * y}
+     *
      * @return a {@link BinaryFunction} that returns the result of multiplying its two arguments, i.e. {@code x * y}
      */
     public static BinaryFunction<Integer, Integer, Integer> multiply()
@@ -73,6 +80,11 @@ public class Integers
             public Integer apply(Integer i1, Integer i2)
             {
                 return i1 * i2;
+            }
+
+            public String toString()
+            {
+                return "*";
             }
         };
     }
