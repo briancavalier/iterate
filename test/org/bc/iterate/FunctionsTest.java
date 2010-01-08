@@ -15,8 +15,11 @@
  */
 package org.bc.iterate;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 public class FunctionsTest
 {
@@ -44,6 +47,21 @@ public class FunctionsTest
     {
         String s = "This is a test";
         assertEquals(s.substring(0, 4), Functions.<String, String>invoke("substring", 0, 4).apply(s));
-        assertEquals(s.substring(0, 4), Functions.<String, String>invoke("substring", new Integer[] {0, 4}).apply(s));
+        assertEquals(s.substring(0, 4), Functions.<String, String>invoke("substring", new Integer[]{0, 4}).apply(s));
+    }
+
+    @Test
+    public void applyToEach()
+    {
+        Function<Iterable<Integer>, Iterable<Integer>> plusOne = Functions.applyToEach(new Function<Integer, Integer>()
+        {
+            @Override
+            public Integer apply(Integer i)
+            {
+                return i + 1;
+            }
+        });
+
+        assertEquals(Arrays.asList(2, 3, 4), plusOne.apply(Arrays.asList(1, 2, 3)));
     }
 }

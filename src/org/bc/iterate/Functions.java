@@ -18,6 +18,7 @@ package org.bc.iterate;
 import org.bc.iterate.function.*;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +52,8 @@ public class Functions
     }
 
     /**
-     * a {@link Function} that returns the number of times it has been invoked minus one.  That is, the first time
-     * it is called, it returns {@code 0}, the second time {@code 1}, and so on.
+     * a {@link Function} that returns the number of times it has been invoked minus one.  That is, the first time it is
+     * called, it returns {@code 0}, the second time {@code 1}, and so on.
      *
      * @return a {@link Function} that returns the number of times it has been invoked minus one.
      */
@@ -71,8 +72,10 @@ public class Functions
 
     /**
      * a {@link Function} equivalent to {@code g(f)}, that is {code g.apply(f.apply(x))}.
+     *
      * @param f inner {@link Function}
      * @param g outer {@link Function}
+     *
      * @return a {@link Function} equivalent to {@code g(f)}, that is {code g.apply(f.apply(x))}.
      */
     public static <X, Y, Z> Function<X, Z> compose(Function<X, Y> f, Function<Y, Z> g)
@@ -188,7 +191,8 @@ public class Functions
         };
     }
 
-    public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector, final List<Function<X, Y>> functions)
+    public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector,
+                                                    final List<Function<X, Y>> functions)
     {
         return new Function<X, Y>()
         {
@@ -199,8 +203,72 @@ public class Functions
         };
     }
 
-    public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector, final Function<X, Y>... functions)
+    public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector,
+                                                    final Function<X, Y>... functions)
     {
         return conditional(selector, Arrays.asList(functions));
+    }
+
+    public static <X, Y, F extends Function<? super X, ? extends Y>>
+    BinaryFunction<? super X, List<F>, Y>conditional(final BinaryFunction<X, List<F>, F> conditional)
+    {
+        return new BinaryFunction<X, List<F>, Y>()
+        {
+            @Override
+            public Y apply(X x, List<F> functions)
+            {
+                return conditional.apply(x, functions).apply(x);
+            }
+        };
+    }
+
+    public static <X, Y> Function<X, Y> conditional(final Function<X, Function<? super X, ? extends Y>> conditional)
+    {
+        return new Function<X, Y>()
+        {
+            @Override
+            public Y apply(X x)
+            {
+                return conditional.apply(x).apply(x);
+            }
+        };
+    }
+
+    public static <X, Y> Function<X, Y> conditional(final Provider<Function<? super X, ? extends Y>> functionProvider)
+    {
+        return new Function<X, Y>()
+        {
+            @Override
+            public Y apply(X x)
+            {
+                return functionProvider.get().apply(x);
+            }
+        };
+    }
+
+    /**
+     * a {@link Function} that will apply {@code f} to each element of an {@link Iterable}, returning an {@link
+     * Iterable} containing all corresponding results.
+     *
+     * @param f {@link Function} to apply to each element
+     *
+     * @return a {@link Function} that will apply {@code f} to each element of an {@link Iterable}, returning an {@link
+     *         Iterable} containing all corresponding results.
+     */
+    public static <X, Y> Function<Iterable<X>, Iterable<Y>> applyToEach(final Function<? super X, ? extends Y> f)
+    {
+        return new Function<Iterable<X>, Iterable<Y>>()
+        {
+            @Override
+            public Iterable<Y> apply(Iterable<X> xIterable)
+            {
+                List<Y> results = new ArrayList<Y>(Iterate.estimateSize(xIterable));
+                for (X x : xIterable) {
+                    results.add(f.apply(x));
+                }
+
+                return results;
+            }
+        };
     }
 }
