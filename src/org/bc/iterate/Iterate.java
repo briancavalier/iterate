@@ -131,11 +131,6 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
         return new Iterate<X>(new UntilIterable<X>(this, c));
     }
 
-    public Iterate<X> transform(Function<Iterable<X>, Iterable<X>> transformFunction)
-    {
-        return new Iterate<X>(transformFunction.apply(this));
-    }
-
     /**
      * Limits iteration to all items including and after the first item for which {@code c.eval(item) == true}
      *
@@ -147,6 +142,11 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
     public Iterate<X> after(Condition<? super X> c)
     {
         return new Iterate<X>(new AfterIterable<X>(this, c));
+    }
+
+    public Iterate<X> transform(Function<Iterable<X>, Iterable<X>> transformFunction)
+    {
+        return new Iterate<X>(transformFunction.apply(this));
     }
 
     public <Y> Iterate<Y> map(Function<? super X, ? extends Y> f)
