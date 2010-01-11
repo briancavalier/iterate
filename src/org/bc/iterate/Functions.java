@@ -83,12 +83,28 @@ public class Functions
         return new CompositeFunction<X, Y, Z>(f, g);
     }
 
+    /**
+     * a {@link org.bc.iterate.Function} equivalent to {@code functions[3](functions[2](functions[1]))} etc.
+     *
+     * @param functions functions to compose.  The first will be the innermost, and the last will be the outermost in
+     *                  the composition.
+     *
+     * @returna a {@link org.bc.iterate.Function} equivalent to {@code functions[3](functions[2](functions[1]))} etc.
+     */
     public static <X> Function<X, X> compose(Function<X, X>... functions)
     {
         return compose(Arrays.asList(functions));
     }
 
-    public static <X> Function<X, X> compose(List<Function<X, X>> functions)
+    /**
+     * a {@link org.bc.iterate.Function} equivalent to {@code functions[3](functions[2](functions[1]))} etc.
+     *
+     * @param functions functions to compose.  The first will be the innermost, and the last will be the outermost in
+     *                  the composition.
+     *
+     * @returna a {@link org.bc.iterate.Function} equivalent to {@code functions[3](functions[2](functions[1]))} etc.
+     */
+    public static <X> Function<X, X> compose(Iterable<Function<X, X>> functions)
     {
         return new CompositeMonoid<X>(functions);
     }
@@ -110,16 +126,46 @@ public class Functions
         return new CompositeBinaryFunction<X, Y, Z, R>(Functions.<X, R, Y>unbind(f), g);
     }
 
+    /**
+     * a {@link Function} that, for each x, will compute {@code functionToMemoize(x)} once, caching the result, and
+     * subsequently return the cached result.
+     *
+     * @param functionToMemoize {@link Function} to memoize
+     *
+     * @returna a {@link Function} that, for each x, will compute {@code functionToMemoize(x)} once, caching the result,
+     * and subsequently return the cached result.
+     */
     public static <X, Y> Function<X, Y> memoize(Function<X, Y> functionToMemoize)
     {
         return new MemoizedFunction<X, Y>(functionToMemoize);
     }
 
+    /**
+     * a {@link Function} that, for each x, will compute {@code functionToMemoize(x)} once, caching the result in {@code
+     * resultsCache} , and subsequently return the cached result.
+     *
+     * @param functionToMemoize {@link Function} to memoize
+     * @param resultsCache      {@link Map} to use to cache memoized results
+     *
+     * @returna a {@link Function} that, for each x, will compute {@code functionToMemoize(x)} once, caching the result
+     * in {@code resultsCache}, and subsequently return the cached result.
+     */
     public static <X, Y> Function<X, Y> memoize(Function<X, Y> functionToMemoize, Map<X, Y> resultsCache)
     {
         return new MemoizedFunction<X, Y>(functionToMemoize, resultsCache);
     }
 
+    /**
+     * a {@link Function} that, for each x, will compute {@code functionToMemoize(x)} once, caching the result, and
+     * subsequently return the cached result.
+     *
+     * @param functionToMemoize {@link Function} to memoize
+     * @param resultsCacheSize  approximate size of the range of {@code functionToMemoize}, used to efficiently allocate
+     *                          space for the cached results.
+     *
+     * @returna a {@link Function} that, for each x, will compute {@code functionToMemoize(x)} once, caching the result,
+     * and subsequently return the cached result.
+     */
     public static <X, Y> Function<X, Y> memoize(Function<X, Y> functionToMemoize, int resultsCacheSize)
     {
         return new MemoizedFunction<X, Y>(functionToMemoize, resultsCacheSize);
@@ -167,6 +213,15 @@ public class Functions
         };
     }
 
+    /**
+     * a {@link Function} that will apply {@code f(x)} only to values of x for which {@code condition.eval(x) == true}
+     *
+     * @param condition {@link Condition} to evaluate for each x
+     * @param f         {@link Function} to apply if {@code condition} evaluates to {@code true}
+     *
+     * @return a {@link Function} that will apply {@code f(x)} only to values of x for which {@code condition.eval(x) ==
+     *         true}
+     */
     public static <X> Function<X, X> conditional(final Condition<X> condition, final Function<X, X> f)
     {
         return new Function<X, X>()
@@ -178,6 +233,17 @@ public class Functions
         };
     }
 
+    /**
+     * a {@link Function} that will apply {@code f1(x)} for values of x where {@code condition.eval(x) == true}, and
+     * {@code f2(x)} otherwise.
+     *
+     * @param condition {@link Condition} to evaluate for each x
+     * @param f1        {@link Function} to apply if {@code condition} evaluates to {@code true}
+     * @param f2        {@link Function} to apply if {@code condition} evaluates to {@code false}
+     *
+     * @return a {@link Function} that will apply {@code f1(x)} for values of x where {@code condition.eval(x) == true}, and
+     * {@code f2(x)} otherwise
+     */
     public static <X, Y> Function<X, Y> conditional(final Condition<X> condition,
                                                     final Function<X, Y> f1,
                                                     final Function<X, Y> f2)
@@ -191,6 +257,15 @@ public class Functions
         };
     }
 
+    /**
+     * a {@link Function} that will apply {@code f[n](x)} for values of x, where {@code n = selector.apply(x)}
+     *
+     * @param selector {@link Function} to generate an index into {@code functions}
+     * @param functions {@link java.util.List} of {@link Function}s from which one will be selected using the index
+     * generated by {@code selector.apply(x)}.
+     *
+     * @return a {@link Function} that will apply {@code f[n](x)} for values of x, where {@code n = selector.apply(x)}
+     */
     public static <X, Y> Function<X, Y> conditional(final Function<X, Integer> selector,
                                                     final List<Function<X, Y>> functions)
     {
@@ -210,7 +285,7 @@ public class Functions
     }
 
     public static <X, Y, F extends Function<? super X, ? extends Y>>
-    BinaryFunction<? super X, List<F>, Y>conditional(final BinaryFunction<X, List<F>, F> conditional)
+    BinaryFunction<? super X, List<F>, Y> conditional(final BinaryFunction<X, List<F>, F> conditional)
     {
         return new BinaryFunction<X, List<F>, Y>()
         {

@@ -21,9 +21,9 @@ import java.util.List;
 
 public class CompositeMonoid<X> implements Function<X, X>
 {
-    final private List<Function<X, X>> functions;
+    final private Iterable<Function<X, X>> functions;
 
-    public CompositeMonoid(final List<Function<X, X>> functions)
+    public CompositeMonoid(final Iterable<Function<X, X>> functions)
     {
         this.functions = functions;
     }
