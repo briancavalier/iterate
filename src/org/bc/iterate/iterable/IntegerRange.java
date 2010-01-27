@@ -16,10 +16,13 @@
 
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.BasicIterateImpl;
+import org.bc.iterate.Iterate;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class IntegerRange implements Iterable<Integer>
+public class IntegerRange extends Iterate<Integer>
 {
     protected int start;
     protected final int end;
@@ -31,6 +34,7 @@ public class IntegerRange implements Iterable<Integer>
 
     public IntegerRange(int start, int end)
     {
+        super(end - start);
         this.start = start;
         this.end = end;
     }

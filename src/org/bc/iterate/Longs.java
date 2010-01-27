@@ -15,8 +15,9 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.iterable.IterableBase;
+import org.bc.iterate.iterable.AbstractIterator;
 
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -98,47 +99,43 @@ public class Longs
     }
 
     /**
-     * @return a inexhaustable {@link Iterable} of random {@link Long}s. See {@link java.util.Random#nextLong()}
-     *         for numeric range of returned values.
+     * @return a inexhaustable {@link Iterable} of random {@link Long}s. See {@link java.util.Random#nextLong()} for
+     *         numeric range of returned values.
      */
-    public static Iterable<Long> random()
+    public static Iterate<Long> random()
     {
-        final Random random = new Random();
-        return new IterableBase<Long>()
-        {
-            public boolean hasNext()
-            {
-                return true;
-            }
-
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Long next()
-            {
-                return random.nextLong();
-            }
-        };
+        return random(new Random());
     }
 
     /**
      * @param random {@link Random} to use to generate random {@link Float}s
-     * @return a inexhaustable {@link Iterable} of random {@link Long}s using the supplied {@link Random}.
-     *         See {@link java.util.Random#nextLong()} for numeric range of returned values.
+     *
+     * @return a inexhaustable {@link Iterable} of random {@link Long}s using the supplied {@link Random}. See {@link
+     *         java.util.Random#nextLong()} for numeric range of returned values.
      */
-    public static Iterable<Long> random(final Random random)
+    public static Iterate<Long> random(final Random random)
     {
-        return new IterableBase<Long>()
+        return Iterate.each(new Iterable<Long>()
         {
-            public boolean hasNext()
+            @Override
+            public Iterator<Long> iterator()
             {
-                return true;
-            }
+                return new AbstractIterator<Long>()
+                {
 
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Long next()
-            {
-                return random.nextLong();
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
+
+                    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+                    public Long next()
+                    {
+                        return random.nextLong();
+                    }
+                };
             }
-        };
+        });
     }
 
 }

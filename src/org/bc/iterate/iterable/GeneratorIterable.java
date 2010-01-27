@@ -17,6 +17,7 @@
 package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
+import org.bc.iterate.Iterate;
 
 import java.util.Iterator;
 

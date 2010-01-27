@@ -15,8 +15,9 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.iterable.IterableBase;
+import org.bc.iterate.iterable.AbstractIterator;
 
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -98,33 +99,41 @@ public class Floats
     }
 
     /**
-     * @return a inexhaustable {@link Iterable} of random {@link Float}s.  See {@link java.util.Random#nextFloat()}
-     *         for numeric range of returned values.
+     * @return a inexhaustable {@link Iterable} of random {@link Float}s.  See {@link java.util.Random#nextFloat()} for
+     *         numeric range of returned values.
      */
-    public static Iterable<Float> random()
+    public static Iterate<Float> random()
     {
         return random(new Random());
     }
 
     /**
      * @param random {@link Random} to use to generate random {@link Float}s
-     * @return a inexhaustable {@link Iterable} of random {@link Float}s using the supplied {@link Random}.
-     *         See {@link java.util.Random#nextFloat()} for numeric range of returned values.
+     *
+     * @return a inexhaustable {@link Iterable} of random {@link Float}s using the supplied {@link Random}. See {@link
+     *         java.util.Random#nextFloat()} for numeric range of returned values.
      */
-    public static Iterable<Float> random(final Random random)
+    public static Iterate<Float> random(final Random random)
     {
-        return new IterableBase<Float>()
+        return Iterate.each(new Iterable<Float>()
         {
-            public boolean hasNext()
+            @Override
+            public Iterator<Float> iterator()
             {
-                return true;
-            }
+                return new AbstractIterator<Float>()
+                {
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
 
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Float next()
-            {
-                return random.nextFloat();
+                    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+                    public Float next()
+                    {
+                        return random.nextFloat();
+                    }
+                };
             }
-        };
+        });
     }
 }

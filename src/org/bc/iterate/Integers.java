@@ -15,9 +15,10 @@
  */
 package org.bc.iterate;
 
+import org.bc.iterate.iterable.AbstractIterator;
 import org.bc.iterate.iterable.IntegerRange;
-import org.bc.iterate.iterable.IterableBase;
 
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -133,6 +134,7 @@ public class Integers
 
     /**
      * @param maxValueExclusive random integers strictly less than this value will be returned by the {@link Iterable}
+     *
      * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@code maxValueExclusive}
      */
     public static Iterable<Integer> random(final int maxValueExclusive)
@@ -143,24 +145,32 @@ public class Integers
     /**
      * @param random            {@link Random} to use to generate random integers.
      * @param maxValueExclusive random integers strictly less than this value will be returned by the {@link Iterable}
-     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@code maxValueExclusive} using
-     *         the supplied {@link Random}
+     *
+     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@code maxValueExclusive} using the
+     *         supplied {@link Random}
      */
-    public static Iterable<Integer> random(final Random random, final int maxValueExclusive)
+    public static Iterate<Integer> random(final Random random, final int maxValueExclusive)
     {
-        return new IterableBase<Integer>()
+        return Iterate.each(new Iterable<Integer>()
         {
-            public boolean hasNext()
+            @Override
+            public Iterator<Integer> iterator()
             {
-                return true;
-            }
+                return new AbstractIterator<Integer>()
+                {
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
 
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Integer next()
-            {
-                return random.nextInt(maxValueExclusive);
+                    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+                    public Integer next()
+                    {
+                        return random.nextInt(maxValueExclusive);
+                    }
+                };
             }
-        };
+        });
     }
 
     /**
@@ -173,29 +183,38 @@ public class Integers
 
     /**
      * @param random {@link Random} to use to generate random integers.
-     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@link Integer#MAX_VALUE} using
-     *         the supplied {@link Random}.
+     *
+     * @return a inexhaustable {@link Iterable} of random integers from {@code 0} to {@link Integer#MAX_VALUE} using the
+     *         supplied {@link Random}.
      */
-    public static Iterable<Integer> random(final Random random)
+    public static Iterate<Integer> random(final Random random)
     {
-        return new IterableBase<Integer>()
+        return Iterate.each(new Iterable<Integer>()
         {
-            public boolean hasNext()
+            @Override
+            public Iterator<Integer> iterator()
             {
-                return true;
-            }
+                return new AbstractIterator<Integer>()
+                {
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
 
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Integer next()
-            {
-                return random.nextInt();
+                    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+                    public Integer next()
+                    {
+                        return random.nextInt();
+                    }
+                };
             }
-        };
+        });
     }
 
     /**
      * @param start first integer value
      * @param end   exclusive last integer value
+     *
      * @return an {@link Iterable} which will iterate over the integers from {@code start} (inclusive) to {@code end}
      *         (exclusive)
      */
@@ -206,6 +225,7 @@ public class Integers
 
     /**
      * @param end exclusive last integer value
+     *
      * @return an {@link Iterable} which will iterate over the integers from {@code 0} (zero, inclusive) to {@code end}
      *         (exclusive)
      */

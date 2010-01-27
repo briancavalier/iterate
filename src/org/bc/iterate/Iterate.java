@@ -38,9 +38,11 @@ import java.util.regex.Pattern;
  *
  * @author Brian Cavalier
  */
-public class Iterate<X> implements Iterable<X>, HasEstimatedSize
+@SuppressWarnings({"ClassReferencesSubclass"})
+public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
 {
-    public static final int DEFAULT_SIZE_ESTIMATE = 128;
+    public static final int DEFAULT_ESTIMATED_SIZE = 128;
+    private int estimatedSize;
 
     /**
      * Creates an {@link Iterate} that will operate on the items in the supplied {@link Iterable}.
@@ -51,7 +53,21 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public static <X> Iterate<X> each(final Iterable<X> items)
     {
-        return new Iterate<X>(items, estimateSize(items));
+        return new BasicIterateImpl<X>(items, estimateSize(items));
+    }
+
+    /**
+     * Unfortunately necessary method that wraps an {@link java.util.Iterator} as an {@link Iterable}.  Ideally, this
+     * would simply be another variant of {@code each()}, but that makes {@code each(Iterable)} and {@code
+     * each(Iterator)} ambiguous.
+     *
+     * @param items {@link java.util.Iterator} to wrap as an {@link Iterable}
+     *
+     * @return {@link Iterable} whose {@link Iterable#iterator()} method will return {@code items}
+     */
+    public static <X> Iterate<X> each(final Iterator<X> items)
+    {
+        return each(Iterables.of(items));
     }
 
     /**
@@ -63,7 +79,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public static <X> Iterate<X> each(final X... items)
     {
-        return new Iterate<X>(new ArrayIterable<X>(items), items.length);
+        return new BasicIterateImpl<X>(new ArrayIterable<X>(items), items.length);
     }
 
     /**
@@ -76,22 +92,17 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public static <X, Y> Iterate<Map.Entry<X, Y>> each(final Map<X, Y> map)
     {
-        return new Iterate<Map.Entry<X, Y>>(map.entrySet(), map.size());
+        return new BasicIterateImpl<Map.Entry<X, Y>>(map.entrySet(), map.size());
     }
 
-    protected Iterable<X> iterable;
-
-    private int sizeEstimate;
-
-    protected Iterate(Iterable<X> items)
+    protected Iterate()
     {
-        this(items, estimateSize(items));
+
     }
 
-    protected Iterate(Iterable<X> items, int sizeEstimate)
+    protected Iterate(int estimatedSize)
     {
-        this.iterable = items;
-        this.sizeEstimate = sizeEstimate;
+        this.estimatedSize = estimatedSize;
     }
 
     /**
@@ -103,7 +114,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> where(Condition<? super X> c)
     {
-        return new Iterate<X>(new FilterIterable<X>(this, c));
+        return new BasicIterateImpl<X>(new FilterIterable<X>(this, c));
     }
 
     /**
@@ -128,7 +139,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> until(Condition<? super X> c)
     {
-        return new Iterate<X>(new UntilIterable<X>(this, c));
+        return new BasicIterateImpl<X>(new UntilIterable<X>(this, c));
     }
 
     /**
@@ -141,22 +152,22 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> after(Condition<? super X> c)
     {
-        return new Iterate<X>(new AfterIterable<X>(this, c));
+        return new BasicIterateImpl<X>(new AfterIterable<X>(this, c));
     }
 
     public Iterate<X> transform(Function<Iterable<X>, Iterable<X>> transformFunction)
     {
-        return new Iterate<X>(transformFunction.apply(this));
+        return new BasicIterateImpl<X>(transformFunction.apply(this));
     }
 
     public <Y> Iterate<Y> map(Function<? super X, ? extends Y> f)
     {
-        return new Iterate<Y>(new FunctionalIterable<X, Y>(this, f));
+        return new BasicIterateImpl<Y>(new FunctionalIterable<X, Y>(this, f));
     }
 
     public <Y, Z> Iterate<Y> map(BinaryFunction<? super X, ? super Z, Y> f, Z referenceData)
     {
-        return new Iterate<Y>(new BinaryFunctionalIterable<X, Y, Z>(this, referenceData, f));
+        return new BasicIterateImpl<Y>(new BinaryFunctionalIterable<X, Y, Z>(this, referenceData, f));
     }
 
     /**
@@ -173,7 +184,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
                                                     Iterable<Y> itemsToJoin)
     {
         //noinspection unchecked
-        return new Iterate<JoinResult<K, X, Y>>(((JoinStrategy<K, X, Y>) strategy).join(this, itemsToJoin));
+        return new BasicIterateImpl<JoinResult<K, X, Y>>(((JoinStrategy<K, X, Y>) strategy).join(this, itemsToJoin));
     }
 
     public <V extends Visitor<? super X>> V visit(V visitor)
@@ -242,7 +253,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> prepend(Iterable<X> itemsToPrepend)
     {
-        return new Iterate<X>(new ConcatIterable<X>(Arrays.asList(itemsToPrepend, this)));
+        return new BasicIterateImpl<X>(new ConcatIterable<X>(Arrays.asList(itemsToPrepend, this)));
     }
 
     /**
@@ -254,7 +265,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> append(Iterable<X> itemsToAppend)
     {
-        return new Iterate<X>(new ConcatIterable<X>(Arrays.asList(this, itemsToAppend)));
+        return each(new ConcatIterable<X>(Arrays.asList(this, itemsToAppend)));
     }
 
     /**
@@ -268,7 +279,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> slice(int start, int end)
     {
-        return new Iterate<X>(new SliceIterable<X>(this, start, end));
+        return each(new SliceIterable<X>(this, start, end));
     }
 
     /**
@@ -280,21 +291,10 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> slice(int start)
     {
-        return new Iterate<X>(new SliceIterable<X>(this, start), Math.max(0, this.sizeEstimate - start));
+        return each(new SliceIterable<X>(this, start));
     }
 
-    /**
-     * {@link Iterator} over items in this {@link Iterate} view.  Typically, callers will not use this method, but
-     * instead will use the internal iteration methods {@code each}, {@code map}, {@code visit}, and {@code reduce}.
-     *
-     * @return {@link Iterator} over items in this {@link Iterate} view.  Typically, callers will not use this method,
-     *         but instead will use the internal iteration methods {@code each}, {@code map}, {@code visit}, and {@code
-     *         reduce}.
-     */
-    public Iterator<X> iterator()
-    {
-        return iterable.iterator();
-    }
+    public abstract Iterator<X> iterator();
 
     /**
      * Returns an {@link Iterable} which will group items in {@code items} into groups of size {@code groupSize} and
@@ -314,9 +314,9 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      *
      * @return an {@link Iterable} which will group items in {@code items} into groups of size {@code groupSize}.
      */
-    public static <X> Iterable<Collection<X>> group(final Iterable<X> items, int groupSize)
+    public static <X> Iterate<Collection<X>> group(final Iterable<X> items, int groupSize)
     {
-        return new GroupIterable<X>(items, groupSize);
+        return Iterate.each(new GroupIterable<X>(items, groupSize));
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})
@@ -410,9 +410,9 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      *
      * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
      */
-    public static Iterable<String> tokens(Readable in, Pattern delimiter)
+    public static Iterate<String> tokens(Readable in, Pattern delimiter)
     {
-        return new TokenizerIterable(in, delimiter);
+        return each(new TokenizerIterable(in, delimiter));
     }
 
     /**
@@ -423,9 +423,9 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      *
      * @return an {@link Iterable} over all tokens from {@code in}, as delimited by {@code delimiter}
      */
-    public static Iterable<String> tokens(Readable in, String delimiter)
+    public static Iterate<String> tokens(Readable in, String delimiter)
     {
-        return new TokenizerIterable(in, Pattern.compile(delimiter));
+        return tokens(in, Pattern.compile(delimiter));
     }
 
     /**
@@ -434,7 +434,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      *
      * @return an {@link Iterable} over all substrings matching {@code regex}
      */
-    public static Iterable<String> match(Readable in, Pattern regex)
+    public static Iterate<String> match(Readable in, Pattern regex)
     {
         return new RegexMatchIterable(in, regex);
     }
@@ -460,9 +460,9 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      *
      * @return an {@link Iterable} over all substrings matching {@code regex}
      */
-    public static Iterable<String> match(String in, String regex)
+    public static Iterate<String> match(String in, String regex)
     {
-        return new RegexMatchIterable(new StringReader(in), Pattern.compile(regex));
+        return match(new StringReader(in), Pattern.compile(regex));
     }
 
     /**
@@ -473,7 +473,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
      *
      * @return an {@link Iterable} over all substrings matching {@code regex}
      */
-    public static Iterable<String> match(String in, Pattern regex)
+    public static Iterate<String> match(String in, Pattern regex)
     {
         return new RegexMatchIterable(new StringReader(in), regex);
     }
@@ -650,12 +650,12 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
 
     public List<X> list()
     {
-        return add(new ArrayList<X>(estimateSize(iterable)));
+        return add(new ArrayList<X>(estimateSize(this)));
     }
 
     public Set<X> set()
     {
-        return add(new HashSet<X>(estimateSize(iterable)));
+        return add(new HashSet<X>(estimateSize(this)));
     }
 
     public <A extends Appendable> A append(A a) throws IOException
@@ -693,8 +693,8 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
     /**
      * Attempts to estimate the number of items in {@code items} by checking its type to see if it is a type with a
      * known size: <ul> <li>a {@link Collection} or {@link Map}: {@link Collection#size()} or {@link Map#size()}</li>
-     * <li>an {@link Iterate}: {@link #sizeEstimate}</li> <li>any other type of {@link Iterable}: {@link
-     * #DEFAULT_SIZE_ESTIMATE}</li> <li>a {@link String}: {@link String#length()} <li>an array (e.g. int[], etc.):
+     * <li>an {@link Iterate}: {@link #estimatedSize}</li> <li>any other type of {@link Iterable}: {@link
+     * #DEFAULT_ESTIMATED_SIZE}</li> <li>a {@link String}: {@link String#length()} <li>an array (e.g. int[], etc.):
      * {@link Array#getLength(Object)}</li> <li>{@code null}: {@code 0} <li>anything else: {@code 1} </ul>
      *
      * @param items thing whose size will be estimated
@@ -717,7 +717,7 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
             sizeEstimate = ((HasEstimatedSize) items).getEstimatedSize();
         } else if (items instanceof Iterable) {
             // Just have to return something reasonable here
-            sizeEstimate = DEFAULT_SIZE_ESTIMATE;
+            sizeEstimate = DEFAULT_ESTIMATED_SIZE;
         } else if (items instanceof CharSequence) {
             sizeEstimate = ((CharSequence) items).length();
         } else if (items instanceof Object[]) {
@@ -731,14 +731,9 @@ public class Iterate<X> implements Iterable<X>, HasEstimatedSize
         return sizeEstimate;
     }
 
-    public String toString()
-    {
-        return iterable.toString();
-    }
-
     @Override
     public int getEstimatedSize()
     {
-        return sizeEstimate;
+        return estimatedSize;
     }
 }

@@ -15,10 +15,13 @@
  */
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.HasEstimatedSize;
+import org.bc.iterate.Iterate;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class SliceIterable<X> implements Iterable<X>
+public class SliceIterable<X> implements Iterable<X>, HasEstimatedSize
 {
     private final Iterable<X> items;
     private final int start;
@@ -50,6 +53,12 @@ public class SliceIterable<X> implements Iterable<X>
     public Iterator<X> iterator()
     {
         return new SliceIterator();
+    }
+
+    @Override
+    public int getEstimatedSize()
+    {
+        return Math.min(end, Iterate.estimateSize(items)) - start;
     }
 
     private class SliceIterator extends AbstractIterator<X>

@@ -16,6 +16,8 @@
 
 package org.bc.iterate.examples;
 
+import org.bc.iterate.Iterate;
+
 import static org.bc.iterate.Conditions.regex;
 import static org.bc.iterate.Iterate.*;
 
@@ -29,8 +31,8 @@ public class GrepExample {
             System.exit(1);
         }
 
-        final Iterable<String> lines = (args.length >= 2) ? lines(args[1]) : lines(System.in);
+        final Iterate<String> lines = (args.length >= 2) ? lines(args[1]) : lines(System.in);
 
-        each(lines).where(regex(args[0])).visit(println(), System.out);
+        lines.where(regex(args[0])).visit(println(), System.out);
     }
 }

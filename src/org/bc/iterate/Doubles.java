@@ -15,8 +15,9 @@
  */
 package org.bc.iterate;
 
-import org.bc.iterate.iterable.IterableBase;
+import org.bc.iterate.iterable.AbstractIterator;
 
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -98,47 +99,42 @@ public class Doubles
     }
 
     /**
-     * @return a inexhaustable {@link Iterable} of random {@link Double}s. See {@link java.util.Random#nextDouble()}
-     *         for numeric range of returned values.
+     * @return a inexhaustable {@link Iterable} of random {@link Double}s. See {@link java.util.Random#nextDouble()} for
+     *         numeric range of returned values.
      */
-    public static Iterable<Double> random()
+    public static Iterate<Double> random()
     {
-        final Random random = new Random();
-        return new IterableBase<Double>()
-        {
-            public boolean hasNext()
-            {
-                return true;
-            }
-
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Double next()
-            {
-                return random.nextDouble();
-            }
-        };
+        return random(new Random());
     }
 
     /**
      * @param random {@link Random} to use to generate random {@link Double}s
-     * @return a inexhaustable {@link Iterable} of random {@link Double}s using the supplied {@link Random}.
-     *         See {@link java.util.Random#nextDouble()} for numeric range of returned values.
+     *
+     * @return a inexhaustable {@link Iterable} of random {@link Double}s using the supplied {@link Random}. See {@link
+     *         java.util.Random#nextDouble()} for numeric range of returned values.
      */
-    public static Iterable<Double> random(final Random random)
+    public static Iterate<Double> random(final Random random)
     {
-        return new IterableBase<Double>()
+        return Iterate.each(new Iterable<Double>()
         {
-            public boolean hasNext()
+            @Override
+            public Iterator<Double> iterator()
             {
-                return true;
-            }
+                return new AbstractIterator<Double>()
+                {
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
 
-            @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
-            public Double next()
-            {
-                return random.nextDouble();
+                    @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException"})
+                    public Double next()
+                    {
+                        return random.nextDouble();
+                    }
+                };
             }
-        };
+        });
     }
 
 }

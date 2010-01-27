@@ -16,12 +16,15 @@
 
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.Iterate;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Iterator;
 
-public class LineReaderIterable extends LookaheadIterable<String> implements Closeable
+public class LineReaderIterable extends Iterate<String> implements Closeable
 {
     private BufferedReader reader;
 
@@ -39,21 +42,10 @@ public class LineReaderIterable extends LookaheadIterable<String> implements Clo
         this.close = close;
     }
 
-    protected String findNext()
+    @Override
+    public Iterator<String> iterator()
     {
-        try {
-            return reader.readLine();
-        } catch (IOException ignored) {
-            if (close) {
-                //noinspection UnusedCatchParameter
-                try {
-                    close();
-                } catch (IOException e) {
-                    // oh well, we tried
-                }
-            }
-            return end();
-        }
+        return new LineReaderIterator();
     }
 
     public LineReaderIterable setClose(boolean close)
@@ -65,5 +57,25 @@ public class LineReaderIterable extends LookaheadIterable<String> implements Clo
     public void close() throws IOException
     {
         reader.close();
+    }
+
+    private class LineReaderIterator extends LookaheadIterator<String>
+    {
+        protected String findNext()
+        {
+            try {
+                return reader.readLine();
+            } catch (IOException ignored) {
+                if (close) {
+                    //noinspection UnusedCatchParameter
+                    try {
+                        close();
+                    } catch (IOException e) {
+                        // oh well, we tried
+                    }
+                }
+                return end();
+            }
+        }
     }
 }

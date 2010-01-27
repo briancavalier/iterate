@@ -19,8 +19,6 @@ import java.util.Iterator;
 
 public abstract class AbstractIterator<T> implements Iterator<T>
 {
-    public abstract boolean hasNext();
-
     public abstract T next();
 
     @Override

@@ -16,14 +16,23 @@
 
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.Iterate;
+
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class RegexMatchIterable extends LookaheadIterable<String>
+public class RegexMatchIterable extends Iterate<String>
 {
-    private Scanner scanner;
-    private Pattern pattern;
+    private final Scanner scanner;
+    private final Pattern pattern;
     private int maxLookahead;
+
+    @Override
+    public Iterator<String> iterator()
+    {
+        return new RegexMatchIterator();
+    }
 
     public RegexMatchIterable(Readable input, Pattern tokenRegex)
     {
@@ -37,14 +46,20 @@ public class RegexMatchIterable extends LookaheadIterable<String>
         this.maxLookahead = maxLookahead;
     }
 
-    protected String findNext()
-    {
-        return scanner.findWithinHorizon(pattern, maxLookahead);
-    }
-
     public RegexMatchIterable setLookahead(int maxLookahead)
     {
         this.maxLookahead = maxLookahead;
         return this;
+    }
+
+    private class RegexMatchIterator extends LookaheadIterator<String>
+    {
+        private final int horizon = RegexMatchIterable.this.maxLookahead;
+
+        @Override
+        protected String findNext()
+        {
+            return scanner.findWithinHorizon(pattern, horizon);
+        }
     }
 }

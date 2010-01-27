@@ -26,41 +26,22 @@ import java.util.*;
  */
 public class Iterables
 {
-
-    /**
-     * Unfortunately necessary method that wraps an {@link java.util.Iterator} as an {@link Iterable}.  Ideally, this
-     * would simply be another variant of {@code each()}, but that makes {@code each(Iterable)} and {@code each(Iterator)} ambiguous.
-     *
-     * @param items {@link java.util.Iterator} to wrap as an {@link Iterable}
-     * @return {@link Iterable} whose {@link Iterable#iterator()} method will return {@code items}
-     */
-    public static <X> Iterable<X> of(final Iterator<X> items)
-    {
-        return new Iterable<X>()
-        {
-            public Iterator<X> iterator()
-            {
-                return items;
-            }
-        };
-    }
-
     /**
      * @param n         number of items to generate
      * @param generator {@link Function} which will be used by the returned {@link Iterable} to generate items.
      * @return an {@link Iterable} which will invoke the supplied {@link Function} exactly {@code n} times.
      */
-    public static <X> Iterable<X> generate(int n, Function<Integer, X> generator)
+    public static <X> Iterate<X> generate(int n, Function<Integer, X> generator)
     {
-        return new GeneratorIterable<X>(n, generator);
+        return Iterate.each(new GeneratorIterable<X>(n, generator));
     }
 
-    public static <X> Iterable<X> generate(int n, Provider<X> provider)
+    public static <X> Iterate<X> generate(int n, Provider<X> provider)
     {
         final int n1 = n;
         final Provider<X> provider1 = provider;
 
-        return new Iterable<X>() {
+        return Iterate.each(new Iterable<X>() {
 
             @Override
             public Iterator<X> iterator()
@@ -83,7 +64,7 @@ public class Iterables
                     }
                 };
             }
-        };
+        });
     }
 
     public static <X> Iterable<X> generate(final Provider<X> provider)
@@ -314,6 +295,17 @@ public class Iterables
                 final List<X> buffer = addAll(new ArrayList<X>(Iterate.estimateSize(xIterable)), xIterable);
                 Collections.reverse(buffer);
                 return buffer;
+            }
+        };
+    }
+
+    static <X> Iterable<X> of(final Iterator<X> items)
+    {
+        return new Iterable<X>()
+        {
+            public Iterator<X> iterator()
+            {
+                return items;
             }
         };
     }

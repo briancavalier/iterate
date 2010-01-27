@@ -16,20 +16,28 @@
 
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.Iterate;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Iterator;
 
-public class ByteBufferIterable extends LookaheadIterable<ByteBuffer> implements Closeable
+public class ByteBufferIterable extends Iterate<ByteBuffer> implements Closeable
 {
-    private final ByteBuffer buffer;
-
-    private boolean close;
+    private boolean close = false;
 
     private final ReadableByteChannel channel;
+    private final int maxBytesPerIteration;
+
+    @Override
+    public Iterator<ByteBuffer> iterator()
+    {
+        return new ByteBufferIterator();
+    }
 
     public ByteBufferIterable(InputStream in, int maxBytesPerIteration, boolean close)
     {
@@ -40,25 +48,7 @@ public class ByteBufferIterable extends LookaheadIterable<ByteBuffer> implements
     {
         this.channel = channel;
         this.close = close;
-        this.buffer = ByteBuffer.allocate(maxBytesPerIteration);
-    }
-
-    protected ByteBuffer findNext()
-    {
-        try {
-            final int bytesRead = channel.read(buffer);
-            return (bytesRead == -1) ? end() : buffer.asReadOnlyBuffer();
-        } catch (IOException ignored) {
-            if (close) {
-                //noinspection UnusedCatchParameter
-                try {
-                    close();
-                } catch (IOException e) {
-                    // oh well, we tried
-                }
-            }
-            return end();
-        }
+        this.maxBytesPerIteration = maxBytesPerIteration;
     }
 
     public ByteBufferIterable setClose(boolean close)
@@ -70,5 +60,30 @@ public class ByteBufferIterable extends LookaheadIterable<ByteBuffer> implements
     public void close() throws IOException
     {
         channel.close();
+    }
+
+    private class ByteBufferIterator extends LookaheadIterator<ByteBuffer>
+    {
+        private final ByteBuffer buffer = ByteBuffer.allocate(maxBytesPerIteration);
+        private final boolean doClose = close;
+
+        @Override
+        protected ByteBuffer findNext()
+        {
+            try {
+                final int bytesRead = channel.read(buffer);
+                return (bytesRead == -1) ? end() : buffer.asReadOnlyBuffer();
+            } catch (IOException ignored) {
+                if (doClose) {
+                    //noinspection UnusedCatchParameter
+                    try {
+                        close();
+                    } catch (IOException e) {
+                        // oh well, we tried
+                    }
+                }
+                return end();
+            }
+        }
     }
 }

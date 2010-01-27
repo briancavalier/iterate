@@ -16,18 +16,21 @@
 
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.Iterate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class GroupIterable<X> implements Iterable<Collection<X>>
+public class GroupIterable<X> extends Iterate<Collection<X>>
 {
     private final Iterable<X> iterable;
     private final int groupSize;
 
     public GroupIterable(Iterable<X> iterable, int groupSize)
     {
+        super((estimateSize(iterable) / groupSize) + 1);
         this.iterable = iterable;
         this.groupSize = groupSize;
     }

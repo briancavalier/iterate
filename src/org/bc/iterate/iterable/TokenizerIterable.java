@@ -16,26 +16,35 @@
 
 package org.bc.iterate.iterable;
 
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class TokenizerIterable extends IterableBase<String>
+public class TokenizerIterable implements Iterable<String>
 {
-    private Scanner scanner;
+    private final Scanner scanner;
+
+    @Override
+    public Iterator<String> iterator()
+    {
+        return new TokenizerIterator();
+    }
 
     public TokenizerIterable(Readable input, Pattern delimiter)
     {
-        this.scanner = new Scanner(input);
-        this.scanner.useDelimiter(delimiter);
+        this.scanner = new Scanner(input).useDelimiter(delimiter);
     }
 
-    public boolean hasNext()
+    private class TokenizerIterator extends AbstractIterator<String>
     {
-        return scanner.hasNext();
-    }
+        public boolean hasNext()
+        {
+            return scanner.hasNext();
+        }
 
-    public String next()
-    {
-        return scanner.next();
+        public String next()
+        {
+            return scanner.next();
+        }
     }
 }
