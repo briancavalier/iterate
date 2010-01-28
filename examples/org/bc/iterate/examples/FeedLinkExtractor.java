@@ -32,7 +32,7 @@ public class FeedLinkExtractor
             System.exit(1);
         }
 
-        each(lines(args[0]))
+        lines(args[0])
                 .until(regex("</head>"))
                 .where(regex("\\<link.+?rel\\=.alternate.*?\\>"))
                 .map(find("(?:href)\\=[\\\"\\']([^#].*?)[\\\"\\']", 1))

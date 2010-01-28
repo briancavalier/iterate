@@ -32,8 +32,7 @@ public class LinkExtractor
             System.exit(1);
         }
 
-        each(lines(args[0]))
-                .where(regex("\\<(a|link|img|script).+?(src|href)\\=.+?\\>"))
+        lines(args[0]).where(regex("\\<(a|link|img|script).+?(src|href)\\=.+?\\>"))
                 .map(find("(?:src|href)\\=[\\\"\\']([^#].*?)[\\\"\\']", 1))
                 .transform(Iterables.<String>sort())
                 .println(System.out);

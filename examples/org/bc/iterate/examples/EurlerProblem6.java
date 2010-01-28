@@ -32,8 +32,8 @@ public class EurlerProblem6
         // using Iterate
         // range is inclusive min, exclusive max
         // squared sum - sum of squares
-        int answer1 = square().apply(each(range(1, 101)).reduce(sum())) - each(range(1, 101)).map(square()).reduce(sum());
-//        answer1 = square().apply(range(1, 101).reduce(sum())) - range(1, 101).map(square()).reduce(sum());
+        int answer1 = square().apply(range(1, 101).reduce(sum())) - range(1, 101).map(square()).reduce(sum());
+
         // now using straight Java
         int sum = 0;
         int sumOfSquares = 0;
@@ -41,10 +41,12 @@ public class EurlerProblem6
             sum += i;
             sumOfSquares += i*i;
         }
-
         int answer2 = (sum*sum) - sumOfSquares;
 
         System.out.println("Iterate: " + answer1);
         System.out.println("Java: " + answer2);
+
+        System.out.println(answer1 + (answer1 == answer2 ? " == " : " != ") + answer2);
+
     }
 }
