@@ -15,6 +15,7 @@
  */
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.HasEstimatedSize;
 import org.bc.iterate.Iterables;
 import org.bc.iterate.Iterate;
 
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author Brian Cavalier
  */
-public class NaturalSortIterable<X extends Comparable<X>> implements Iterable<X>
+public class NaturalSortIterable<X extends Comparable<X>> implements Iterable<X>, HasEstimatedSize
 {
     private List<X> sorted;
     private Iterable<X> source;
@@ -41,11 +42,20 @@ public class NaturalSortIterable<X extends Comparable<X>> implements Iterable<X>
 
     public Iterator<X> iterator()
     {
+        // This method and getEstimatedSize() may need to be synchronized
         if (sorted == null) {
-            this.sorted = Iterables.addAll(new ArrayList<X>(Iterate.estimateSize(source)), source);
-            Collections.sort(sorted);
+            final List<X> tmp = Iterables.addAll(new ArrayList<X>(Iterate.estimateSize(source)), source);
+            Collections.sort(tmp);
+            // Ensure that underlying sorted list cannot be modified via Iterator.remove()
+            sorted = Collections.unmodifiableList(tmp);
         }
 
         return sorted.iterator();
+    }
+
+    @Override
+    public int getEstimatedSize()
+    {
+        return sorted == null ? Iterate.estimateSize(source) : sorted.size();
     }
 }

@@ -15,6 +15,9 @@
  */
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.HasEstimatedSize;
+import org.bc.iterate.Iterate;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -25,7 +28,7 @@ import java.util.Iterator;
  *
  * @author Brian Cavalier
  */
-public class ConcatIterable<X> implements Iterable<X>
+public class ConcatIterable<X> implements Iterable<X>, HasEstimatedSize
 {
     private final Iterable<? extends Iterable<X>> nested;
 
@@ -43,6 +46,18 @@ public class ConcatIterable<X> implements Iterable<X>
     public Iterator<X> iterator()
     {
         return new ConcatIterator();
+    }
+
+    @Override
+    public int getEstimatedSize()
+    {
+        // This may be inefficient, might be better to do a simple guess by counting number of iterables
+        int size = 0;
+        for (Iterable<X> iterable : nested) {
+            size += Iterate.estimateSize(iterable);
+        }
+
+        return size;
     }
 
     private class ConcatIterator implements Iterator<X>

@@ -17,6 +17,7 @@
 package org.bc.iterate.iterable;
 
 import org.bc.iterate.Function;
+import org.bc.iterate.HasEstimatedSize;
 import org.bc.iterate.Iterate;
 
 import java.util.Iterator;
@@ -26,7 +27,7 @@ import java.util.Iterator;
  *  
  * @author Brian Cavalier
  */
-public class GeneratorIterable<X> implements Iterable<X>
+public class GeneratorIterable<X> implements Iterable<X>, HasEstimatedSize
 {
     private final int end;
     private final Function<Integer, X> generator;
@@ -41,6 +42,12 @@ public class GeneratorIterable<X> implements Iterable<X>
     public Iterator<X> iterator()
     {
         return new GeneratorIterator();
+    }
+
+    @Override
+    public int getEstimatedSize()
+    {
+        return end;
     }
 
     private class GeneratorIterator extends AbstractIterator<X>

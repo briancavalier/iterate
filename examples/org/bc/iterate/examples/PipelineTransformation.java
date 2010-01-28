@@ -16,17 +16,14 @@
 package org.bc.iterate.examples;
 
 import org.bc.iterate.Iterables;
+import org.bc.iterate.Iterate;
 
-import static org.bc.iterate.Algorithms.generate;
+import java.util.Arrays;
+
 import static org.bc.iterate.Integers.identity;
 import static org.bc.iterate.Integers.square;
-import static org.bc.iterate.Iterables.*;
-import static org.bc.iterate.Iterate.collect;
-import static org.bc.iterate.Iterate.each;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.bc.iterate.Iterables.append;
+import static org.bc.iterate.Iterables.prepend;
 
 public class PipelineTransformation
 {
@@ -34,20 +31,19 @@ public class PipelineTransformation
     {
         // First, square the items in the original list, then inject some new items before them in the pipeline
         // Then collect all items and print the resulting list
-        List<Integer> ints = generate(10, identity());
-        System.out.println(each(ints).map(square()).prepend(Arrays.asList(1, 2, 3)).list());
-        System.out.println(each(ints).map(square()).transform(prepend(Arrays.asList(1, 2, 3))).list());
+        final Iterate<Integer> ints = Iterables.generate(10, identity());
+        System.out.println(ints.map(square()).prepend(Arrays.asList(1, 2, 3)).list());
+        System.out.println(ints.map(square()).transform(prepend(Arrays.asList(1, 2, 3))).list());
 
         // First, square the items in the original list, then inject some new items after them in the pipeline
         // Then collect all items and print the resulting list
-        ints = generate(10, identity());
-        System.out.println(each(ints).map(square()).append(Arrays.asList(1, 2, 3)).list());
-        System.out.println(each(ints).map(square()).transform(append(Arrays.asList(1, 2, 3))).transform(Iterables.<Integer>sort()).list());
+        System.out.println(ints.map(square()).append(Arrays.asList(1, 2, 3)).list());
+        System.out.println(ints.map(square()).transform(append(Arrays.asList(1, 2, 3)))
+                .transform(Iterables.<Integer>sort()).list());
 
-        ints = generate(10, identity());
-        System.out.println(each(ints).map(square()).slice(1, 5).list());
-        System.out.println(each(ints).map(square()).transform(Iterables.<Integer>slice(1, 5)).list());
-        System.out.println(each(ints).map(square()).slice(1).list());
-        System.out.println(each(ints).map(square()).transform(Iterables.<Integer>slice(1)).list());
+        System.out.println(ints.map(square()).slice(1, 5).list());
+        System.out.println(ints.map(square()).transform(Iterables.<Integer>slice(1, 5)).list());
+        System.out.println(ints.map(square()).slice(1).list());
+        System.out.println(ints.map(square()).transform(Iterables.<Integer>slice(1)).list());
     }
 }

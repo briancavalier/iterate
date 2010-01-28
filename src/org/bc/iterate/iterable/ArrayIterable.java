@@ -16,10 +16,12 @@
 
 package org.bc.iterate.iterable;
 
+import org.bc.iterate.HasEstimatedSize;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayIterable<X> implements Iterable<X>
+public class ArrayIterable<X> implements Iterable<X>, HasEstimatedSize
 {
     private final X[] array;
     private final int end;
@@ -54,6 +56,12 @@ public class ArrayIterable<X> implements Iterable<X>
     public String toString()
     {
         return "[" + array[0] + ".." + array[array.length-1] + ']';
+    }
+
+    @Override
+    public int getEstimatedSize()
+    {
+        return end - start;
     }
 
     private class ArrayIterator implements Iterator<X>

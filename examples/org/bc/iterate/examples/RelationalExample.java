@@ -23,12 +23,14 @@ import org.bc.iterate.relational.Join;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.bc.iterate.Iterate.*;
+
 public class RelationalExample
 {
     public static void main(String[] args)
     {
         List<Integer> a = Arrays.asList(4, 5, 6);
         List<Integer> b = Arrays.asList(7, 8, 9);
-        Iterate.each(a).join(Join.left(Functions.index(), Functions.index()), b).println(System.out);
+        each(a).join(Join.left(Functions.index(), Functions.index()), b).println(System.out);
     }
 }

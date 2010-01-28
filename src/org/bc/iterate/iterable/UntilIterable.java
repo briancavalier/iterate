@@ -17,6 +17,8 @@
 package org.bc.iterate.iterable;
 
 import org.bc.iterate.Condition;
+import org.bc.iterate.HasEstimatedSize;
+import org.bc.iterate.Iterate;
 
 import java.util.Iterator;
 

@@ -97,7 +97,6 @@ public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
 
     protected Iterate()
     {
-
     }
 
     protected Iterate(int estimatedSize)
@@ -139,7 +138,7 @@ public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> until(Condition<? super X> c)
     {
-        return new BasicIterateImpl<X>(new UntilIterable<X>(this, c));
+        return each(new UntilIterable<X>(this, c));
     }
 
     /**
@@ -152,22 +151,22 @@ public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> after(Condition<? super X> c)
     {
-        return new BasicIterateImpl<X>(new AfterIterable<X>(this, c));
+        return each(new AfterIterable<X>(this, c));
     }
 
     public Iterate<X> transform(Function<Iterable<X>, Iterable<X>> transformFunction)
     {
-        return new BasicIterateImpl<X>(transformFunction.apply(this));
+        return each(transformFunction.apply(this));
     }
 
     public <Y> Iterate<Y> map(Function<? super X, ? extends Y> f)
     {
-        return new BasicIterateImpl<Y>(new FunctionalIterable<X, Y>(this, f));
+        return each(new FunctionalIterable<X, Y>(this, f));
     }
 
     public <Y, Z> Iterate<Y> map(BinaryFunction<? super X, ? super Z, Y> f, Z referenceData)
     {
-        return new BasicIterateImpl<Y>(new BinaryFunctionalIterable<X, Y, Z>(this, referenceData, f));
+        return each(new BinaryFunctionalIterable<X, Y, Z>(this, referenceData, f));
     }
 
     /**
@@ -184,7 +183,7 @@ public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
                                                     Iterable<Y> itemsToJoin)
     {
         //noinspection unchecked
-        return new BasicIterateImpl<JoinResult<K, X, Y>>(((JoinStrategy<K, X, Y>) strategy).join(this, itemsToJoin));
+        return each(((JoinStrategy<K, X, Y>) strategy).join(this, itemsToJoin));
     }
 
     public <V extends Visitor<? super X>> V visit(V visitor)
@@ -253,7 +252,7 @@ public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public Iterate<X> prepend(Iterable<X> itemsToPrepend)
     {
-        return new BasicIterateImpl<X>(new ConcatIterable<X>(Arrays.asList(itemsToPrepend, this)));
+        return each(new ConcatIterable<X>(Arrays.asList(itemsToPrepend, this)));
     }
 
     /**
@@ -316,7 +315,7 @@ public abstract class Iterate<X> implements Iterable<X>, HasEstimatedSize
      */
     public static <X> Iterate<Collection<X>> group(final Iterable<X> items, int groupSize)
     {
-        return Iterate.each(new GroupIterable<X>(items, groupSize));
+        return each(new GroupIterable<X>(items, groupSize));
     }
 
     @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed"})

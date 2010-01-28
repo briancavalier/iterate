@@ -17,10 +17,12 @@
 package org.bc.iterate.iterable;
 
 import org.bc.iterate.Condition;
+import org.bc.iterate.HasEstimatedSize;
+import org.bc.iterate.Iterate;
 
 import java.util.Iterator;
 
-public class FilterIterable<X> implements Iterable<X>
+public class FilterIterable<X> implements Iterable<X>, HasEstimatedSize
 {
     protected final Condition<? super X> filter;
     protected final Iterable<X> iterable;
@@ -41,6 +43,12 @@ public class FilterIterable<X> implements Iterable<X>
     public String toString()
     {
         return iterable.toString() + ' ' + filter;
+    }
+
+    @Override
+    public int getEstimatedSize()
+    {
+        return Iterate.estimateSize(iterable);
     }
 
     protected class FilterIterator extends LookaheadIterator<X>

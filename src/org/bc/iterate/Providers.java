@@ -76,8 +76,8 @@ public class Providers
     {
         return new Provider<T>()
         {
-            private transient T cached = null;
-            private transient boolean init = true;
+            private T cached = null;
+            private boolean init = true;
 
             public T get()
             {
@@ -121,9 +121,8 @@ public class Providers
                     current = providerIterator.next();
                 }
 
-                T provided;
                 while (current != null) {
-                    provided = current.get();
+                    T provided = current.get();
                     // If current Provider returns null, assume it is exhausted and move to next
                     // else, return the value it provided
                     if (provided == null) {

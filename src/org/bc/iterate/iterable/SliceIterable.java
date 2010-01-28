@@ -58,7 +58,12 @@ public class SliceIterable<X> implements Iterable<X>, HasEstimatedSize
     @Override
     public int getEstimatedSize()
     {
-        return Math.min(end, Iterate.estimateSize(items)) - start;
+        final int sourceSize = Iterate.estimateSize(items);
+        // If end > 0 use the tighter bound, either end - start, or estimated size - start
+        // If end < 0 try to use the estimated size - start
+        return end > 0
+               ? end < sourceSize ? end - start : sourceSize - start
+               : sourceSize < start ? sourceSize - start : 0;
     }
 
     private class SliceIterator extends AbstractIterator<X>
