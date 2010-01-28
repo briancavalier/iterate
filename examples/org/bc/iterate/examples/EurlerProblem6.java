@@ -15,12 +15,9 @@
  */
 package org.bc.iterate.examples;
 
-import org.bc.iterate.Integers;
 import org.bc.iterate.Iterate;
-import org.bc.iterate.iterable.IntegerRange;
 
 import static org.bc.iterate.Integers.*;
-import static org.bc.iterate.Iterate.*;
 
 /**
  * A solution to http://projecteuler.net/index.php?section=problems&id=6 using {@link Iterate}
@@ -37,11 +34,11 @@ public class EurlerProblem6
         // now using straight Java
         int sum = 0;
         int sumOfSquares = 0;
-        for(int i=1; i<=100; i++) {
+        for (int i = 1; i <= 100; i++) {
             sum += i;
-            sumOfSquares += i*i;
+            sumOfSquares += i * i;
         }
-        int answer2 = (sum*sum) - sumOfSquares;
+        int answer2 = (sum * sum) - sumOfSquares;
 
         System.out.println("Iterate: " + answer1);
         System.out.println("Java: " + answer2);
