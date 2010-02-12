@@ -39,10 +39,11 @@ public class StepIntegerRange extends IntegerRange
         return this;
     }
 
+    @SuppressWarnings({"RefusedBequest"})
     @Override
     public Iterator<Integer> iterator()
     {
-        return new StepIntegerRangeInterator();
+        return (start <= end) ? new StepAscendingIntegerRangeInterator() : new StepDescendingIntegerRangeIterator();
     }
 
     @Override
@@ -51,14 +52,27 @@ public class StepIntegerRange extends IntegerRange
         return step == 1 ? super.toString() : "[" + start + ".." + end + " by " + step + ']';
     }
 
-    private class StepIntegerRangeInterator extends IntegerRangeIterator
+    private class StepAscendingIntegerRangeInterator extends AscendingIntegerRangeIterator
     {
         @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException", "RefusedBequest"})
+        @Override
         public Integer next()
         {
             int current = index;
             index += step;
             return current;
         }
+    }
+
+    private class StepDescendingIntegerRangeIterator extends DescendingIntegerRangeIterator
+    {
+        @SuppressWarnings({"IteratorNextCanNotThrowNoSuchElementException", "RefusedBequest"})
+        @Override
+        public Integer next()
+        {
+            int current = index;
+            index -= step;
+            return current;
+        }        
     }
 }

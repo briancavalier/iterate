@@ -23,7 +23,7 @@ public class IntegerRangeTest
 {
     @SuppressWarnings({"UnusedDeclaration"})
     @Test
-    public void basic()
+    public void ascending()
     {
         final int start = 10;
         final int end = 500;
@@ -34,5 +34,20 @@ public class IntegerRangeTest
         }
 
         assertEquals(end - start, count);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    @Test
+    public void descending()
+    {
+        final int start = 500;
+        final int end = 10;
+        IntegerRange range = new IntegerRange(start, end);
+        int count = 0;
+        for (int i : range) {
+            count++;
+        }
+
+        assertEquals(start - end, count);
     }
 }

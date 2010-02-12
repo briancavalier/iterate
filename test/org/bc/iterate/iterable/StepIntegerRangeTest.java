@@ -23,7 +23,7 @@ public class StepIntegerRangeTest
 {
     @SuppressWarnings({"UnusedDeclaration"})
     @Test
-    public void basic()
+    public void ascending1()
     {
         final int start = 10;
         final int end = 20;
@@ -39,7 +39,7 @@ public class StepIntegerRangeTest
 
     @SuppressWarnings({"UnusedDeclaration"})
     @Test
-    public void basic2()
+    public void ascending2()
     {
         final int start = 10;
         final int end = 23;
@@ -53,4 +53,19 @@ public class StepIntegerRangeTest
         assertEquals(5, count);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
+    @Test
+    public void descending1()
+    {
+        final int start = 20;
+        final int end = 10;
+        final int step = 3;
+        IntegerRange range = new StepIntegerRange(start, end, step);
+        int count = 0;
+        for (int i : range) {
+            count++;
+        }
+
+        assertEquals(4, count);
+    }
 }

@@ -16,7 +16,6 @@
 
 package org.bc.iterate.iterable;
 
-import org.bc.iterate.BasicIterateImpl;
 import org.bc.iterate.Iterate;
 
 import java.util.Iterator;
@@ -34,7 +33,7 @@ public class IntegerRange extends Iterate<Integer>
 
     public IntegerRange(int start, int end)
     {
-        super(end - start);
+        super(Math.abs(end - start));
         this.start = start;
         this.end = end;
     }
@@ -52,7 +51,7 @@ public class IntegerRange extends Iterate<Integer>
 
     public Iterator<Integer> iterator()
     {
-        return new IntegerRangeIterator();
+        return (start <= end) ? new AscendingIntegerRangeIterator() : new DescendingIntegerRangeIterator();
     }
 
     @Override
@@ -61,11 +60,11 @@ public class IntegerRange extends Iterate<Integer>
         return "[" + start + ".." + end + ']';
     }
 
-    protected class IntegerRangeIterator implements Iterator<Integer>
+    protected class AscendingIntegerRangeIterator implements Iterator<Integer>
     {
         protected int index;
 
-        public IntegerRangeIterator()
+        public AscendingIntegerRangeIterator()
         {
             index = start;
         }
@@ -79,6 +78,36 @@ public class IntegerRange extends Iterate<Integer>
         {
             if(index < end) {
                 return index++;
+            } else {
+                throw new NoSuchElementException("Reached end value " + end);
+            }
+        }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    protected class DescendingIntegerRangeIterator implements Iterator<Integer>
+    {
+        protected int index;
+
+        public DescendingIntegerRangeIterator()
+        {
+            index = start;
+        }
+
+        public boolean hasNext()
+        {
+            return index > end;
+        }
+
+        public Integer next()
+        {
+            if(index > end) {
+                return index--;
             } else {
                 throw new NoSuchElementException("Reached end value " + end);
             }
