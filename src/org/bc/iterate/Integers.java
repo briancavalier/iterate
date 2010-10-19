@@ -231,6 +231,6 @@ public class Integers
      */
     public static IntegerRange upto(int end)
     {
-        return new IntegerRange(0, end);
+        return new IntegerRange(0, Math.max(0, end));
     }
 }

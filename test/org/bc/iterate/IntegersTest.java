@@ -77,4 +77,35 @@ public class IntegersTest
             assertTrue(iterator.next() < max);
         }
     }
+
+    @Test
+    public void uptoZero()
+    {
+        int count = 0;
+        for(int i: Integers.upto(0)) {
+            count++;
+        }
+        assertEquals(0, count);
+    }
+
+    @Test
+    public void uptoNonZero()
+    {
+        int count = 0;
+        for(int i: Integers.upto(10)) {
+            count++;
+        }
+        assertEquals(10, count);
+    }
+
+    @Test
+    public void uptoNegative()
+    {
+        int count = 0;
+        for(int i: Integers.upto(-1)) {
+            count++;
+        }
+        assertEquals(0, count);
+    }
+
 }
